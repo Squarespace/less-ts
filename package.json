@@ -1,0 +1,52 @@
+{
+  "name": "@squarespace/less-ts",
+  "author": "Patrick Hensley <pathensley@gmail.com>",
+  "license": "Apache-2.0",
+  "scripts": {
+    "build": "tsc -p ./tsconfig.build.json",
+    "build:watch": "tsc -p ./tsconfig.build.json -w",
+    "clean": "rimraf ./coverage ./lib && jest --clearCache",
+    "clean:full": "rimraf ./node_modules",
+    "lint": "echo 'fixme'",
+    "release": "",
+    "stress": "echo 'fixme'",
+    "test": "rimraf ./coverage && jest --coverage --verbose -i --no-cache",
+    "test:codecov": "rimraf ./coverage && jest --coverage --coverageReporters=lcovonly --verbose -i --no-cache",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+	},
+  "devDependencies": {
+    "@types/glob": "^5.0.34",
+    "@types/jest": "^22.2.3",
+    "@types/lodash": "4.14.104",
+    "@types/node": "8.10.10",
+    "glob": "^7.1.2",
+    "jest": "^22.4.3",
+    "rimraf": "^2.6.2",
+    "ts-jest": "22.4.2",
+    "ts-node": "6.0.1",
+    "tslint": "5.9.1",
+    "tslint-no-circular-imports": "^0.2.1",
+    "typedoc": "^0.9.0",
+    "typescript": "~2.8.3"
+  },
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "ts",
+      "tsx"
+    ],
+    "moduleNameMapper": {
+    },
+    "testMatch": [
+      "**/__tests__/**/*.test.ts"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    }
+  }
+}
