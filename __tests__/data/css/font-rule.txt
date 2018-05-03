@@ -1,0 +1,99 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-font-1']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'font'], [EXPRESSION_LIST, [
+      [EXPRESSION, [
+        [DIMENSION, 14, 'px'],
+        [KEYWORD, 'Helvetica']
+      ]],
+      [KEYWORD, 'sans-serif']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-font-2']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'font'], [EXPRESSION_LIST, [
+      [EXPRESSION, [
+        [KEYWORD, 'bold'],
+        [SHORTHAND, [DIMENSION, 14, 'px'], [DIMENSION, 1.5, null]],
+        [KEYWORD, 'Helvetica']
+      ]],
+      [KEYWORD, 'sans-serif']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-font-3']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'font'], [EXPRESSION_LIST, [
+      [EXPRESSION, [
+        [KEYWORD, 'italic'],
+        [KEYWORD, 'small-caps'],
+        [KEYWORD, 'bold'],
+        [SHORTHAND, [DIMENSION, 1, 'em'], [DIMENSION, 140, '%']],
+        [KEYWORD, 'Helvetica']
+      ]],
+      [KEYWORD, 'sans-serif']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-font-4']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'font'], [EXPRESSION_LIST, [
+      [EXPRESSION, [
+        [KEYWORD, 'italic'],
+        [KEYWORD, 'small-caps']
+      ]]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-font-5']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'font'], [EXPRESSION_LIST, [
+      [EXPRESSION, [
+        [KEYWORD, 'italic']
+      ]],
+      [KEYWORD, 'sans-serif'],
+      [KEYWORD, 'small-caps'],
+      [KEYWORD, 'bold']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-font-6']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'font'], [EXPRESSION_LIST, [
+      [EXPRESSION, [
+        [KEYWORD, 'italic']
+      ]]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-font-7']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'font'], [EXPRESSION_LIST, [
+      [EXPRESSION, [
+        [DIMENSION, 400, null],
+        [DIMENSION, 12, 'px'],
+        [ANONYMOUS, '/'],
+        [DIMENSION, 14, 'px'],
+        [QUOTED, 0, false, [
+          [ANONYMOUS, 'proxima-nova']
+        ]]
+      ]]
+    ]], false]
+  ]]
+]]

@@ -1,0 +1,57 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.color-rgb']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'a1'], [COLOR, 0, 0, 0, 1.0], false],
+    [RULE, [PROPERTY, 'a2'], [COLOR, 255, 255, 255, 1.0], false],
+    [RULE, [PROPERTY, 'a3'], [COLOR, 170, 170, 170, 1.0], false],
+    [RULE, [PROPERTY, 'a4'], [COLOR, 18, 52, 86, 1.0], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.color-keywords']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'b1'], [EXPRESSION, [
+      [COLOR, 255, 0, 0, 1.0],
+      [COLOR, 255, 255, 0, 1.0],
+      [COLOR, 0, 0, 255, 1.0],
+      [COLOR, 0, 128, 0, 1.0]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.color-math']
+    ]]
+  ]], [
+    [COMMENT, ' addition, subtraction', 0, true],
+    [RULE, [PROPERTY, 'c1'], [OPERATION, '+', [COLOR, 0, 0, 0, 1.0], [DIMENSION, 1, null]], false],
+    [RULE, [PROPERTY, 'c2'], [OPERATION, '-', [COLOR, 0, 0, 0, 1.0], [DIMENSION, 1, null]], false],
+    [RULE, [PROPERTY, 'c3'], [OPERATION, '+', [COLOR, 255, 255, 255, 1.0], [DIMENSION, 1, null]], false],
+    [RULE, [PROPERTY, 'c4'], [OPERATION, '-', [COLOR, 255, 255, 255, 1.0], [DIMENSION, 1, null]], false],
+    [RULE, [PROPERTY, 'c5'], [OPERATION, '-', [COLOR, 255, 0, 0, 1.0], [COLOR, 128, 0, 0, 1.0]], false],
+    [COMMENT, ' keywords', 0, true],
+    [RULE, [PROPERTY, 'c6'], [OPERATION, '+', [COLOR, 0, 0, 255, 1.0], [COLOR, 255, 0, 0, 1.0]], false],
+    [RULE, [PROPERTY, 'c7'], [OPERATION, '-', [COLOR, 255, 255, 0, 1.0], [COLOR, 0, 128, 0, 1.0]], false],
+    [RULE, [PROPERTY, 'c8'], [EXPRESSION_LIST, [
+      [COLOR, 0, 128, 0, 1.0],
+      [OPERATION, '+', [COLOR, 0, 128, 0, 1.0], [DIMENSION, 1, null]]
+    ]], false],
+    [COMMENT, ' multiplication', 0, true],
+    [RULE, [PROPERTY, 'c9'], [OPERATION, '*', [COLOR, 34, 34, 34, 1.0], [DIMENSION, 4, null]], false],
+    [RULE, [PROPERTY, 'c10'], [OPERATION, '*', [COLOR, 51, 51, 51, 1.0], [DIMENSION, 2, null]], false],
+    [RULE, [PROPERTY, 'c11'], [OPERATION, '*', [COLOR, 17, 34, 51, 1.0], [DIMENSION, 2, null]], false],
+    [COMMENT, ' division', 0, true],
+    [RULE, [PROPERTY, 'c12'], [OPERATION, '/', [COLOR, 136, 136, 136, 1.0], [COLOR, 34, 34, 34, 1.0]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.bad-hex-colors']
+    ]]
+  ]], [
+    [COMMENT, ' parsed as an anonymous value', 0, true],
+    [RULE, [PROPERTY, 'd1'], [ANONYMOUS, '#xyz'], false]
+  ]]
+]]

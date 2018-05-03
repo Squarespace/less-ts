@@ -1,0 +1,14 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.unicode-range']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'a1'], [EXPRESSION_LIST, [
+      [UNICODE_RANGE, 'U+??????'],
+      [UNICODE_RANGE, 'U+0???'],
+      [UNICODE_RANGE, 'U+0-7F'],
+      [UNICODE_RANGE, 'U+A5']
+    ]], false]
+  ]]
+]]

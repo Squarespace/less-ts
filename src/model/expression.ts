@@ -1,11 +1,11 @@
-import { Buffer, ExecEnv, Node, NodeType } from './types';
+import { Buffer, ExecEnv, Node, NodeType } from '../common';
 
 export class Expression extends Node {
 
   private evaluate: boolean = false;
 
   constructor(readonly values: Node[], skipEval: boolean = false) {
-    super();
+    super(NodeType.EXPRESSION);
     if (!skipEval) {
       for (const v of values) {
         if (v.needsEval()) {
@@ -14,10 +14,6 @@ export class Expression extends Node {
         }
       }
     }
-  }
-
-  type(): NodeType {
-    return NodeType.EXPRESSION;
   }
 
   repr(buf: Buffer): void {
@@ -59,7 +55,7 @@ export class ExpressionList extends Node {
   private evaluate: boolean = false;
 
   constructor(readonly values: Node[], skipEval: boolean = false) {
-    super();
+    super(NodeType.EXPRESSION_LIST);
     if (!skipEval) {
       for (const v of values) {
         if (v.needsEval()) {
@@ -70,16 +66,13 @@ export class ExpressionList extends Node {
     }
   }
 
-  type(): NodeType {
-    return NodeType.EXPRESSION_LIST;
-  }
-
   repr(buf: Buffer): void {
     const { values } = this;
     const len = values.length;
+    const { listsep } = buf.chars;
     for (let i = 0; i < len; i++) {
       if (i > 0) {
-        buf.listsep();
+        buf.str(listsep);
       }
       values[i].repr(buf);
     }

@@ -1,0 +1,49 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.rule']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'parent-1'], [KEYWORD, 'true'], false],
+    [RULE, [PROPERTY, 'sibling-1'], [KEYWORD, 'true'], false],
+    [RULE, [PROPERTY, 'sibling-2'], [KEYWORD, 'true'], false],
+    [RULE, [PROPERTY, 'child-1'], [KEYWORD, 'true'], false]
+  ]],
+  [IMPORT, [QUOTED, 1, false, [
+    [ANONYMOUS, 'foo.css']
+  ]], 0, NULL],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.rule']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'output-once'], [KEYWORD, 'true'], false]
+  ]],
+  [IMPORT, [QUOTED, 1, false, [
+    [ANONYMOUS, 'bar.css']
+  ]], 0, NULL],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-1']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.child']
+      ]]
+    ]], [
+      [IMPORT, [QUOTED, 1, false, [
+        [ANONYMOUS, 'foo.css']
+      ]], 0, NULL]
+    ]],
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.sibling']
+      ]]
+    ]], [
+      [IMPORT, [QUOTED, 1, false, [
+        [ANONYMOUS, 'bar.css']
+      ]], 0, NULL]
+    ]]
+  ]]
+]]

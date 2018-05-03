@@ -1,3 +1,4 @@
+import { Node } from '../common';
 import {
   Alpha,
   Anonymous,
@@ -20,13 +21,13 @@ import {
   Features,
   FunctionCall,
   Guard,
+  Import,
   Keyword,
   Media,
   Mixin,
   MixinCall,
   MixinCallArgs,
   MixinParams,
-  Node,
   Operation,
   Operator,
   Parameter,
@@ -69,6 +70,7 @@ import {
   FeaturesJ,
   FunctionCallJ,
   GuardJ,
+  ImportJ,
   JsonType,
   KeywordJ,
   MediaJ,
@@ -97,16 +99,43 @@ import {
 } from './types';
 
 /*
- * Initially we are skipping the parser. Instead we define a mapping from JSON to LESS that
- * is used to reconstruct the stylesheet. A server component will deliver JSON to the
- * browser and this class will build an executable tree.
+ * A parser will not be developed in this first pass. Instead we define a mapping from
+ * JSON to LESS that is used to reconstruct the stylesheet. A server component will
+ * deliver JSON to the browser and this class will build an executable tree.
  */
 
 export class Builder {
 
+  // TODO: encode source map info for looking up char/line and filename
+  // This will create a string[] (produced by splitting on a delimiter) that
+  // contains a list of Base64 VLQ. When an error occurs, a node's index value
+  // is used to find the relevant VLQ which resolves the line/char offset and
+  // optional file path. we only attach file paths to block-level nodes, so
+  // the error handling function should know how to do that.
+
+  // Appending char/line offsets and filename index to each node bloats the
+  // JSON by roughly 2x, whereas using the implicit node index and vlq should
+  // add only about 1.25 to 1.5x size, and the vlq would keep the offset info
+  // out of the less instruction tree.
+
+  // Also we plan to add a safe mode to this compiler which will report errors
+  // in the console but not throw.
+
+  // TODO: use this identifier to index into the line/char offset table
+  private nodeId: number = 0;
+
   constructor(readonly table: string[]) {}
 
   expand(t: NodeJ): Node {
+
+    // TODO: add nodeId to each node. this will be used to index into the vlq for
+    // execution error reporting
+
+    // TODO: note that tuple types are not automatically narrowed (yet) by the
+    // Typescript compiler. For this reason you see a lot of casts to avoid
+    // adding another intermediate "const x = y as Type" in some cases.
+    // https://github.com/Microsoft/TypeScript/issues/23512
+
     switch (t[0]) {
       case JsonType.ALPHA:
       {
@@ -122,34 +151,29 @@ export class Builder {
 
       case JsonType.ARGUMENT:
       {
-        const o = t as ArgumentJ;
-        const name = this.table[o[1]];
-        const value = this.expand(o[2]);
+        const name = this.table[(t as ArgumentJ)[1]];
+        const value = this.expand((t as ArgumentJ)[2]);
         return new Argument(name, value);
       }
 
       case JsonType.ASSIGNMENT:
       {
-        const o = t as AssignmentJ;
-        const name = this.table[o[1]];
-        const value = this.expand(o[2]);
+        const name = this.table[(t as AssignmentJ)[1]];
+        const value = this.expand((t as AssignmentJ)[2]);
         return new Assignment(name, value);
       }
 
       case JsonType.ATTR_ELEMENT:
       {
-        const o = t as AttrElementJ;
-        const comb = this.table[o[1]] as Combinator;
-        const segments = this.expandList(o[2]);
+        const comb = this.table[(t as AttrElementJ)[1]] as Combinator;
+        const segments = this.expandList((t as AttrElementJ)[2]);
         return new AttributeElement(comb, segments);
       }
 
       case JsonType.BLOCK_DIRECTIVE:
       {
-        const o = t as BlockDirectiveJ;
-        const name = this.table[o[1]];
-        const nodes = this.expandList(o[2]);
-        const block = new Block(nodes);
+        const name = this.table[(t as BlockDirectiveJ)[1]];
+        const block = this.expandBlock((t as BlockDirectiveJ)[2]);
         return new BlockDirective(name, block);
       }
 
@@ -177,24 +201,21 @@ export class Builder {
 
       case JsonType.DEFINITION:
       {
-        const o = t as DefinitionJ;
-        const name = this.table[o[1]];
-        const value = this.expand(o[2]);
+        const name = this.table[(t as DefinitionJ)[1]];
+        const value = this.expand((t as DefinitionJ)[2]);
         return new Definition(name, value);
       }
 
       case JsonType.DIMENSION:
       {
-        const o = t as DimensionJ;
-        const unit = this.table[o[2]];
-        return new Dimension(o[1], unit as Unit);
+        const unit = this.table[(t as DimensionJ)[2]];
+        return new Dimension((t as DimensionJ)[1], unit as Unit);
       }
 
       case JsonType.DIRECTIVE:
       {
-        const o = t as DirectiveJ;
-        const name = this.table[o[1]];
-        const value = this.expand(o[2]);
+        const name = this.table[(t as DirectiveJ)[1]];
+        const value = this.expand((t as DirectiveJ)[2]);
         return new Directive(name, value);
       }
 
@@ -215,9 +236,8 @@ export class Builder {
 
       case JsonType.FEATURE:
       {
-        const o = t as FeatureJ;
-        const property = this.expand(o[1]);
-        const value = this.expand(o[2]);
+        const property = this.expand((t as FeatureJ)[1]);
+        const value = this.expand((t as FeatureJ)[2]);
         return new Feature(property, value);
       }
 
@@ -229,9 +249,8 @@ export class Builder {
 
       case JsonType.FUNCTION_CALL:
       {
-        const o = t as FunctionCallJ;
-        const name = this.table[o[1]];
-        const args = this.expandList(o[2]);
+        const name = this.table[(t as FunctionCallJ)[1]];
+        const args = this.expandList((t as FunctionCallJ)[2]);
         return new FunctionCall(name, args);
       }
 
@@ -239,6 +258,15 @@ export class Builder {
       {
         const conditions = this.expandList((t as GuardJ)[1]);
         return new Guard(conditions as Condition[]);
+      }
+
+      case JsonType.IMPORT:
+      {
+        const o = t as ImportJ;
+        const path = this.expand(o[1]);
+        const once = o[2];
+        const features = this.expandNullable(o[3]) as Features;
+        return new Import(path, once, features);
       }
 
       case JsonType.KEYWORD:
@@ -249,10 +277,9 @@ export class Builder {
 
       case JsonType.MEDIA:
       {
-        const o = t as MediaJ;
-        const features = this.expandList(o[1]);
-        const rules = this.expandList(o[2]);
-        return new Media(new Features(features), new Block(rules));
+        const features = this.expandNullable((t as MediaJ)[1]) as Features;
+        const block = this.expandBlock((t as MediaJ)[2]);
+        return new Media(features, block);
       }
 
       case JsonType.MIXIN:
@@ -260,16 +287,15 @@ export class Builder {
         const o = t as MixinJ;
         const name = this.table[o[1]];
         const params = this.expand(o[2]) as MixinParams;
-        const guard = this.expand(o[3]) as Guard;
-        const rules = this.expandList(o[4]);
-        return new Mixin(name, params, guard, new Block(rules));
+        const guard = this.expandNullable(o[3]) as Guard;
+        const block = this.expandBlock(o[4]);
+        return new Mixin(name, params, guard, block);
       }
 
       case JsonType.MIXIN_ARGS:
       {
-        const o = t as MixinCallArgsJ;
-        const delim = o[1] ? ',' : ';';
-        const args = this.expandList(o[2]) as Argument[];
+        const delim = (t as MixinCallArgsJ)[1] ? ',' : ';';
+        const args = this.expandList((t as MixinCallArgsJ)[2]) as Argument[];
         return new MixinCallArgs(delim, args);
       }
 
@@ -320,7 +346,7 @@ export class Builder {
       case JsonType.QUOTED:
       {
         const o = t as QuotedJ;
-        const delim = o[1] ? "'" : '"';
+        const delim = o[1] ? '"' : "'";
         const segments = this.expandList(o[3]);
         return new Quoted(delim, o[2], segments);
       }
@@ -343,8 +369,8 @@ export class Builder {
       {
         const o = t as RulesetJ;
         const selectors = this.expand(o[1]) as Selectors;
-        const rules = this.expandList(o[2]);
-        return new Ruleset(selectors, new Block(rules));
+        const block = this.expandBlock(o[2]);
+        return new Ruleset(selectors, block);
       }
 
       case JsonType.SELECTOR:
@@ -361,24 +387,22 @@ export class Builder {
 
       case JsonType.SHORTHAND:
       {
-        const o = t as ShorthandJ;
-        const left = this.expand(o[1]);
-        const right = this.expand(o[2]);
+        const left = this.expand((t as ShorthandJ)[1]);
+        const right = this.expand((t as ShorthandJ)[2]);
         return new Shorthand(left, right);
       }
 
       case JsonType.STYLESHEET:
       {
         // TODO: versioning support
-        const rules = this.expandList((t as StylesheetJ)[2]);
-        return new Stylesheet(new Block(rules));
+        const block = this.expandBlock((t as StylesheetJ)[2]);
+        return new Stylesheet(block);
       }
 
       case JsonType.TEXT_ELEMENT:
       {
-        const o = t as TextElementJ;
-        const comb = this.table[o[1]] as Combinator;
-        const name = this.table[o[2]];
+        const comb = this.table[(t as TextElementJ)[1]] as Combinator;
+        const name = this.table[(t as TextElementJ)[2]];
         return new TextElement(comb, name);
       }
 
@@ -399,9 +423,8 @@ export class Builder {
 
       case JsonType.VALUE_ELEMENT:
       {
-        const o = t as ValueElementJ;
-        const comb = this.table[o[1]] as Combinator;
-        const value = this.expand(o[2]);
+        const comb = this.table[(t as ValueElementJ)[1]] as Combinator;
+        const value = this.expand((t as ValueElementJ)[2]);
         return new ValueElement(comb, value);
       }
 
@@ -413,6 +436,10 @@ export class Builder {
     }
   }
 
+  expandNullable(node: NodeJ): Node | undefined {
+    return node[0] === -1 ? undefined : this.expand(node);
+  }
+
   expandList(nodes: NodeJ[]): Node[] {
     const r: Node[] = [];
     for (const n of nodes) {
@@ -421,4 +448,14 @@ export class Builder {
     return r;
   }
 
+  /**
+   * Append each node to the block, setting flags along the way.
+   */
+  expandBlock(nodes: NodeJ[]): Block {
+    const block = new Block();
+    for (const n of nodes) {
+      block.add(this.expand(n));
+    }
+    return block;
+  }
 }

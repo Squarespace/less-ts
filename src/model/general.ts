@@ -1,13 +1,9 @@
-import { Buffer, ExecEnv, Node, NodeType } from './types';
+import { Buffer, ExecEnv, Node, NodeType } from '../common';
 
 export class Alpha extends Node {
 
   constructor(readonly value: Node) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.ALPHA;
+    super(NodeType.ALPHA);
   }
 
   repr(buf: Buffer): void {
@@ -29,11 +25,7 @@ export class Alpha extends Node {
 export class Anonymous extends Node {
 
   constructor(readonly value: string) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.ANONYMOUS;
+    super(NodeType.ANONYMOUS);
   }
 
   repr(buf: Buffer): void {
@@ -46,11 +38,7 @@ export class Assignment extends Node {
   constructor(
     readonly name: string,
     readonly value: Node) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.ASSIGNMENT;
+    super(NodeType.ASSIGNMENT);
   }
 
   repr(buf: Buffer): void {
@@ -74,11 +62,7 @@ export class Comment extends Node {
     readonly body: string,
     readonly block: boolean | number,
     readonly newline: boolean | number) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.COMMENT;
+    super(NodeType.COMMENT);
   }
 
   repr(buf: Buffer): void {
@@ -94,8 +78,31 @@ export class Comment extends Node {
     }
   }
 
-  protected hasBang(): boolean {
+  hasBang(): boolean {
     return this.body !== '' && this.body[0] === '!';
+  }
+}
+
+export class Directive extends Node {
+
+  constructor(
+    readonly name: string,
+    readonly value: Node) {
+    super(NodeType.DIRECTIVE);
+  }
+
+  repr(buf: Buffer): void {
+    buf.str(this.name);
+    buf.str(' ');
+    this.value.repr(buf);
+  }
+
+  needsEval(): boolean {
+    return this.value.needsEval();
+  }
+
+  eval(env: ExecEnv): Node {
+    return this.needsEval() ? new Directive(this.name, this.value.eval(env)) : this;
   }
 }
 
@@ -104,20 +111,17 @@ export class FunctionCall extends Node {
   constructor(
     readonly name: string,
     readonly args: Node[]) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.FUNCTION_CALL;
+    super(NodeType.FUNCTION_CALL);
   }
 
   repr(buf: Buffer): void {
     buf.str(this.name).str('(');
     const args = this.args;
     const len = args.length;
+    const { listsep } = buf.chars;
     for (let i = 0; i < len; i++) {
       if (i > 0) {
-        buf.listsep();
+        buf.str(listsep);
       }
       args[i].repr(buf);
     }
@@ -135,11 +139,7 @@ export class FunctionCall extends Node {
 export class Paren extends Node {
 
   constructor(readonly value: Node) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.PAREN;
+    super(NodeType.PAREN);
   }
 
   repr(buf: Buffer): void {
@@ -160,11 +160,7 @@ export class Paren extends Node {
 export class Property extends Node {
 
   constructor(readonly name: string) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.PROPERTY;
+    super(NodeType.PROPERTY);
   }
 
   repr(buf: Buffer): void {
@@ -175,11 +171,7 @@ export class Property extends Node {
 export class Ratio extends Node {
 
   constructor(readonly value: string) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.RATIO;
+    super(NodeType.RATIO);
   }
 
   repr(buf: Buffer): void {
@@ -192,11 +184,7 @@ export class Shorthand extends Node {
   constructor(
     readonly left: Node,
     readonly right: Node) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.SHORTHAND;
+    super(NodeType.SHORTHAND);
   }
 
   repr(buf: Buffer): void {
@@ -217,11 +205,7 @@ export class Shorthand extends Node {
 export class UnicodeRange extends Node {
 
   constructor(readonly value: string) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.UNICODE_RANGE;
+    super(NodeType.UNICODE_RANGE);
   }
 
   repr(buf: Buffer): void {
@@ -232,11 +216,7 @@ export class UnicodeRange extends Node {
 export class Url extends Node {
 
   constructor(readonly value: Node) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.URL;
+    super(NodeType.URL);
   }
 
   repr(buf: Buffer): void {

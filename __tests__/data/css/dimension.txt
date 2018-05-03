@@ -1,0 +1,106 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.dimension-unitless']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'a1'], [DIMENSION, 0, null], false],
+    [RULE, [PROPERTY, 'a2'], [DIMENSION, 0.1, null], false],
+    [RULE, [PROPERTY, 'a3'], [DIMENSION, 0, null], false],
+    [RULE, [PROPERTY, 'a4'], [DIMENSION, -0.1, null], false],
+    [RULE, [PROPERTY, 'a5'], [DIMENSION, -1, null], false],
+    [RULE, [PROPERTY, 'a6'], [DIMENSION, 3.14159, null], false],
+    [RULE, [PROPERTY, 'a7'], [DIMENSION, -3.14159, null], false],
+    [RULE, [PROPERTY, 'a8'], [DIMENSION, -0.001, null], false],
+    [RULE, [PROPERTY, 'a9'], [DIMENSION, -1.0E-6, null], false],
+    [RULE, [PROPERTY, 'a10'], [DIMENSION, 1.000000000005E11, null], false],
+    [RULE, [PROPERTY, 'a11'], [DIMENSION, -1.00000001, null], false],
+    [RULE, [PROPERTY, 'a12'], [DIMENSION, -0.99999999, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.dimension-limits']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'b1'], [DIMENSION, 9223372036854775807, null], false],
+    [RULE, [PROPERTY, 'b2'], [DIMENSION, -9223372036854775808, null], false],
+    [RULE, [PROPERTY, 'b3'], [DIMENSION, -9.223372036854776E19, null], false],
+    [COMMENT, ' approximated', 0, true]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.dimension-case']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'c1'], [DIMENSION, 3.5, 'px'], false],
+    [RULE, [PROPERTY, 'c2'], [DIMENSION, 3.5, 'cm'], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.dimension-absolute-lengths']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'd1'], [DIMENSION, -3.5, 'cm'], false],
+    [RULE, [PROPERTY, 'd2'], [DIMENSION, -3.5, 'mm'], false],
+    [RULE, [PROPERTY, 'd3'], [DIMENSION, -3.5, 'in'], false],
+    [RULE, [PROPERTY, 'd4'], [DIMENSION, -3.5, 'px'], false],
+    [RULE, [PROPERTY, 'd5'], [DIMENSION, -3.5, 'pt'], false],
+    [RULE, [PROPERTY, 'd6'], [DIMENSION, -3.5, 'pc'], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.dimension-font-relative-lengths']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'e1'], [DIMENSION, -3.5, 'ch'], false],
+    [RULE, [PROPERTY, 'e2'], [DIMENSION, -3.5, 'em'], false],
+    [RULE, [PROPERTY, 'e3'], [DIMENSION, -3.5, 'ex'], false],
+    [RULE, [PROPERTY, 'e4'], [DIMENSION, -3.5, 'rem'], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.dimension-viewport-relative-lengths']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'f1'], [DIMENSION, -3.5, 'vh'], false],
+    [RULE, [PROPERTY, 'f2'], [DIMENSION, -3.5, 'vw'], false],
+    [RULE, [PROPERTY, 'f3'], [DIMENSION, -3.5, 'vmin'], false],
+    [RULE, [PROPERTY, 'f4'], [DIMENSION, -3.5, 'vmax'], false],
+    [RULE, [PROPERTY, 'f5'], [DIMENSION, -3.5, 'vm'], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.dimension-times']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'g1'], [DIMENSION, -3.5, 's'], false],
+    [RULE, [PROPERTY, 'g2'], [DIMENSION, -3.5, 'ms'], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.dimension-resolutions']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'h1'], [DIMENSION, -3.5, 'dpi'], false],
+    [RULE, [PROPERTY, 'h2'], [DIMENSION, -3.5, 'dpcm'], false],
+    [RULE, [PROPERTY, 'h3'], [DIMENSION, -3.5, 'dppx'], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.dimension-frequencies']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'i1'], [DIMENSION, -3.5, 'hz'], false],
+    [RULE, [PROPERTY, 'i2'], [DIMENSION, -3.5, 'khz'], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.dimension-angles']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'j1'], [DIMENSION, -3.5, 'deg'], false],
+    [RULE, [PROPERTY, 'j2'], [DIMENSION, -3.5, 'grad'], false],
+    [RULE, [PROPERTY, 'j3'], [DIMENSION, -3.5, 'rad'], false],
+    [RULE, [PROPERTY, 'j4'], [DIMENSION, -3.5, 'turn'], false]
+  ]]
+]]

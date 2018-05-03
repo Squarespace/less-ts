@@ -1,0 +1,27 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.rule']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'parent-1'], [KEYWORD, 'true'], false],
+    [RULE, [PROPERTY, 'sibling-1'], [KEYWORD, 'true'], false],
+    [RULE, [PROPERTY, 'sibling-2'], [KEYWORD, 'true'], false],
+    [RULE, [PROPERTY, 'child-1'], [KEYWORD, 'true'], false]
+  ]],
+  [MEDIA, [FEATURES, [
+    [EXPRESSION, [
+      [KEYWORD, 'screen'],
+      [KEYWORD, 'and'],
+      [KEYWORD, 'mobile']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.rule']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'output-once'], [KEYWORD, 'true'], false]
+    ]]
+  ]]
+]]

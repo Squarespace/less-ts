@@ -1,0 +1,11 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'a1'], [FUNCTION_CALL, 'foo-bar', [
+      [ASSIGNMENT, 'arg', [COLOR, 17, 34, 51, 1.0]]
+    ]], false]
+  ]]
+]]

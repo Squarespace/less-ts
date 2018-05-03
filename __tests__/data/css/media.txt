@@ -1,0 +1,68 @@
+[STYLESHEET, 1, [
+  [COMMENT, ' Nested rules and selectors', 0, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.parent']
+    ]]
+  ]], [
+    [MEDIA, [FEATURES, [
+      [EXPRESSION, [
+        [KEYWORD, 'a']
+      ]],
+      [EXPRESSION, [
+        [KEYWORD, 'b']
+      ]]
+    ]], [
+      [RULESET, [SELECTORS, [
+        [SELECTOR, [
+          [TEXT_ELEMENT, ' ', '.child']
+        ]]
+      ]], [
+        [RULE, [PROPERTY, 'a'], [DIMENSION, 1, null], false]
+      ]]
+    ]]
+  ]],
+  [COMMENT, ' Cartesian product', 0, true],
+  [MEDIA, [FEATURES, [
+    [EXPRESSION, [
+      [KEYWORD, 'a']
+    ]],
+    [EXPRESSION, [
+      [KEYWORD, 'b']
+    ]]
+  ]], [
+    [MEDIA, [FEATURES, [
+      [EXPRESSION, [
+        [KEYWORD, 'c'],
+        [KEYWORD, 'and'],
+        [KEYWORD, 'd']
+      ]],
+      [EXPRESSION, [
+        [KEYWORD, 'e']
+      ]]
+    ]], [
+      [RULESET, [SELECTORS, [
+        [SELECTOR, [
+          [TEXT_ELEMENT, ' ', '.parent-1']
+        ]]
+      ]], [
+        [RULE, [PROPERTY, 'b'], [DIMENSION, 2, null], false]
+      ]]
+    ]],
+    [MEDIA, [FEATURES, [
+      [EXPRESSION, [
+        [KEYWORD, 'f'],
+        [KEYWORD, 'and'],
+        [KEYWORD, 'g']
+      ]]
+    ]], [
+      [RULESET, [SELECTORS, [
+        [SELECTOR, [
+          [TEXT_ELEMENT, ' ', '.parent-2']
+        ]]
+      ]], [
+        [RULE, [PROPERTY, 'c'], [DIMENSION, 3, null], false]
+      ]]
+    ]]
+  ]]
+]]

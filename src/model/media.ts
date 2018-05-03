@@ -1,15 +1,12 @@
-import { Block, BlockNode, Buffer, ExecEnv, Node, NodeType } from './types';
+import { Buffer, ExecEnv, Node, NodeType } from '../common';
+import { Block, BlockNode } from './block';
 
 export class Feature extends Node {
 
   constructor(
     readonly property: Node,
     readonly value: Node) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.FEATURE;
+    super(NodeType.FEATURE);
   }
 
   repr(buf: Buffer): void {
@@ -37,7 +34,7 @@ export class Features extends Node {
   constructor(
     readonly features: Node[],
     skipEval: boolean = false) {
-    super();
+    super(NodeType.FEATURES);
     if (!skipEval) {
       for (const f of features) {
         if (f.needsEval()) {
@@ -46,10 +43,6 @@ export class Features extends Node {
         }
       }
     }
-  }
-
-  type(): NodeType {
-    return NodeType.FEATURES;
   }
 
   repr(buf: Buffer): void {
@@ -83,18 +76,14 @@ export class Features extends Node {
 export class Media extends BlockNode {
 
   constructor(
-    readonly features: Features,
+    readonly features: Features | undefined,
     readonly block: Block) {
-    super(block);
-  }
-
-  type(): NodeType {
-    return NodeType.MEDIA;
+    super(NodeType.MEDIA, block);
   }
 
   repr(buf: Buffer): void {
     buf.str('@media ');
-    if (this.features.features.length > 0) {
+    if (this.features && this.features.features.length > 0) {
       this.features.repr(buf);
       buf.str(' ');
     }

@@ -1,0 +1,52 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-keyframes']
+    ]]
+  ]], [
+    [BLOCK_DIRECTIVE, '@-webkit-keyframes frames', [
+      [RULESET, [SELECTORS, [
+        [SELECTOR, [
+          [TEXT_ELEMENT, ' ', '0%']
+        ]]
+      ]], [
+        [RULE, [PROPERTY, 'border'], [DIMENSION, 1, 'px'], false]
+      ]]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-font-face']
+    ]]
+  ]], [
+    [BLOCK_DIRECTIVE, '@font-face', [
+      [RULE, [PROPERTY, 'font-family'], [KEYWORD, 'Helvetica'], false]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-namespace']
+    ]]
+  ]], [
+    [DIRECTIVE, '@namespace', [EXPRESSION, [
+      [KEYWORD, 'sqs'],
+      [URL, [QUOTED, 0, false, [
+        [ANONYMOUS, 'http://squarespace.com']
+      ]]]
+    ]]]
+  ]],
+  [DEFINITION, '@name', [KEYWORD, 'foo']],
+  [DEFINITION, '@value', [URL, [QUOTED, 0, false, [
+    [ANONYMOUS, 'http://squarespace.com']
+  ]]]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-namespace-dynamic']
+    ]]
+  ]], [
+    [DIRECTIVE, '@namespace', [EXPRESSION, [
+      [VARIABLE, '@name'],
+      [VARIABLE, '@value']
+    ]]]
+  ]]
+]]

@@ -1,4 +1,4 @@
-import { Buffer, ExecEnv, Node, NodeType } from './types';
+import { Buffer, ExecEnv, Node, NodeType } from '../common';
 import { Combinator, Element } from './element';
 import { whitespace } from '../utils';
 
@@ -12,13 +12,18 @@ export class Selector extends Node {
 
   protected mixinPath?: string[];
   protected flags: number = 0;
+  readonly hasWildcard: boolean;
 
   constructor(readonly elements: Element[]) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.SELECTOR;
+    super(NodeType.SELECTOR);
+    let wildcard = false;
+    for (const e of elements) {
+      if (e.isWildcard()) {
+        wildcard = true;
+        break;
+      }
+    }
+    this.hasWildcard = wildcard;
   }
 
   repr(buf: Buffer): void {
@@ -35,11 +40,7 @@ export class Selector extends Node {
 export class Selectors extends Node {
 
   constructor(readonly selectors: Selector[]) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.SELECTORS;
+    super(NodeType.SELECTORS);
   }
 
   repr(buf: Buffer): void {
@@ -87,11 +88,11 @@ const reprElement = (buf: Buffer, element: Element, isFirst: boolean): void => {
       if (!buf.compress && !isDescendant) {
         buf.str(' ');
       }
-      if (!isDescendant || !whitespace(buf.prevchar())) {
+      if (!isDescendant || !whitespace(buf.prev)) {
         buf.str(comb);
       }
     }
-    if (!buf.compress && !element.isWildcard() && !whitespace(buf.prevchar())) {
+    if (!buf.compress && !element.isWildcard() && !whitespace(buf.prev)) {
       buf.str(' ');
     }
   }

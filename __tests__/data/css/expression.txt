@@ -1,0 +1,34 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.one']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'background'], [EXPRESSION, [
+      [URL, [ANONYMOUS, 'some-image.jpg']],
+      [KEYWORD, 'no-repeat'],
+      [KEYWORD, 'right'],
+      [DIMENSION, 0.75, 'rem'],
+      [KEYWORD, 'center'],
+      [ANONYMOUS, '/'],
+      [DIMENSION, 0.8, 'rem'],
+      [DIMENSION, 1, 'rem']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.two']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'background'], [EXPRESSION, [
+      [URL, [ANONYMOUS, 'some-image.jpg']],
+      [KEYWORD, 'no-repeat'],
+      [KEYWORD, 'right'],
+      [DIMENSION, 0.75, 'rem'],
+      [KEYWORD, 'center'],
+      [ANONYMOUS, '/'],
+      [DIMENSION, 5, 'px'],
+      [DIMENSION, 1, 'rem']
+    ]], false]
+  ]]
+]]

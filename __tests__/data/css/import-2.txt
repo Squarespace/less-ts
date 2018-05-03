@@ -1,0 +1,10 @@
+[STYLESHEET, 1, [
+  [COMMENT, ' Non-less-evaluated imports', 0, true],
+  [IMPORT, [URL, [ANONYMOUS, 'http://foo.com/foo.css']], 0, NULL],
+  [IMPORT, [URL, [QUOTED, 0, false, [
+    [ANONYMOUS, 'http://foo.com/foo.css']
+  ]]], 0, NULL],
+  [IMPORT, [URL, [QUOTED, 1, false, [
+    [ANONYMOUS, 'http://foo.com/foo.css']
+  ]]], 0, NULL]
+]]

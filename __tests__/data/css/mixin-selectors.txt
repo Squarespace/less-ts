@@ -1,0 +1,131 @@
+[STYLESHEET, 1, [
+  [COMMENT, ' Mixin selector matching.', 0, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '#ns']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.m1'],
+        [TEXT_ELEMENT, null, '.m2']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'res'], [DIMENSION, 1, null], false]
+    ]],
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.m1']
+      ]]
+    ]], [
+      [RULESET, [SELECTORS, [
+        [SELECTOR, [
+          [TEXT_ELEMENT, ' ', '&'],
+          [TEXT_ELEMENT, null, '.m2']
+        ]]
+      ]], [
+        [RULE, [PROPERTY, 'res'], [DIMENSION, 2, null], false]
+      ]]
+    ]],
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.m1'],
+        [TEXT_ELEMENT, ' ', '.m2']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'res'], [DIMENSION, 3, null], false]
+    ]],
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.m1'],
+        [TEXT_ELEMENT, '>', '.m2']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'res'], [DIMENSION, 4, null], false]
+    ]],
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.m1'],
+        [TEXT_ELEMENT, '+', '.m2']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'res'], [DIMENSION, 5, null], false]
+    ]],
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, '>', '.m1'],
+        [TEXT_ELEMENT, '~', '.m2']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'res'], [DIMENSION, 6, null], false]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '#ns'],
+      [TEXT_ELEMENT, ' ', '.m1'],
+      [TEXT_ELEMENT, ' ', '.m2']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'res'], [DIMENSION, 7, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '#ns'],
+      [TEXT_ELEMENT, null, '.m1'],
+      [TEXT_ELEMENT, null, '.m2']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'res'], [DIMENSION, 8, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '#ns'],
+      [TEXT_ELEMENT, null, '.m1'],
+      [TEXT_ELEMENT, '>', '.m2']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'res'], [DIMENSION, 9, null], false]
+  ]],
+  [COMMENT, ' less.js doesn't match the next mixin due to a bug that only trims a selector by 1', 0, true],
+  [COMMENT, ' rather than by the no. of elements that matched (ruleset.js in \"if (match = selector.match( ...\"', 0, true],
+  [COMMENT, ' My code fixes this bug.', 0, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '#ns'],
+      [TEXT_ELEMENT, ' ', '.m1']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '&'],
+        [TEXT_ELEMENT, null, '.m2']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'res'], [DIMENSION, 10, null], false]
+    ]]
+  ]],
+  [COMMENT, ' mixin calls below', 0, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-1']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '#ns'],
+      [TEXT_ELEMENT, null, '.m1'],
+      [TEXT_ELEMENT, ' ', '.m2']
+    ]], NULL, false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-2']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '#ns'],
+      [TEXT_ELEMENT, '>', '.m1'],
+      [TEXT_ELEMENT, null, '.m2']
+    ]], NULL, false]
+  ]]
+]]

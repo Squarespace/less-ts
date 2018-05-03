@@ -177,6 +177,9 @@ export const rgbToName = (r: number, g: number, b: number): string | undefined =
   return COLOR_NAMES.rgbToName[n];
 };
 
+export const nameToRGB = (name: string): ColorFields | undefined =>
+  COLOR_NAMES.nameToRgb[name];
+
 export const hexToRGB = (raw: string): ColorFields => {
   let start = 0;
   let len = raw.length;

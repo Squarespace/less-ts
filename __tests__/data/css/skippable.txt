@@ -1,0 +1,155 @@
+[STYLESHEET, 1, [
+  [COMMENT, ' WARNING: This file contains whitespace which may not show up or be', 0, true],
+  [COMMENT, ' editable in your text editor.', 0, true],
+  [COMMENT, ' Each whitespace character in the rule value is delimited by 's' and 'e'.', 0, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.spaces-ascii']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'tab'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false],
+    [RULE, [PROPERTY, 'newline'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false],
+    [RULE, [PROPERTY, 'vertical-tab'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false],
+    [RULE, [PROPERTY, 'form-feed'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false],
+    [RULE, [PROPERTY, 'carriage-return'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.spaces-1680']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'ogham-space-mark'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.spaces-180e']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'mongolian-vowel-sep'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.spaces-2000-200a']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'en-quad'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false],
+    [RULE, [PROPERTY, 'em-quad'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false],
+    [RULE, [PROPERTY, 'en-space'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false],
+    [RULE, [PROPERTY, 'em-space'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false],
+    [RULE, [PROPERTY, 'three-per-em-space'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false],
+    [RULE, [PROPERTY, 'four-per-em-space'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false],
+    [RULE, [PROPERTY, 'six-per-em-space'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false],
+    [RULE, [PROPERTY, 'figure-space'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false],
+    [RULE, [PROPERTY, 'punctuation-space'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false],
+    [RULE, [PROPERTY, 'thin-space'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false],
+    [RULE, [PROPERTY, 'hair-space'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.spaces-2028-2029']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'line-sep'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false],
+    [RULE, [PROPERTY, 'para-sep'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.spaces-202f']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'narrow-nbsp'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.spaces-205f']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'medium-math-space'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.spaces-3000']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'ideographic-space'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.spaces-bom']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'bom'], [EXPRESSION, [
+      [KEYWORD, 's'],
+      [KEYWORD, 'e']
+    ]], false]
+  ]]
+]]

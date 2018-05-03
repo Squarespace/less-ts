@@ -1,0 +1,53 @@
+[STYLESHEET, 1, [
+  [DEFINITION, '@domain', [QUOTED, 0, false, [
+    [ANONYMOUS, 'glonk.com']
+  ]]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-url-plain']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'a1'], [URL, [ANONYMOUS, 'http://squarespace.com']], false],
+    [RULE, [PROPERTY, 'a2'], [URL, [ANONYMOUS, 'foo']], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-url-quoted']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'a1'], [URL, [QUOTED, 0, false, [
+      [ANONYMOUS, 'foo']
+    ]]], false],
+    [RULE, [PROPERTY, 'a2'], [URL, [QUOTED, 1, false, [
+      [ANONYMOUS, 'foo']
+    ]]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-url-escaped']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'a1'], [URL, [QUOTED, 0, true, [
+      [ANONYMOUS, 'foo']
+    ]]], false],
+    [RULE, [PROPERTY, 'a2'], [URL, [QUOTED, 1, true, [
+      [ANONYMOUS, 'foo']
+    ]]], false],
+    [RULE, [PROPERTY, 'a3'], [URL, [QUOTED, 0, true, [
+      [ANONYMOUS, '//'],
+      [VARIABLE, '@domain'],
+      [ANONYMOUS, '/foo.css']
+    ]]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-url-vars']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'a1'], [URL, [QUOTED, 0, false, [
+      [ANONYMOUS, 'http://'],
+      [VARIABLE, '@domain'],
+      [ANONYMOUS, '/site.css']
+    ]]], false]
+  ]]
+]]

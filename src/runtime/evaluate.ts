@@ -1,21 +1,19 @@
-import { Context } from './context';
+import { Context, ExecEnv, NodeType } from '../common';
 import {
   Block,
   BlockDirective,
   Definition,
   Directive,
-  ExecEnv,
   Media,
   Mixin,
   MixinCall,
-  NodeType,
   Rule,
   Ruleset,
   Stylesheet,
 } from '../model';
 import { MixinMatch, MixinMatcher } from './mixin';
 
-export class LessEvaluator {
+export class Evaluator {
 
   constructor(readonly ctx: Context) {}
 
@@ -67,8 +65,7 @@ export class LessEvaluator {
     const { rules } = block;
     for (let i = 0; i < rules.length; i++) {
       let n = rules[i];
-      const type = n.type();
-      switch (type) {
+      switch (n.type) {
         case NodeType.BLOCK_DIRECTIVE:
           n = this.evaluateBlockDirective(env, n as BlockDirective);
           break;
@@ -119,6 +116,10 @@ export class LessEvaluator {
         case NodeType.RULESET:
           n = this.evaluateRuleset(env, n as Ruleset, forceImportant);
           break;
+
+        default:
+          n = n.eval(env);
+          break;
       }
 
       // TODO: catch errors
@@ -133,7 +134,7 @@ export class LessEvaluator {
     const { rules } = block;
     for (let i = 0; i < rules.length; i++) {
       const n = rules[i];
-      if (n.type() === NodeType.MIXIN_CALL) {
+      if (n.type === NodeType.MIXIN_CALL) {
         const result = this.executeMixinCall(env, n as MixinCall);
         rules.splice(i, 1, ...result.rules);
         i += result.rules.length - 1;

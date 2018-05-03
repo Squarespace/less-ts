@@ -1,5 +1,5 @@
-import { Buffer, Node, NodeType } from './types';
-import { hexchar, hexToRGB, rgbToName } from '../utils';
+import { Buffer, Node, NodeType } from '../common';
+import { hexchar, hexToRGB, nameToRGB, rgbToName } from '../utils';
 
 export const enum Colorspace {
   RGB = 0,
@@ -8,8 +8,8 @@ export const enum Colorspace {
 
 export abstract class BaseColor extends Node {
 
-  type(): NodeType {
-    return NodeType.COLOR;
+  constructor() {
+    super(NodeType.COLOR);
   }
 
   abstract colorspace(): Colorspace;
@@ -26,19 +26,29 @@ export abstract class BaseColor extends Node {
 
 export class RGBColor extends BaseColor {
 
+  readonly r: number;
+  readonly g: number;
+  readonly b: number;
+  readonly a: number;
+
   protected _forceHex: boolean = false;
 
-  constructor(readonly r: number, readonly g: number, readonly b: number, readonly a: number) {
+  constructor(r: number, g: number, b: number, a: number) {
     super();
+    this.r = chan(r);
+    this.g = chan(g);
+    this.b = chan(b);
+    this.a = clamp(a, 0, 1.0);
   }
 
   repr(buf: Buffer): void {
     const { r, g, b, a } = this;
     if (a < 1.0) {
+      const { listsep } = buf.chars;
       buf.str('rgba(');
-      buf.num(r).listsep();
-      buf.num(g).listsep();
-      buf.num(b).listsep();
+      buf.num(r).str(listsep);
+      buf.num(g).str(listsep);
+      buf.num(b).str(listsep);
       buf.num(a);
       buf.str(')');
       return;
@@ -53,11 +63,11 @@ export class RGBColor extends BaseColor {
     const b1 = hexchar(b & 0x0F);
 
     // See if we can represent this as a 3-character hex color
-    const hex3 = r0 === r1 && g0 === g1 && b0 === b1;
+    const hex3 = buf.fastcolor && r0 === r1 && g0 === g1 && b0 === b1;
 
     // If we aren't forcing a hex value here, try to outut a name if
     // if is shorter than the hex representation.
-    if (!this._forceHex) {
+    if (!this._forceHex && !buf.fastcolor) {
       const name = rgbToName(r, g, b);
       if (name) {
         const len = name.length;
@@ -130,3 +140,16 @@ export class KeywordColor extends RGBColor {
     buf.str(this.keyword);
   }
 }
+
+export const colorFromName = (name: string): RGBColor | undefined => {
+  if (name === 'transparent') {
+    return new KeywordColor(name, 0, 0, 0);
+  }
+  const c = nameToRGB(name);
+  return c ? new RGBColor(c[0], c[1], c[2], 1.0) : undefined;
+};
+
+const chan = (n: number): number => clamp(n, 0, 255);
+
+const clamp = (n: number, lo: number, hi: number): number =>
+   Math.min(hi, Math.max(n, lo));

@@ -1,0 +1,39 @@
+[STYLESHEET, 1, [
+  [COMMENT, ' Block comment 1 ', 1, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-1']
+    ]]
+  ]], [
+    [COMMENT, ' single line comment', 0, true],
+    [COMMENT, ' Block comment 1.1 ', 1, true],
+    [RULE, [PROPERTY, 'child-1'], [KEYWORD, 'foo'], false],
+    [COMMENT, ' trailing comment', 0, true],
+    [COMMENT, ' Block comment 1.2 ', 1, true],
+    [COMMENT, ' single line comment', 0, true]
+  ]],
+  [COMMENT, '\n * Block comment 2\n ', 1, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-2']
+    ]]
+  ]], [
+    [COMMENT, '\n     * Block comment 2.1\n     ', 1, true],
+    [RULE, [PROPERTY, 'child-2'], [KEYWORD, 'bar'], false],
+    [COMMENT, ' trailing comment', 0, true],
+    [COMMENT, ' \n     * Block comment 2.2 \n     ', 1, true]
+  ]],
+  [COMMENT, ' Block comment 3 ', 1, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'h1'],
+      [TEXT_ELEMENT, ' ', 'span'],
+      [TEXT_ELEMENT, null, ':hover']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [EXPRESSION, [
+      [COMMENT, ' c ', 1, false],
+      [COLOR, 255, 0, 0, 1.0]
+    ]], false]
+  ]]
+]]

@@ -1,0 +1,32 @@
+[STYLESHEET, 1, [
+  [DIRECTIVE, '@charset', [QUOTED, 1, false, [
+    [ANONYMOUS, 'utf-8']
+  ]]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-1']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 0, 0, 255, 1.0], false]
+  ]],
+  [DIRECTIVE, '@charset', [QUOTED, 1, false, [
+    [ANONYMOUS, 'iso-8859-1']
+  ]]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-2']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 0, 128, 0, 1.0], false]
+  ]],
+  [DIRECTIVE, '@charset', [QUOTED, 1, false, [
+    [ANONYMOUS, 'ascii']
+  ]]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-3']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+  ]]
+]]

@@ -1,17 +1,14 @@
-import { Buffer, DefinitionBase, ExecEnv, Node, NodeType } from './types';
+import { Buffer, IDefinition, ExecEnv, Node, NodeType } from '../common';
+import { Anonymous } from './general';
 
-export class Definition extends Node implements DefinitionBase {
+export class Definition extends Node implements IDefinition {
 
   private evaluating: boolean = false;
 
   constructor(
     readonly name: string,
     readonly value: Node) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.DEFINITION;
+    super(NodeType.DEFINITION);
   }
 
   repr(buf: Buffer): void {
@@ -25,10 +22,18 @@ export class Definition extends Node implements DefinitionBase {
   }
 
   dereference(env: ExecEnv): Node {
-    // TODO:
-    return this;
+    if (this.evaluating) {
+      return this.value;
+    }
+
+    this.evaluating = true;
+    const result = this.value.eval(env);
+    this.evaluating = false;
+    return result;
   }
 }
+
+const EMPTY = new Anonymous('');
 
 export class Variable extends Node {
 
@@ -36,7 +41,7 @@ export class Variable extends Node {
   readonly indirect: boolean;
 
   constructor(name: string, readonly curly: boolean = false) {
-    super();
+    super(NodeType.VARIABLE);
     if (name.startsWith('@@')) {
       name = name.substring(1);
       this.indirect = true;
@@ -44,10 +49,6 @@ export class Variable extends Node {
       this.indirect = false;
     }
     this.name = name;
-  }
-
-  type(): NodeType {
-    return NodeType.VARIABLE;
   }
 
   repr(buf: Buffer): void {
@@ -69,8 +70,18 @@ export class Variable extends Node {
   }
 
   eval(env: ExecEnv): Node {
+    const def = env.resolveDefinition(this.name);
+    if (!def) {
+      return EMPTY;
+    }
 
-    // TODO:
+    const res = def.dereference(env);
+    if (!this.indirect) {
+      return res;
+    }
+
+    const { ctx } = env;
+    // TODO: implement escape mode
     return this;
   }
 }

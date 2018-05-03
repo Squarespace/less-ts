@@ -1,0 +1,119 @@
+[STYLESHEET, 1, [
+  [COMMENT, ' Selector inheritance', 0, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.parent']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.child-1']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'a'], [DIMENSION, 1, null], false]
+    ]],
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.child-2']
+      ]],
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.child-3']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'b'], [DIMENSION, 2, null], false]
+    ]]
+  ]],
+  [COMMENT, ' Cartesian product', 0, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.child']
+    ]],
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.sibling']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '&'],
+        [TEXT_ELEMENT, '+', '&']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'c'], [DIMENSION, 3, null], false]
+    ]]
+  ]],
+  [COMMENT, ' Wildcard concatenation', 0, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.parent']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '&'],
+        [TEXT_ELEMENT, null, '.class-1']
+      ]],
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '&'],
+        [TEXT_ELEMENT, null, '.class-2']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'd'], [DIMENSION, 4, null], false]
+    ]],
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '&'],
+        [TEXT_ELEMENT, null, '.class-3']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'e'], [DIMENSION, 5, null], false]
+    ]]
+  ]],
+  [COMMENT, ' Ruleset mixin', 0, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-mixin']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.child']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'f'], [DIMENSION, 6, null], false]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.mixin-parent']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '.ruleset-mixin']
+    ]], NULL, false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.complex-combinators']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, '>', 'h1'],
+        [TEXT_ELEMENT, '+', 'p'],
+        [TEXT_ELEMENT, null, ':other']
+      ]]
+    ]], [
+      [RULESET, [SELECTORS, [
+        [SELECTOR, [
+          [TEXT_ELEMENT, ' ', '&'],
+          [TEXT_ELEMENT, null, ':hover']
+        ]],
+        [SELECTOR, [
+          [TEXT_ELEMENT, '>', '&']
+        ]]
+      ]], [
+        [RULE, [PROPERTY, 'g'], [DIMENSION, 7, null], false]
+      ]]
+    ]]
+  ]]
+]]

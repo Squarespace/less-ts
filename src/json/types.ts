@@ -22,30 +22,31 @@ export const enum JsonType {
   FEATURES = 16,
   FUNCTION_CALL = 17,
   GUARD = 18,
-  KEYWORD = 19,
-  MEDIA = 20,
-  MIXIN = 21,
-  MIXIN_ARGS = 22,
-  MIXIN_CALL = 23,
-  MIXIN_PARAMS = 24,
-  OPERATION = 25,
-  PARAMETER = 26,
-  PAREN = 27,
-  PROPERTY = 28,
-  QUOTED = 29,
-  RATIO = 30,
-  RULE = 31,
-  RULESET = 32,
-  SELECTOR = 33,
-  SELECTORS = 34,
-  SHORTHAND = 35,
-  STYLESHEET = 36,
-  TEXT_ELEMENT = 37,
-  TRUE = 38,
-  UNICODE_RANGE = 39,
-  URL = 40,
-  VALUE_ELEMENT = 41,
-  VARIABLE = 42
+  IMPORT = 19,
+  KEYWORD = 20,
+  MEDIA = 21,
+  MIXIN = 22,
+  MIXIN_ARGS = 23,
+  MIXIN_CALL = 24,
+  MIXIN_PARAMS = 25,
+  OPERATION = 26,
+  PARAMETER = 27,
+  PAREN = 28,
+  PROPERTY = 29,
+  QUOTED = 30,
+  RATIO = 31,
+  RULE = 32,
+  RULESET = 33,
+  SELECTOR = 34,
+  SELECTORS = 35,
+  SHORTHAND = 36,
+  STYLESHEET = 37,
+  TEXT_ELEMENT = 38,
+  TRUE = 39,
+  UNICODE_RANGE = 40,
+  URL = 41,
+  VALUE_ELEMENT = 42,
+  VARIABLE = 43
 }
 
 export type NodeJ =
@@ -68,6 +69,7 @@ export type NodeJ =
   | FeaturesJ
   | FunctionCallJ
   | GuardJ
+  | ImportJ
   | KeywordJ
   | MediaJ
   | MixinJ
@@ -93,6 +95,12 @@ export type NodeJ =
   | ValueElementJ
   | VariableJ
   ;
+
+/**
+ * Each type in the JSON syntax is an array whose first element is
+ * the node type. All strings are represented by a numeric offset into
+ * a shared string table.
+ */
 
 export interface AlphaJ {
   [0]: JsonType.ALPHA;
@@ -240,6 +248,16 @@ export interface GuardJ {
   [1]: NodeJ[];
 }
 
+export interface ImportJ {
+  [0]: JsonType.IMPORT;
+  // path
+  [1]: NodeJ;
+  // once boolean
+  [2]: number;
+  // features (nullable)
+  [3]: NodeJ;
+}
+
 export interface KeywordJ {
   [0]: JsonType.KEYWORD;
   // value index
@@ -248,8 +266,8 @@ export interface KeywordJ {
 
 export interface MediaJ {
   [0]: JsonType.MEDIA;
-  // features
-  [1]: NodeJ[];
+  // features (nullable)
+  [1]: NodeJ;
   // block
   [2]: NodeJ[];
 }

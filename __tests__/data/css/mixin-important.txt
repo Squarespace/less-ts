@@ -1,0 +1,61 @@
+[STYLESHEET, 1, [
+  [MIXIN, '.m', [MIXIN_PARAMS, [], false, 0], NULL, [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', 'a2']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'color'], [COLOR, 0, 0, 255, 1.0], false],
+      [RULE, [PROPERTY, 'font-size'], [DIMENSION, 8, 'px'], false],
+      [RULESET, [SELECTORS, [
+        [SELECTOR, [
+          [TEXT_ELEMENT, ' ', 'b2']
+        ]]
+      ]], [
+        [RULE, [PROPERTY, 'color'], [COLOR, 0, 0, 0, 1.0], false]
+      ]]
+    ]]
+  ]],
+  [MIXIN, '.m', [MIXIN_PARAMS, [
+    [PARAMETER, '@a', NULL, false]
+  ], false, 1], NULL, [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', 'a1']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false],
+      [RULE, [PROPERTY, 'font-size'], [DIMENSION, 10, 'px'], false],
+      [RULESET, [SELECTORS, [
+        [SELECTOR, [
+          [TEXT_ELEMENT, ' ', 'b1']
+        ]]
+      ]], [
+        [RULE, [PROPERTY, 'color'], [COLOR, 255, 255, 255, 1.0], false]
+      ]],
+      [MIXIN_CALL, [SELECTOR, [
+        [TEXT_ELEMENT, null, '.m']
+      ]], NULL, false]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.t1']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '.m']
+    ]], NULL, true]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.t2']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '.m']
+    ]], [MIXIN_ARGS, 0, [
+      [ARGUMENT, null, [DIMENSION, 1, null]]
+    ]], true]
+  ]]
+]]

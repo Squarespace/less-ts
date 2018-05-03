@@ -1,0 +1,19 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.wrapper']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'display'], [KEYWORD, 'grid'], false],
+    [RULE, [PROPERTY, 'grid-gap'], [DIMENSION, 10, 'px'], false],
+    [RULE, [PROPERTY, 'grid-template'], [EXPRESSION, [
+      [KEYWORD, 'auto'],
+      [DIMENSION, 1, 'fr'],
+      [KEYWORD, 'auto'],
+      [DIMENSION, 1, 'fr'],
+      [KEYWORD, 'auto']
+    ]], false],
+    [RULE, [PROPERTY, 'background-color'], [COLOR, 255, 255, 255, 1.0], false],
+    [RULE, [PROPERTY, 'color'], [COLOR, 68, 68, 68, 1.0], false]
+  ]]
+]]

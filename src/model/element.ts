@@ -1,4 +1,4 @@
-import { Buffer, ExecEnv, Node, NodeType } from './types';
+import { Buffer, ExecEnv, Node, NodeType } from '../common';
 import { Quoted } from './quoted';
 
 export const enum Combinator {
@@ -13,11 +13,7 @@ export abstract class Element extends Node {
 
   constructor(
     readonly comb: Combinator | undefined) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.ELEMENT;
+    super(NodeType.ELEMENT);
   }
 
   abstract isWildcard(): boolean;

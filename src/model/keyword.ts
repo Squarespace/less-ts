@@ -1,13 +1,9 @@
-import { Buffer, ExecEnv, Node, NodeType } from './types';
+import { Buffer, ExecEnv, Node, NodeType } from '../common';
 
 export class Keyword extends Node {
 
-  constructor(readonly value: string) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.KEYWORD;
+  constructor(readonly value: string, type: NodeType = NodeType.KEYWORD) {
+    super(type);
   }
 
   repr(buf: Buffer): void {
@@ -18,11 +14,7 @@ export class Keyword extends Node {
 export class False extends Keyword {
 
   constructor() {
-    super('false');
-  }
-
-  type(): NodeType {
-    return NodeType.FALSE;
+    super('false', NodeType.FALSE);
   }
 
 }
@@ -30,11 +22,7 @@ export class False extends Keyword {
 export class True extends Keyword {
 
   constructor() {
-    super('true');
-  }
-
-  type(): NodeType {
-    return NodeType.TRUE;
+    super('true', NodeType.TRUE);
   }
 
 }

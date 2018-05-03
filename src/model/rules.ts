@@ -1,4 +1,5 @@
-import { Block, BlockNode, Buffer, ExecEnv, Node, NodeType } from './types';
+import { Buffer, ExecEnv, Node, NodeType } from '../common';
+import { Block, BlockNode } from './block';
 import { Selectors } from './selector';
 
 export class Rule extends Node {
@@ -8,11 +9,7 @@ export class Rule extends Node {
     readonly value: Node,
     readonly important: boolean | number
   ) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.RULE;
+    super(NodeType.RULE);
   }
 
   repr(buf: Buffer): void {
@@ -44,11 +41,7 @@ export class Ruleset extends BlockNode {
   constructor(
     readonly selectors: Selectors,
     readonly block: Block) {
-    super(block);
-  }
-
-  type(): NodeType {
-    return NodeType.RULESET;
+    super(NodeType.RULESET, block);
   }
 
   repr(buf: Buffer): void {

@@ -1,0 +1,15 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.calc-function']
+    ]]
+  ]], [
+    [DEFINITION, '@adjust', [DIMENSION, 12, 'px']],
+    [RULE, [PROPERTY, 'width'], [FUNCTION_CALL, 'calc', [
+      [QUOTED, 0, true, [
+        [ANONYMOUS, '100% + '],
+        [VARIABLE, '@adjust']
+      ]]
+    ]], false]
+  ]]
+]]

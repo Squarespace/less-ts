@@ -1,0 +1,73 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.media-features']
+    ]]
+  ]], [
+    [MEDIA, [FEATURES, [
+      [EXPRESSION, [
+        [KEYWORD, 'foo'],
+        [KEYWORD, 'and'],
+        [PAREN, [FEATURE, [PROPERTY, 'width'], [DIMENSION, 12, 'px']]]
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'dummy'], [KEYWORD, 'rule'], false]
+    ]],
+    [MEDIA, [FEATURES, [
+      [EXPRESSION, [
+        [PAREN, [FEATURE, [PROPERTY, 'a'], [DIMENSION, 1, null]]]
+      ]],
+      [EXPRESSION, [
+        [PAREN, [FEATURE, [PROPERTY, 'b'], [DIMENSION, 2, null]]],
+        [KEYWORD, 'and'],
+        [PAREN, [FEATURE, [PROPERTY, 'c'], [DIMENSION, 3, null]]]
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'dummy'], [KEYWORD, 'rule'], false]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.mixin-guard']
+    ]]
+  ]], [
+    [MIXIN, '.mixin-0', [MIXIN_PARAMS, [
+      [PARAMETER, '@a', [DIMENSION, 12, 'px'], false]
+    ], false, 0], NULL, [
+      [RULE, [PROPERTY, 'dummy'], [KEYWORD, 'rule'], false]
+    ]],
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '.mixin-0']
+    ]], [MIXIN_ARGS, 0, []], false]
+  ]],
+  [COMMENT, ' Wildcards which match nothing should not create additional space.', 0, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset'],
+      [TEXT_ELEMENT, ' ', '&'],
+      [TEXT_ELEMENT, ' ', '&'],
+      [TEXT_ELEMENT, ' ', '&'],
+      [TEXT_ELEMENT, ' ', '&']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'ignore'], [KEYWORD, 'me'], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-1'],
+      [TEXT_ELEMENT, ' ', '&'],
+      [TEXT_ELEMENT, ' ', '&'],
+      [TEXT_ELEMENT, ' ', '&'],
+      [TEXT_ELEMENT, ' ', '&']
+    ]],
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.ruleset-2'],
+      [TEXT_ELEMENT, ' ', '&'],
+      [TEXT_ELEMENT, ' ', '&'],
+      [TEXT_ELEMENT, ' ', '&'],
+      [TEXT_ELEMENT, ' ', '&']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'ignore'], [KEYWORD, 'me'], false]
+  ]]
+]]

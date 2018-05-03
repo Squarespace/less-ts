@@ -1,0 +1,23 @@
+#!/bin/bash
+
+# checkout the main squarespace less compiler to use for testing
+
+TOP=$(cd `dirname .`; pwd)
+
+REPO="git@github.com:squarespace/less-compiler.git"
+REV="1.x"
+
+SERVER=${TOP}/server
+mkdir -p ${SERVER}
+cd ${SERVER}
+
+if [[ ! -d less-compiler ]] ; then
+    git clone ${REPO}
+fi
+
+cd less-compiler
+git checkout ${REV}
+git reset --hard
+git pull origin ${REV}
+./gradlew clean check makeCli
+

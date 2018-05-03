@@ -7,6 +7,7 @@
     "build:watch": "tsc -p ./tsconfig.build.json -w",
     "clean": "rimraf ./coverage ./lib && jest --clearCache",
     "clean:full": "rimraf ./node_modules",
+    "generate": "ts-node scripts/generate.ts",
     "lint": "echo 'fixme'",
     "release": "",
     "stress": "echo 'fixme'",
@@ -14,21 +15,23 @@
     "test:codecov": "rimraf ./coverage && jest --coverage --coverageReporters=lcovonly --verbose -i --no-cache",
     "test:watch": "jest --watch"
   },
-  "dependencies": {
-	},
+  "dependencies": {},
   "devDependencies": {
+    "@types/core-js": "^0.9.46",
     "@types/glob": "^5.0.34",
     "@types/jest": "^22.2.3",
     "@types/lodash": "4.14.104",
     "@types/node": "8.10.10",
+    "core-js": "^2.5.5",
     "glob": "^7.1.2",
     "jest": "^22.4.3",
     "rimraf": "^2.6.2",
+    "rollup": "^0.58.2",
+    "rollup-plugin-typescript": "^0.8.1",
     "ts-jest": "22.4.2",
     "ts-node": "6.0.1",
     "tslint": "5.9.1",
     "tslint-no-circular-imports": "^0.2.1",
-    "typedoc": "^0.9.0",
     "typescript": "~2.8.3"
   },
   "jest": {
@@ -40,8 +43,7 @@
       "ts",
       "tsx"
     ],
-    "moduleNameMapper": {
-    },
+    "moduleNameMapper": {},
     "testMatch": [
       "**/__tests__/**/*.test.ts"
     ],

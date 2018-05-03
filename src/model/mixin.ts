@@ -1,15 +1,12 @@
-import { Block, BlockNode, Buffer, ExecEnv, Node, NodeType } from './types';
+import { Buffer, ExecEnv, Node, NodeType } from '../common';
+import { Block, BlockNode } from './block';
 import { Guard } from './guard';
 import { Selector, Selectors } from './selector';
 
 export class Argument extends Node {
 
   constructor(readonly name: string, readonly value: Node) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.ARGUMENT;
+    super(NodeType.ARGUMENT);
   }
 
   repr(buf: Buffer): void {
@@ -35,11 +32,7 @@ export class Parameter extends Node {
     readonly name: string,
     readonly value: Node,
     readonly variadic: boolean | number) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.PARAMETER;
+    super(NodeType.PARAMETER);
   }
 
   repr(buf: Buffer): void {
@@ -65,11 +58,7 @@ export class MixinParams extends Node {
     readonly params: Parameter[],
     readonly variadic: boolean | number,
     readonly required: number) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.MIXIN_PARAMS;
+    super(NodeType.MIXIN_PARAMS);
   }
 
   repr(buf: Buffer): void {
@@ -95,15 +84,11 @@ export class Mixin extends BlockNode {
     readonly params: MixinParams,
     readonly guard: Guard,
     readonly block: Block) {
-      super(block);
-  }
-
-  type(): NodeType {
-    return NodeType.MIXIN;
+      super(NodeType.MIXIN, block);
   }
 
   repr(buf: Buffer): void {
-    buf.str(name).str('(');
+    buf.str(this.name).str('(');
     if (this.params) {
       this.params.repr(buf);
     }
@@ -112,6 +97,14 @@ export class Mixin extends BlockNode {
       buf.str(' when ');
       this.guard.repr(buf);
     }
+    if (buf.compress) {
+      buf.str('{');
+    } else {
+      buf.str(' {\n');
+    }
+    buf.incr();
+    this.block.repr(buf);
+    buf.decr();
     if (buf.compress) {
       buf.str('{');
     } else {
@@ -125,11 +118,7 @@ export class MixinCallArgs extends Node {
   constructor(
     readonly delimiter: string,
     readonly args: Argument[]) {
-    super();
-  }
-
-  type(): NodeType {
-    return NodeType.MIXIN_ARGS;
+    super(NodeType.MIXIN_ARGS);
   }
 
   repr(buf: Buffer): void {
@@ -157,11 +146,7 @@ export class MixinCall extends Node {
     readonly selector: Selector,
     readonly args: MixinCallArgs,
     readonly important: boolean | number) {
-      super();
-  }
-
-  type(): NodeType {
-    return NodeType.MIXIN_CALL;
+      super(NodeType.MIXIN_CALL);
   }
 
   repr(buf: Buffer): void {

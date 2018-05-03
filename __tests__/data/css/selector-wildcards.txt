@@ -1,0 +1,198 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.one']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.two'],
+        [TEXT_ELEMENT, '+', '&']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.two'],
+      [TEXT_ELEMENT, ' ', '#three']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.four'],
+        [TEXT_ELEMENT, null, '&']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.a']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.b'],
+        [TEXT_ELEMENT, null, '&']
+      ]]
+    ]], [
+      [RULESET, [SELECTORS, [
+        [SELECTOR, [
+          [TEXT_ELEMENT, ' ', '.c'],
+          [TEXT_ELEMENT, null, '&']
+        ]]
+      ]], [
+        [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+      ]]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, '>', '.a']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.b'],
+        [TEXT_ELEMENT, null, '&']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.a']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, '+', '&']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.a'],
+      [TEXT_ELEMENT, null, '.b'],
+      [TEXT_ELEMENT, null, '.c']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.d'],
+        [TEXT_ELEMENT, '+', '.e'],
+        [TEXT_ELEMENT, null, '&']
+      ]]
+    ]], [
+      [RULESET, [SELECTORS, [
+        [SELECTOR, [
+          [TEXT_ELEMENT, ' ', '.f'],
+          [TEXT_ELEMENT, ' ', '&']
+        ]]
+      ]], [
+        [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+      ]]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.a']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.b'],
+        [TEXT_ELEMENT, ' ', '&'],
+        [TEXT_ELEMENT, ' ', '.c'],
+        [TEXT_ELEMENT, ' ', '&']
+      ]]
+    ]], [
+      [RULESET, [SELECTORS, [
+        [SELECTOR, [
+          [TEXT_ELEMENT, ' ', '.d'],
+          [TEXT_ELEMENT, null, '&']
+        ]],
+        [SELECTOR, [
+          [TEXT_ELEMENT, ' ', '.e'],
+          [TEXT_ELEMENT, null, '&']
+        ]]
+      ]], [
+        [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+      ]]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.c']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '&'],
+        [TEXT_ELEMENT, '+', '&']
+      ]],
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '&'],
+        [TEXT_ELEMENT, '+', '&'],
+        [TEXT_ELEMENT, null, '&'],
+        [TEXT_ELEMENT, '+', '&']
+      ]],
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '&'],
+        [TEXT_ELEMENT, null, '&'],
+        [TEXT_ELEMENT, null, '&']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.c'],
+      [TEXT_ELEMENT, '+', '&'],
+      [TEXT_ELEMENT, '+', '&'],
+      [TEXT_ELEMENT, '+', '&']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.a']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '&'],
+        [TEXT_ELEMENT, null, '.b'],
+        [TEXT_ELEMENT, null, '&'],
+        [TEXT_ELEMENT, '+', '.c'],
+        [TEXT_ELEMENT, null, '&']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.a']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, '+', '&'],
+        [TEXT_ELEMENT, '>', '&'],
+        [TEXT_ELEMENT, '+', '&'],
+        [TEXT_ELEMENT, null, '.b']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0], false]
+    ]]
+  ]]
+]]

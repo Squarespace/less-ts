@@ -1,0 +1,213 @@
+[STYLESHEET, 1, [
+  [COMMENT, ' definitions', 0, true],
+  [MIXIN, '.m', [MIXIN_PARAMS, [
+    [PARAMETER, '@a', NULL, false]
+  ], false, 1], [GUARD, [
+    [CONDITION, '=', [VARIABLE, '@a'], [TRUE], false]
+  ]], [
+    [COMMENT, ' (@a) ', 1, true],
+    [RULE, [PROPERTY, '-1'], [VARIABLE, '@a'], false]
+  ]],
+  [MIXIN, '.m', [MIXIN_PARAMS, [
+    [PARAMETER, '@a', NULL, false]
+  ], false, 1], [GUARD, [
+    [CONDITION, '=', [VARIABLE, '@a'], [KEYWORD, 'true'], false]
+  ]], [
+    [COMMENT, ' (@a = true) ', 1, true],
+    [RULE, [PROPERTY, '-2'], [VARIABLE, '@a'], false]
+  ]],
+  [MIXIN, '.m', [MIXIN_PARAMS, [
+    [PARAMETER, '@a', NULL, false]
+  ], false, 1], [GUARD, [
+    [CONDITION, '<', [VARIABLE, '@a'], [DIMENSION, 10, 'px'], false]
+  ]], [
+    [COMMENT, ' (@a < 10px) ', 1, true],
+    [RULE, [PROPERTY, '-3'], [VARIABLE, '@a'], false]
+  ]],
+  [MIXIN, '.m', [MIXIN_PARAMS, [
+    [PARAMETER, '@a', NULL, false]
+  ], false, 1], [GUARD, [
+    [CONDITION, '>', [VARIABLE, '@a'], [DIMENSION, 10, 'px'], false]
+  ]], [
+    [COMMENT, ' (@a > 10px) ', 1, true],
+    [RULE, [PROPERTY, '-4'], [VARIABLE, '@a'], false]
+  ]],
+  [MIXIN, '.m', [MIXIN_PARAMS, [
+    [PARAMETER, '@a', NULL, false]
+  ], false, 1], [GUARD, [
+    [CONDITION, '<', [DIMENSION, 10, 'px'], [VARIABLE, '@a'], false]
+  ]], [
+    [COMMENT, ' (10px < @a) ', 1, true],
+    [RULE, [PROPERTY, '-5'], [VARIABLE, '@a'], false]
+  ]],
+  [MIXIN, '.m', [MIXIN_PARAMS, [
+    [PARAMETER, '@a', NULL, false]
+  ], false, 1], [GUARD, [
+    [CONDITION, '>', [DIMENSION, 10, 'px'], [VARIABLE, '@a'], false]
+  ]], [
+    [COMMENT, ' (10px > @a) ', 1, true],
+    [RULE, [PROPERTY, '-6'], [VARIABLE, '@a'], false]
+  ]],
+  [MIXIN, '.m', [MIXIN_PARAMS, [
+    [PARAMETER, '@a', NULL, false]
+  ], false, 1], [GUARD, [
+    [CONDITION, '=', [COLOR, 0, 0, 255, 1.0], [VARIABLE, '@a'], false]
+  ]], [
+    [COMMENT, ' (#00f = @a) ', 1, true],
+    [RULE, [PROPERTY, '-7'], [VARIABLE, '@a'], false]
+  ]],
+  [MIXIN, '.m', [MIXIN_PARAMS, [
+    [PARAMETER, '@a', NULL, false]
+  ], false, 1], [GUARD, [
+    [CONDITION, '<=', [VARIABLE, '@a'], [DIMENSION, 10, 'px'], false],
+    [CONDITION, '>=', [VARIABLE, '@a'], [DIMENSION, 20, 'px'], false]
+  ]], [
+    [COMMENT, ' (@a <= 10px), (@a >= 20px) ', 1, true],
+    [RULE, [PROPERTY, '-8'], [VARIABLE, '@a'], false]
+  ]],
+  [MIXIN, '.m', [MIXIN_PARAMS, [
+    [PARAMETER, '@a', NULL, false]
+  ], false, 1], [GUARD, [
+    [CONDITION, '<=', [VARIABLE, '@a'], [DIMENSION, 10, 'px'], false],
+    [CONDITION, '>=', [VARIABLE, '@a'], [DIMENSION, 20, 'px'], false]
+  ]], [
+    [COMMENT, ' (@a =< 10px), (@a => 20px) ', 1, true],
+    [RULE, [PROPERTY, '-9'], [VARIABLE, '@a'], false]
+  ]],
+  [MIXIN, '.m', [MIXIN_PARAMS, [
+    [PARAMETER, '@a', NULL, false]
+  ], false, 1], [GUARD, [
+    [CONDITION, 'and', [CONDITION, '<>', [VARIABLE, '@a'], [DIMENSION, 20, 'px'], false], [CONDITION, '<>', [VARIABLE, '@a'], [DIMENSION, 5, 'px'], false], false]
+  ]], [
+    [COMMENT, ' (@a != 20px) and (@a != 5px) ', 1, true],
+    [RULE, [PROPERTY, '-10'], [VARIABLE, '@a'], false]
+  ]],
+  [COMMENT, ' calls', 0, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.result-1']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '.m']
+    ]], [MIXIN_ARGS, 0, [
+      [ARGUMENT, null, [DIMENSION, 1, null]]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.result-true']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '.m']
+    ]], [MIXIN_ARGS, 0, [
+      [ARGUMENT, null, [KEYWORD, 'true']]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.result-escaped-true']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '.m']
+    ]], [MIXIN_ARGS, 0, [
+      [ARGUMENT, null, [QUOTED, 0, true, [
+        [ANONYMOUS, 'true']
+      ]]]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.result-quoted-true']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '.m']
+    ]], [MIXIN_ARGS, 0, [
+      [ARGUMENT, null, [QUOTED, 0, false, [
+        [ANONYMOUS, 'true']
+      ]]]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.result-quoted-11px']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '.m']
+    ]], [MIXIN_ARGS, 0, [
+      [ARGUMENT, null, [QUOTED, 0, true, [
+        [ANONYMOUS, '11px']
+      ]]]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.result-red']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '.m']
+    ]], [MIXIN_ARGS, 0, [
+      [ARGUMENT, null, [COLOR, 255, 0, 0, 1.0]]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.result-red-hex']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '.m']
+    ]], [MIXIN_ARGS, 0, [
+      [ARGUMENT, null, [COLOR, 255, 0, 0, 1.0]]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.result-blue-hex']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '.m']
+    ]], [MIXIN_ARGS, 0, [
+      [ARGUMENT, null, [COLOR, 0, 0, 255, 1.0]]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.result-5px']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '.m']
+    ]], [MIXIN_ARGS, 0, [
+      [ARGUMENT, null, [DIMENSION, 5, 'px']]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.result-20px']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '.m']
+    ]], [MIXIN_ARGS, 0, [
+      [ARGUMENT, null, [DIMENSION, 20, 'px']]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.result-30px']
+    ]]
+  ]], [
+    [MIXIN_CALL, [SELECTOR, [
+      [TEXT_ELEMENT, null, '.m']
+    ]], [MIXIN_ARGS, 0, [
+      [ARGUMENT, null, [DIMENSION, 30, 'px']]
+    ]], false]
+  ]]
+]]

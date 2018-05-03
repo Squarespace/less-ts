@@ -1,0 +1,15 @@
+
+@color: red;
+@size: 10px;
+
+.parent {
+  .child {
+    color: @color + @c;
+    font-size: 12px + @size;
+    width: @other;
+  }
+
+  @other: 15px;
+  @c: 12;
+}
+

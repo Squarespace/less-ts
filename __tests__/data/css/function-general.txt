@@ -1,0 +1,95 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.function-general-formatting']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'a1'], [FUNCTION_CALL, '%', [
+      [QUOTED, 1, false, [
+        [ANONYMOUS, 'repetitions: %a file: %d']
+      ]],
+      [OPERATION, '+', [DIMENSION, 1, null], [DIMENSION, 2, null]],
+      [QUOTED, 1, false, [
+        [ANONYMOUS, 'directory/file.less']
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'a2'], [FUNCTION_CALL, '%', [
+      [QUOTED, 0, false, [
+        [ANONYMOUS, 'repetitions: %A file: %D']
+      ]],
+      [OPERATION, '+', [DIMENSION, 1, null], [DIMENSION, 2, null]],
+      [QUOTED, 1, false, [
+        [ANONYMOUS, 'directory/file.less']
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'a3'], [FUNCTION_CALL, '%', [
+      [QUOTED, 1, false, [
+        [ANONYMOUS, 'repetitions: %s file: %s']
+      ]],
+      [OPERATION, '+', [DIMENSION, 1, null], [DIMENSION, 2, null]],
+      [QUOTED, 1, false, [
+        [ANONYMOUS, 'directory/file.less']
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'a4'], [FUNCTION_CALL, '%', [
+      [QUOTED, 0, false, [
+        [ANONYMOUS, 'repetitions: %S file: %S']
+      ]],
+      [OPERATION, '+', [DIMENSION, 1, null], [DIMENSION, 2, null]],
+      [QUOTED, 1, false, [
+        [ANONYMOUS, 'directory/file.less']
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'a5'], [FUNCTION_CALL, '%', [
+      [QUOTED, 0, false, [
+        [ANONYMOUS, 'the value is %s%%']
+      ]],
+      [DIMENSION, 20, null]
+    ]], false],
+    [COMMENT, ' ignore extra args', 0, true],
+    [RULE, [PROPERTY, 'a6'], [FUNCTION_CALL, '%', [
+      [QUOTED, 0, false, [
+        [ANONYMOUS, 'values: %s %s %s']
+      ]],
+      [DIMENSION, 1, null],
+      [DIMENSION, 2, null],
+      [DIMENSION, 3, null],
+      [DIMENSION, 4, null],
+      [DIMENSION, 5, null],
+      [DIMENSION, 6, null],
+      [DIMENSION, 7, null]
+    ]], false],
+    [COMMENT, ' % at very end of format string, just output '%'', 0, true],
+    [RULE, [PROPERTY, 'a7'], [FUNCTION_CALL, '%', [
+      [QUOTED, 0, false, [
+        [ANONYMOUS, 'foo %s %']
+      ]],
+      [DIMENSION, 1, null]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.function-general-escape']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'b1'], [FUNCTION_CALL, 'e', [
+      [QUOTED, 1, false, [
+        [ANONYMOUS, 'foo']
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'b2'], [FUNCTION_CALL, 'escape', [
+      [QUOTED, 0, false, [
+        [ANONYMOUS, '( = )']
+      ]]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.function-general-alpha']
+    ]]
+  ]], [
+    [DEFINITION, '@alpha', [DIMENSION, 0.7, null]],
+    [RULE, [PROPERTY, 'c1'], [ALPHA, [DIMENSION, 0.35, null]], false],
+    [RULE, [PROPERTY, 'c2'], [ALPHA, [VARIABLE, '@alpha']], false]
+  ]]
+]]

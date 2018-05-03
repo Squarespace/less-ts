@@ -1,0 +1,30 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.function-unit']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'a1'], [FUNCTION_CALL, 'unit', [
+      [DIMENSION, 10, null],
+      [KEYWORD, 'px']
+    ]], false],
+    [RULE, [PROPERTY, 'a2'], [FUNCTION_CALL, 'unit', [
+      [DIMENSION, 10, null],
+      [QUOTED, 0, false, [
+        [ANONYMOUS, 'px']
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'a3'], [FUNCTION_CALL, 'unit', [
+      [DIMENSION, 10, null],
+      [QUOTED, 0, true, [
+        [ANONYMOUS, 'px']
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'a4'], [FUNCTION_CALL, 'unit', [
+      [DIMENSION, 10, null],
+      [QUOTED, 0, false, [
+        [ANONYMOUS, '%']
+      ]]
+    ]], false]
+  ]]
+]]

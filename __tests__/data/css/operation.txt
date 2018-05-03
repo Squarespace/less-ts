@@ -1,0 +1,66 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.operations-basic-math']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'a1'], [OPERATION, '+', [DIMENSION, 0, null], [DIMENSION, 0, null]], false],
+    [RULE, [PROPERTY, 'a2'], [OPERATION, '-', [DIMENSION, 0, null], [DIMENSION, 0, null]], false],
+    [RULE, [PROPERTY, 'a3'], [OPERATION, '-', [DIMENSION, 1, null], [DIMENSION, 1, null]], false],
+    [RULE, [PROPERTY, 'a4'], [OPERATION, '+', [DIMENSION, -1, null], [DIMENSION, 1, null]], false],
+    [RULE, [PROPERTY, 'a5'], [OPERATION, '-', [OPERATION, '-', [OPERATION, '-', [OPERATION, '-', [DIMENSION, 1, null], [DIMENSION, 1, null]], [DIMENSION, 1, null]], [DIMENSION, 1, null]], [DIMENSION, 1, null]], false],
+    [RULE, [PROPERTY, 'a6'], [OPERATION, '+', [OPERATION, '+', [OPERATION, '+', [OPERATION, '+', [DIMENSION, 1, null], [DIMENSION, 1, null]], [DIMENSION, 1, null]], [DIMENSION, 1, null]], [DIMENSION, 1, null]], false],
+    [RULE, [PROPERTY, 'a7'], [OPERATION, '+', [OPERATION, '-', [OPERATION, '+', [OPERATION, '-', [DIMENSION, 1, null], [DIMENSION, 1, null]], [DIMENSION, 1, null]], [DIMENSION, 1, null]], [DIMENSION, 1, null]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.operations-operators']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'b1'], [OPERATION, '*', [DIMENSION, 0, null], [DIMENSION, 0, null]], false],
+    [RULE, [PROPERTY, 'b2'], [OPERATION, '*', [DIMENSION, 2, null], [DIMENSION, 3, null]], false],
+    [RULE, [PROPERTY, 'b3'], [OPERATION, '*', [DIMENSION, 50, null], [DIMENSION, -10, null]], false],
+    [RULE, [PROPERTY, 'b4'], [OPERATION, '/', [DIMENSION, 1, null], [DIMENSION, 2, null]], false],
+    [RULE, [PROPERTY, 'b5'], [OPERATION, '/', [DIMENSION, 4, null], [DIMENSION, 0.5, null]], false],
+    [RULE, [PROPERTY, 'b6'], [OPERATION, '/', [DIMENSION, 0.5, null], [DIMENSION, 0.5, null]], false],
+    [RULE, [PROPERTY, 'b7'], [OPERATION, '/', [OPERATION, '/', [OPERATION, '/', [DIMENSION, 10, null], [DIMENSION, 10, null]], [DIMENSION, 10, null]], [DIMENSION, 10, null]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.operations-precedence']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'c1'], [OPERATION, '+', [DIMENSION, 3, null], [OPERATION, '*', [DIMENSION, 5, null], [DIMENSION, 2, null]]], false],
+    [RULE, [PROPERTY, 'c2'], [OPERATION, '-', [DIMENSION, 3, null], [OPERATION, '*', [DIMENSION, 5, null], [DIMENSION, 2, null]]], false],
+    [RULE, [PROPERTY, 'c3'], [OPERATION, '-', [DIMENSION, 3, null], [OPERATION, '/', [DIMENSION, 4, null], [DIMENSION, 2, null]]], false],
+    [RULE, [PROPERTY, 'c4'], [OPERATION, '-', [OPERATION, '/', [OPERATION, '*', [DIMENSION, 10, null], [DIMENSION, 20, null]], [DIMENSION, 5, null]], [DIMENSION, 1, null]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.operations-parens']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'd1'], [OPERATION, '*', [OPERATION, '+', [DIMENSION, 3, null], [DIMENSION, 5, null]], [DIMENSION, 2, null]], false],
+    [RULE, [PROPERTY, 'd2'], [OPERATION, '*', [OPERATION, '-', [DIMENSION, 3, null], [DIMENSION, 5, null]], [DIMENSION, 2, null]], false],
+    [RULE, [PROPERTY, 'd3'], [OPERATION, '/', [OPERATION, '-', [DIMENSION, 3, null], [DIMENSION, 4, null]], [DIMENSION, 2, null]], false],
+    [RULE, [PROPERTY, 'd4'], [OPERATION, '*', [DIMENSION, 10, null], [OPERATION, '/', [DIMENSION, 20, null], [OPERATION, '-', [DIMENSION, 5, null], [DIMENSION, 1, null]]]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.operations-convert-units']
+    ]]
+  ]], [
+    [COMMENT, ' length', 0, true],
+    [RULE, [PROPERTY, 'e1'], [OPERATION, '+', [DIMENSION, 48, 'px'], [DIMENSION, 1, 'in']], false],
+    [RULE, [PROPERTY, 'e2'], [OPERATION, '+', [DIMENSION, 1, 'in'], [DIMENSION, 48, 'px']], false],
+    [COMMENT, ' time', 0, true],
+    [RULE, [PROPERTY, 'e3'], [OPERATION, '+', [DIMENSION, 1000, 'ms'], [DIMENSION, 1, 's']], false],
+    [RULE, [PROPERTY, 'e4'], [OPERATION, '-', [DIMENSION, 2, 's'], [DIMENSION, 500, 'ms']], false],
+    [COMMENT, ' frequency', 0, true],
+    [RULE, [PROPERTY, 'e5'], [OPERATION, '-', [DIMENSION, 1, 'khz'], [DIMENSION, 500, 'hz']], false],
+    [RULE, [PROPERTY, 'e6'], [OPERATION, '+', [DIMENSION, 100, 'hz'], [DIMENSION, 1, 'khz']], false],
+    [COMMENT, ' angle', 0, true],
+    [RULE, [PROPERTY, 'e7'], [OPERATION, '+', [DIMENSION, 360, 'deg'], [DIMENSION, 1, 'turn']], false],
+    [RULE, [PROPERTY, 'e8'], [OPERATION, '+', [DIMENSION, 1, 'turn'], [DIMENSION, 180, 'deg']], false]
+  ]]
+]]

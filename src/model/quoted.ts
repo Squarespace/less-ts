@@ -1,4 +1,4 @@
-import { Buffer, ExecEnv, Node, NodeType } from './types';
+import { Buffer, ExecEnv, Node, NodeType } from '../common';
 
 export class Quoted extends Node {
 
@@ -9,7 +9,7 @@ export class Quoted extends Node {
     readonly escaped: boolean | number,
     readonly parts: Node[],
     skipEval: boolean = false) {
-      super();
+      super(NodeType.QUOTED);
 
     if (!skipEval) {
       for (const n of parts) {
@@ -19,10 +19,6 @@ export class Quoted extends Node {
         }
       }
     }
-  }
-
-  type(): NodeType {
-    return NodeType.QUOTED;
   }
 
   repr(buf: Buffer): void {

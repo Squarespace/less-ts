@@ -1,0 +1,352 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.function-color-rgb']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'a1'], [FUNCTION_CALL, 'rgb', [
+      [DIMENSION, 1, null],
+      [DIMENSION, 2, null],
+      [DIMENSION, 3, null]
+    ]], false],
+    [RULE, [PROPERTY, 'a2'], [FUNCTION_CALL, 'rgba', [
+      [DIMENSION, 1, null],
+      [DIMENSION, 2, null],
+      [DIMENSION, 3, null],
+      [DIMENSION, 0.5, null]
+    ]], false],
+    [RULE, [PROPERTY, 'a3'], [FUNCTION_CALL, 'red', [
+      [COLOR, 2, 4, 6, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'a4'], [FUNCTION_CALL, 'blue', [
+      [COLOR, 2, 4, 6, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'a5'], [FUNCTION_CALL, 'green', [
+      [COLOR, 2, 4, 6, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'a6'], [FUNCTION_CALL, 'alpha', [
+      [FUNCTION_CALL, 'rgba', [
+        [DIMENSION, 1, null],
+        [DIMENSION, 2, null],
+        [DIMENSION, 3, null],
+        [DIMENSION, 0.5, null]
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'a7'], [FUNCTION_CALL, 'color', [
+      [QUOTED, 0, true, [
+        [ANONYMOUS, '#123']
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'a8'], [FUNCTION_CALL, 'argb', [
+      [FUNCTION_CALL, 'rgba', [
+        [DIMENSION, 5, null],
+        [DIMENSION, 6, null],
+        [DIMENSION, 7, null],
+        [DIMENSION, 0.25, null]
+      ]]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.function-color-hsl']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'b1'], [OPERATION, '+', [FUNCTION_CALL, 'hsl', [
+      [DIMENSION, 0.1666666666666666, null],
+      [DIMENSION, 1, null],
+      [DIMENSION, 0.375, null]
+    ]], [COLOR, 0, 0, 0, 1.0]], false],
+    [RULE, [PROPERTY, 'b2'], [FUNCTION_CALL, 'hsl', [
+      [DIMENSION, 100, null],
+      [DIMENSION, 0.5, null],
+      [DIMENSION, 0.5, null]
+    ]], false],
+    [RULE, [PROPERTY, 'b3'], [OPERATION, '+', [FUNCTION_CALL, 'hsl', [
+      [DIMENSION, 60, null],
+      [DIMENSION, 0.5, null],
+      [DIMENSION, 0.25, null]
+    ]], [COLOR, 0, 0, 0, 1.0]], false],
+    [RULE, [PROPERTY, 'b4'], [OPERATION, '+', [FUNCTION_CALL, 'hsla', [
+      [DIMENSION, 100, null],
+      [DIMENSION, 0.5, null],
+      [DIMENSION, 0.25, null],
+      [DIMENSION, 0.5, null]
+    ]], [COLOR, 0, 0, 0, 1.0]], false],
+    [RULE, [PROPERTY, 'b5'], [FUNCTION_CALL, 'hsla', [
+      [DIMENSION, 1, null],
+      [DIMENSION, 0.5, null],
+      [DIMENSION, 0.5, null],
+      [DIMENSION, 0.5, null]
+    ]], false],
+    [RULE, [PROPERTY, 'b6'], [FUNCTION_CALL, 'hue', [
+      [FUNCTION_CALL, 'hsl', [
+        [DIMENSION, 50, null],
+        [DIMENSION, 0.4, null],
+        [DIMENSION, 0.3, null]
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'b7'], [FUNCTION_CALL, 'saturation', [
+      [FUNCTION_CALL, 'hsl', [
+        [DIMENSION, 20, null],
+        [DIMENSION, 0.2, null],
+        [DIMENSION, 0.2, null]
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'b8'], [FUNCTION_CALL, 'lightness', [
+      [FUNCTION_CALL, 'hsl', [
+        [DIMENSION, 10, null],
+        [DIMENSION, 0.1, null],
+        [DIMENSION, 0.1, null]
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'b9'], [FUNCTION_CALL, 'luma', [
+      [FUNCTION_CALL, 'hsl', [
+        [DIMENSION, 0.5, null],
+        [DIMENSION, 0.4, null],
+        [DIMENSION, 0.3, null]
+      ]]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.function-color-hsv']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'c1'], [FUNCTION_CALL, 'hsv', [
+      [DIMENSION, 100, '%'],
+      [DIMENSION, 50, '%'],
+      [DIMENSION, 25, '%']
+    ]], false],
+    [RULE, [PROPERTY, 'c2'], [FUNCTION_CALL, 'hsv', [
+      [DIMENSION, 1, null],
+      [DIMENSION, 0.5, null],
+      [DIMENSION, 0.25, null]
+    ]], false],
+    [RULE, [PROPERTY, 'c3'], [FUNCTION_CALL, 'hsva', [
+      [DIMENSION, 100, '%'],
+      [DIMENSION, 50, '%'],
+      [DIMENSION, 25, '%'],
+      [DIMENSION, 0.5, null]
+    ]], false],
+    [RULE, [PROPERTY, 'c4'], [FUNCTION_CALL, 'hsva', [
+      [DIMENSION, 360, null],
+      [DIMENSION, 0.5, null],
+      [DIMENSION, 0.25, null],
+      [DIMENSION, 0.5, null]
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.function-color-contrast']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'd1'], [FUNCTION_CALL, 'contrast', [
+      [DIMENSION, 123, null]
+    ]], false],
+    [COMMENT, ' non-color as 1st arg, emit a contrast function call', 0, true],
+    [RULE, [PROPERTY, 'd2'], [FUNCTION_CALL, 'contrast', [
+      [COLOR, 170, 187, 204, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'd3'], [FUNCTION_CALL, 'contrast', [
+      [COLOR, 170, 187, 204, 1.0],
+      [COLOR, 17, 17, 17, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'd4'], [FUNCTION_CALL, 'contrast', [
+      [COLOR, 170, 187, 204, 1.0],
+      [COLOR, 17, 17, 17, 1.0],
+      [COLOR, 34, 34, 34, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'd5'], [FUNCTION_CALL, 'contrast', [
+      [COLOR, 170, 187, 204, 1.0],
+      [COLOR, 17, 17, 17, 1.0],
+      [COLOR, 34, 34, 34, 1.0],
+      [DIMENSION, 0.5, null]
+    ]], false],
+    [RULE, [PROPERTY, 'd6'], [FUNCTION_CALL, 'contrast', [
+      [COLOR, 170, 187, 204, 1.0],
+      [COLOR, 17, 17, 17, 1.0],
+      [COLOR, 34, 34, 34, 1.0],
+      [DIMENSION, 50, '%']
+    ]], false],
+    [RULE, [PROPERTY, 'd7'], [FUNCTION_CALL, 'contrast', [
+      [COLOR, 170, 187, 204, 1.0],
+      [COLOR, 17, 17, 17, 1.0],
+      [COLOR, 34, 34, 34, 1.0],
+      [DIMENSION, 80, '%']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.function-color-adjustment']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'd1'], [FUNCTION_CALL, 'luma', [
+      [COLOR, 170, 187, 204, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'd2'], [FUNCTION_CALL, 'darken', [
+      [COLOR, 136, 136, 136, 1.0],
+      [DIMENSION, 10, '%']
+    ]], false],
+    [RULE, [PROPERTY, 'd3'], [FUNCTION_CALL, 'lighten', [
+      [COLOR, 136, 136, 136, 1.0],
+      [DIMENSION, 10, '%']
+    ]], false],
+    [RULE, [PROPERTY, 'd4'], [FUNCTION_CALL, 'desaturate', [
+      [FUNCTION_CALL, 'hsl', [
+        [DIMENSION, 0.75, null],
+        [DIMENSION, 0.5, null],
+        [DIMENSION, 0.5, null]
+      ]],
+      [DIMENSION, 100, '%']
+    ]], false],
+    [RULE, [PROPERTY, 'd5'], [FUNCTION_CALL, 'fade', [
+      [FUNCTION_CALL, 'rgb', [
+        [DIMENSION, 50, null],
+        [DIMENSION, 50, null],
+        [DIMENSION, 50, null]
+      ]],
+      [DIMENSION, 25, '%']
+    ]], false],
+    [RULE, [PROPERTY, 'd6'], [FUNCTION_CALL, 'fadein', [
+      [FUNCTION_CALL, 'rgba', [
+        [DIMENSION, 50, null],
+        [DIMENSION, 50, null],
+        [DIMENSION, 50, null],
+        [DIMENSION, 0.5, null]
+      ]],
+      [DIMENSION, 25, '%']
+    ]], false],
+    [RULE, [PROPERTY, 'd7'], [FUNCTION_CALL, 'fadeout', [
+      [FUNCTION_CALL, 'rgba', [
+        [DIMENSION, 50, null],
+        [DIMENSION, 50, null],
+        [DIMENSION, 50, null],
+        [DIMENSION, 0.5, null]
+      ]],
+      [DIMENSION, 25, '%']
+    ]], false],
+    [RULE, [PROPERTY, 'd8'], [FUNCTION_CALL, 'spin', [
+      [FUNCTION_CALL, 'hsla', [
+        [DIMENSION, 180, null],
+        [DIMENSION, 0.5, null],
+        [DIMENSION, 0.5, null],
+        [DIMENSION, 0.5, null]
+      ]],
+      [DIMENSION, 10, null]
+    ]], false],
+    [RULE, [PROPERTY, 'd9'], [FUNCTION_CALL, 'spin', [
+      [FUNCTION_CALL, 'hsla', [
+        [DIMENSION, 180, null],
+        [DIMENSION, 0.5, null],
+        [DIMENSION, 0.5, null],
+        [DIMENSION, 0.5, null]
+      ]],
+      [DIMENSION, 10, '%']
+    ]], false],
+    [RULE, [PROPERTY, 'd10'], [FUNCTION_CALL, 'greyscale', [
+      [COLOR, 17, 34, 51, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'd11'], [FUNCTION_CALL, 'greyscale', [
+      [COLOR, 68, 85, 102, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'd12'], [FUNCTION_CALL, 'saturate', [
+      [COLOR, 85, 85, 85, 1.0],
+      [DIMENSION, 10, '%']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.function-color-combination']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'e1'], [FUNCTION_CALL, 'average', [
+      [COLOR, 34, 34, 34, 1.0],
+      [COLOR, 68, 68, 68, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'e2'], [FUNCTION_CALL, 'difference', [
+      [COLOR, 136, 136, 136, 1.0],
+      [COLOR, 34, 34, 34, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'e3'], [OPERATION, '-', [COLOR, 136, 136, 136, 1.0], [COLOR, 34, 34, 34, 1.0]], false],
+    [COMMENT, ' alternate difference', 0, true],
+    [RULE, [PROPERTY, 'e4'], [FUNCTION_CALL, 'exclusion', [
+      [COLOR, 17, 34, 51, 1.0],
+      [COLOR, 119, 136, 153, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'e5'], [FUNCTION_CALL, 'hardlight', [
+      [COLOR, 17, 34, 51, 1.0],
+      [COLOR, 119, 136, 153, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'e6'], [FUNCTION_CALL, 'mix', [
+      [COLOR, 17, 34, 51, 1.0],
+      [COLOR, 119, 136, 153, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'e7'], [FUNCTION_CALL, 'mix', [
+      [COLOR, 17, 34, 51, 1.0],
+      [COLOR, 119, 136, 153, 1.0],
+      [DIMENSION, 50, '%']
+    ]], false],
+    [RULE, [PROPERTY, 'e8'], [FUNCTION_CALL, 'mix', [
+      [COLOR, 17, 34, 51, 1.0],
+      [COLOR, 119, 136, 153, 1.0],
+      [DIMENSION, 25, '%']
+    ]], false],
+    [RULE, [PROPERTY, 'e9'], [FUNCTION_CALL, 'mix', [
+      [COLOR, 17, 34, 51, 1.0],
+      [COLOR, 119, 136, 153, 1.0],
+      [DIMENSION, 75, '%']
+    ]], false],
+    [RULE, [PROPERTY, 'e10'], [FUNCTION_CALL, 'multiply', [
+      [COLOR, 17, 34, 51, 1.0],
+      [COLOR, 119, 136, 153, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'e11'], [FUNCTION_CALL, 'multiply', [
+      [COLOR, 34, 34, 34, 1.0],
+      [COLOR, 68, 68, 68, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'e12'], [FUNCTION_CALL, 'negation', [
+      [COLOR, 34, 34, 34, 1.0],
+      [COLOR, 119, 119, 119, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'e13'], [FUNCTION_CALL, 'negation', [
+      [COLOR, 17, 34, 51, 1.0],
+      [COLOR, 119, 136, 153, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'e14'], [FUNCTION_CALL, 'overlay', [
+      [COLOR, 17, 17, 17, 1.0],
+      [COLOR, 34, 34, 34, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'e15'], [FUNCTION_CALL, 'overlay', [
+      [COLOR, 17, 34, 51, 1.0],
+      [COLOR, 119, 136, 153, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'e16'], [FUNCTION_CALL, 'overlay', [
+      [COLOR, 153, 136, 119, 1.0],
+      [COLOR, 170, 170, 170, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'e17'], [FUNCTION_CALL, 'screen', [
+      [COLOR, 17, 17, 17, 1.0],
+      [COLOR, 34, 34, 34, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'e18'], [FUNCTION_CALL, 'screen', [
+      [COLOR, 17, 34, 51, 1.0],
+      [COLOR, 119, 136, 153, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'e19'], [FUNCTION_CALL, 'shade', [
+      [COLOR, 136, 136, 136, 1.0],
+      [DIMENSION, 50, '%']
+    ]], false],
+    [RULE, [PROPERTY, 'e20'], [FUNCTION_CALL, 'softlight', [
+      [COLOR, 17, 34, 51, 1.0],
+      [COLOR, 119, 136, 153, 1.0]
+    ]], false],
+    [RULE, [PROPERTY, 'e21'], [FUNCTION_CALL, 'tint', [
+      [COLOR, 17, 34, 51, 1.0],
+      [DIMENSION, 1, null]
+    ]], false],
+    [RULE, [PROPERTY, 'e22'], [FUNCTION_CALL, 'tint', [
+      [COLOR, 17, 17, 17, 1.0],
+      [DIMENSION, 1, null]
+    ]], false]
+  ]]
+]]
