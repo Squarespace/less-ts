@@ -72,6 +72,14 @@ export class Dimension extends Node {
     super(NodeType.DIMENSION);
   }
 
+  equals(n: Node): boolean {
+    if (n.type === NodeType.DIMENSION) {
+      return this.value === (n as Dimension).value
+          && this.unit === (n as Dimension).unit;
+    }
+    return false;
+  }
+
   repr(buf: Buffer): void {
     buf.num(this.value);
     if (this.unit) {

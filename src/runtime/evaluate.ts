@@ -1,28 +1,73 @@
-import { Context, ExecEnv, NodeType } from '../common';
+import { Context, ExecEnv, Node, NodeType } from '../common';
 import {
   Block,
   BlockDirective,
   Definition,
   Directive,
+  FALSE,
   Media,
   Mixin,
   MixinCall,
+  MixinParams,
   Rule,
   Ruleset,
   Stylesheet,
 } from '../model';
-import { MixinMatch, MixinMatcher } from './mixin';
+import { MixinMatcher } from './mixin';
+import { MixinMatch, MixinResolver, RulesetMatch } from './resolver';
+
+const EMPTY_BLOCK = new Block([]);
 
 export class Evaluator {
 
-  constructor(readonly ctx: Context) {}
+  constructor(readonly ctx: Context) { }
 
-  evaluate(sheet: Stylesheet): Stylesheet {
-    const env = this.ctx.newEnv();
-    return this.evaluateStylesheet(env, sheet);
+  evaluate(env: ExecEnv, block: Block, n: Node): Node {
+    switch (n.type) {
+      case NodeType.BLOCK_DIRECTIVE:
+        return this.evaluateBlockDirective(env, n as BlockDirective);
+
+      case NodeType.DEFINITION:
+        {
+          const d = n as Definition;
+          return new Definition(d.name, d.dereference(env));
+        }
+
+      case NodeType.DIRECTIVE:
+        {
+          const d = n.eval(env) as Directive;
+          if (d.name === '@charset') {
+            if (block.charset === undefined) {
+              block.charset = d;
+            }
+          }
+          return d;
+        }
+
+      case NodeType.MEDIA:
+        return this.evaluateMedia(env, n as Media);
+
+      case NodeType.MIXIN:
+        {
+          const m = (n as Mixin).original as Mixin;
+          if (m.closure === undefined) {
+            m.closure = env.copy();
+          }
+          return m;
+        }
+
+      case NodeType.MIXIN_CALL:
+        return this.executeMixinCall(env, n as MixinCall);
+
+      case NodeType.RULESET:
+        return this.evaluateRuleset(env, n as Ruleset, false);
+
+      default:
+        return n.eval(env);
+    }
   }
 
-  protected evaluateBlockDirective(env: ExecEnv, orig: BlockDirective): BlockDirective {
+  evaluateBlockDirective(env: ExecEnv, orig: BlockDirective): BlockDirective {
     const n = orig.copy();
     env.push(n);
     this.expandMixins(env, n.block);
@@ -31,7 +76,7 @@ export class Evaluator {
     return n;
   }
 
-  protected evaluateMedia(env: ExecEnv, orig: Media): Media {
+  evaluateMedia(env: ExecEnv, orig: Media): Media {
     const n = orig.copy(env);
     env.push(n);
     this.expandMixins(env, n.block);
@@ -40,7 +85,7 @@ export class Evaluator {
     return n;
   }
 
-  protected evaluateRuleset(env: ExecEnv, input: Ruleset, forceImportant: boolean): Ruleset {
+  evaluateRuleset(env: ExecEnv, input: Ruleset, forceImportant: boolean | number): Ruleset {
     const orig = input.original as Ruleset;
     const n = orig.copy(env);
     env.push(n);
@@ -52,7 +97,7 @@ export class Evaluator {
     return n;
   }
 
-  protected evaluateStylesheet(env: ExecEnv, orig: Stylesheet): Stylesheet {
+  evaluateStylesheet(env: ExecEnv, orig: Stylesheet): Stylesheet {
     const n = new Stylesheet(orig.block.copy());
     env.push(n);
     this.expandMixins(env, n.block);
@@ -61,7 +106,7 @@ export class Evaluator {
     return n;
   }
 
-  protected evaluateRules(env: ExecEnv, block: Block, forceImportant: boolean): void {
+  protected evaluateRules(env: ExecEnv, block: Block, forceImportant: boolean | number): void {
     const { rules } = block;
     for (let i = 0; i < rules.length; i++) {
       let n = rules[i];
@@ -71,47 +116,53 @@ export class Evaluator {
           break;
 
         case NodeType.DEFINITION:
-        {
-          const d = n as Definition;
-          n = new Definition(d.name, d.dereference(env));
-          break;
-        }
+          {
+            const d = n as Definition;
+            n = new Definition(d.name, d.dereference(env));
+            break;
+          }
 
         case NodeType.DIRECTIVE:
-        {
-          const d = n.eval(env) as Directive;
-          if (d.name === '@charset') {
-            if (block.charset === undefined) {
-              block.charset = d;
+          {
+            const d = n.eval(env) as Directive;
+            if (d.name === '@charset') {
+              if (block.charset === undefined) {
+                block.charset = d;
+              }
             }
+            n = d;
+            break;
           }
-          n = d;
-          break;
-        }
 
         case NodeType.MEDIA:
           n = this.evaluateMedia(env, n as Media);
           break;
 
         case NodeType.MIXIN:
-        {
-          const m = (n as Mixin).original as Mixin;
-          if (m.closure === undefined) {
-            m.closure = env;
+          {
+            const m = (n as Mixin).original as Mixin;
+            if (m.closure === undefined) {
+              m.closure = env.copy();
+            }
+            break;
           }
-          break;
-        }
+
+        case NodeType.MIXIN_CALL:
+          {
+            // TODO: should have all been evaluated.
+            break;
+          }
 
         case NodeType.RULE:
-        {
-          const r = n as Rule;
-          if (forceImportant && !r.important) {
-            n = new Rule(r.property, r.value.eval(env), true);
-          } else {
-            n = r.eval(env);
+          {
+            const r = n as Rule;
+            if (forceImportant && !r.important) {
+              n = new Rule(r.property, r.value.eval(env), true);
+            } else {
+              n = r.eval(env);
+            }
+            break;
           }
-          break;
-        }
 
         case NodeType.RULESET:
           n = this.evaluateRuleset(env, n as Ruleset, forceImportant);
@@ -122,7 +173,7 @@ export class Evaluator {
           break;
       }
 
-      // TODO: catch errors
+      // TODO: catch, report errors
       // if env.hasError()
 
       rules[i] = n;
@@ -130,7 +181,10 @@ export class Evaluator {
   }
 
   protected expandMixins(env: ExecEnv, block: Block): void {
-    // TODO: if block.hasMixinCalls flags
+    if (!block.hasMixinCalls()) {
+      return;
+    }
+
     const { rules } = block;
     for (let i = 0; i < rules.length; i++) {
       const n = rules[i];
@@ -139,22 +193,100 @@ export class Evaluator {
         rules.splice(i, 1, ...result.rules);
         i += result.rules.length - 1;
 
-        // TODO: flags
+        // TODO: block flags
       }
     }
   }
 
   protected executeMixinCall(env: ExecEnv, call: MixinCall): Block {
-    const b = new Block();
-    return b;
+    const matcher = new MixinMatcher(env, call);
+    const resolver = new MixinResolver(matcher);
+    resolver.resolve(env.frames);
+    const { matches } = resolver;
+    if (matches.length === 0) {
+      return EMPTY_BLOCK;
+    }
+
+    const block = new Block();
+    let calls = 0;
+    for (const match of matches) {
+      switch (match.kind) {
+        case 'mixin':
+          if (this.executeMixin(env, block, matcher, match)) {
+            calls++;
+          }
+          break;
+        case 'ruleset':
+          if (this.executeRulesetMixin(env, block, matcher, match)) {
+            calls++;
+          }
+          break;
+      }
+    }
+    // TODO: if calls == 0, error / warning
+    return block;
   }
 
-  protected executeMixin(env: ExecEnv, collector: Block, matcher: MixinMatcher, match: MixinMatch): void {
-    //
+  protected executeMixin(env: ExecEnv, collector: Block, matcher: MixinMatcher, match: MixinMatch): boolean {
+    const { call } = matcher;
+    const mixin = (match.mixin as Mixin).copy();
+    const params = mixin.params.eval(env) as MixinParams;
+    const bindings = matcher.bind(params);
+    env = env.copy();
+    const original = (mixin.original || mixin) as Mixin;
+
+    const closureEnv = original.closure;
+    if (closureEnv) {
+      env.append(closureEnv.frames);
+    }
+
+    env.push(bindings);
+
+    const { guard } = mixin;
+    if (guard) {
+      // Execute the guard condition. If it returns false, we return immediately
+      // but return true to indicate we found and evaluated at least one mixin definition.
+      const result = guard.eval(env);
+      if (result.equals(FALSE)) {
+        return true;
+      }
+    }
+
+    const { ctx } = env;
+
+    // TODO: check mixin recursion depth here
+
+    original.enter();
+    ctx.enterMixin();
+
+    env.push(mixin);
+    const { block } = mixin;
+    this.expandMixins(env, block);
+    this.evaluateRules(env, block, call.important);
+    for (const rule of block.rules) {
+      collector.add(rule);
+    }
+
+    ctx.exitMixin();
+    original.exit();
+    return true;
   }
 
-  protected executeRulesetMixin(env: ExecEnv, collector: Block, matcher: MixinMatcher, match: MixinMatch): void {
-    //
+  protected executeRulesetMixin(env: ExecEnv, collector: Block, matcher: MixinMatcher, match: RulesetMatch): boolean {
+    const { call } = matcher;
+    const { ctx } = env;
+    const { ruleset } = match;
+
+    // TODO: check mixin recursion depth
+
+    ctx.enterMixin();
+    const result = this.evaluateRuleset(env, ruleset, call.important);
+    ctx.exitMixin();
+
+    for (const n of result.block.rules) {
+      collector.add(n);
+    }
+    return true;
   }
 
 }

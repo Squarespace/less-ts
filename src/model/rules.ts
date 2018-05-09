@@ -12,6 +12,13 @@ export class Rule extends Node {
     super(NodeType.RULE);
   }
 
+  equals(n: Node): boolean {
+    return n.type === NodeType.RULE
+        && this.important === (n as Rule).important
+        && this.property.equals((n as Rule).property)
+        && this.value.equals((n as Rule).value);
+  }
+
   repr(buf: Buffer): void {
     this.property.repr(buf);
     buf.str(':');
@@ -35,13 +42,22 @@ export class Rule extends Node {
 
 export class Ruleset extends BlockNode {
 
-  protected evaluating: boolean = false;
-  protected hasMixinPath: boolean = false;
+  protected _evaluating: boolean = false;
+  readonly hasMixinPath: boolean = false;
 
   constructor(
     readonly selectors: Selectors,
-    readonly block: Block) {
-    super(NodeType.RULESET, block);
+    readonly block: Block,
+    original?: Ruleset
+  ) {
+    super(NodeType.RULESET, block, original);
+    this.hasMixinPath = selectors.hasMixinPath();
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.RULESET
+        && this.selectors.equals((n as Ruleset).selectors)
+        && this.block.equals((n as Ruleset).block);
   }
 
   repr(buf: Buffer): void {
@@ -63,18 +79,19 @@ export class Ruleset extends BlockNode {
 
   copy(env: ExecEnv): Ruleset {
     const selectors = this.selectors.eval(env) as Selectors;
-    const r = new Ruleset(selectors, this.block.copy());
-    if (this.original) {
-      r.original = this.original;
-    }
+    const r = new Ruleset(selectors, this.block.copy(), this.original as Ruleset);
     return r;
   }
 
+  evaluating(): boolean {
+    return this._evaluating;
+  }
+
   enter(): void {
-    this.evaluating = true;
+    this._evaluating = true;
   }
 
   exit(): void {
-    this.evaluating = false;
+    this._evaluating = false;
   }
 }

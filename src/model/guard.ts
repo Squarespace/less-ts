@@ -4,6 +4,7 @@ import { BaseColor, RGBColor, colorFromName } from './color';
 import { Dimension, Unit, unitConversionFactor } from './dimension';
 import { False, Keyword, True } from './keyword';
 import { Operator } from './operation';
+import { arrayEquals } from '../utils';
 
 export const FALSE = new False();
 export const TRUE = new True();
@@ -19,6 +20,14 @@ export class Condition extends Node {
     readonly right: Node,
     readonly negate: boolean | number) {
     super(NodeType.CONDITION);
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.CONDITION
+        && this.operator === (n as Condition).operator
+        && this.negate === (n as Condition).negate
+        && this.left.equals((n as Condition).left)
+        && this.right.equals((n as Condition).right);
   }
 
   repr(buf: Buffer): void {
@@ -131,6 +140,11 @@ export class Guard extends Node {
 
   constructor(readonly conditions: Condition[]) {
     super(NodeType.GUARD);
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.GUARD
+        && arrayEquals(this.conditions, (n as Guard).conditions);
   }
 
   repr(buf: Buffer): void {

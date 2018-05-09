@@ -1,9 +1,14 @@
 import { Buffer, ExecEnv, Node, NodeType } from '../common';
+import { arrayEquals } from '../utils';
 
 export class Alpha extends Node {
 
   constructor(readonly value: Node) {
     super(NodeType.ALPHA);
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.ALPHA && this.value.equals((n as Alpha).value);
   }
 
   repr(buf: Buffer): void {
@@ -28,6 +33,10 @@ export class Anonymous extends Node {
     super(NodeType.ANONYMOUS);
   }
 
+  equals(n: Node): boolean {
+    return n.type === NodeType.ANONYMOUS && this.value === (n as Anonymous).value;
+  }
+
   repr(buf: Buffer): void {
     buf.str(this.value);
   }
@@ -39,6 +48,12 @@ export class Assignment extends Node {
     readonly name: string,
     readonly value: Node) {
     super(NodeType.ASSIGNMENT);
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.ASSIGNMENT
+        && this.name === (n as Assignment).name
+        && this.value.equals((n as Assignment).value);
   }
 
   repr(buf: Buffer): void {
@@ -63,6 +78,13 @@ export class Comment extends Node {
     readonly block: boolean | number,
     readonly newline: boolean | number) {
     super(NodeType.COMMENT);
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.COMMENT
+        && this.body === (n as Comment).body
+        && this.block === (n as Comment).block
+        && this.newline === (n as Comment).newline;
   }
 
   repr(buf: Buffer): void {
@@ -91,6 +113,12 @@ export class Directive extends Node {
     super(NodeType.DIRECTIVE);
   }
 
+  equals(n: Node): boolean {
+    return n.type === NodeType.DIRECTIVE
+        && this.name === (n as Directive).name
+        && this.value.equals((n as Directive).value);
+  }
+
   repr(buf: Buffer): void {
     buf.str(this.name);
     buf.str(' ');
@@ -112,6 +140,12 @@ export class FunctionCall extends Node {
     readonly name: string,
     readonly args: Node[]) {
     super(NodeType.FUNCTION_CALL);
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.FUNCTION_CALL
+        && this.name === (n as FunctionCall).name
+        && arrayEquals(this.args, (n as FunctionCall).args);
   }
 
   repr(buf: Buffer): void {
@@ -142,6 +176,10 @@ export class Paren extends Node {
     super(NodeType.PAREN);
   }
 
+  equals(n: Node): boolean {
+    return n.type === NodeType.PAREN && this.value.equals((n as Paren).value);
+  }
+
   repr(buf: Buffer): void {
     buf.str('(');
     this.value.repr(buf);
@@ -163,6 +201,11 @@ export class Property extends Node {
     super(NodeType.PROPERTY);
   }
 
+  equals(n: Node): boolean {
+    return n.type === NodeType.PROPERTY
+        && this.name === (n as Property).name;
+  }
+
   repr(buf: Buffer): void {
     buf.str(this.name);
   }
@@ -172,6 +215,10 @@ export class Ratio extends Node {
 
   constructor(readonly value: string) {
     super(NodeType.RATIO);
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.RATIO && this.value === (n as Ratio).value;
   }
 
   repr(buf: Buffer): void {
@@ -185,6 +232,12 @@ export class Shorthand extends Node {
     readonly left: Node,
     readonly right: Node) {
     super(NodeType.SHORTHAND);
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.SHORTHAND
+        && this.left.equals((n as Shorthand).left)
+        && this.right.equals((n as Shorthand).right);
   }
 
   repr(buf: Buffer): void {
@@ -208,6 +261,10 @@ export class UnicodeRange extends Node {
     super(NodeType.UNICODE_RANGE);
   }
 
+  equals(n: Node): boolean {
+    return n.type === NodeType.UNICODE_RANGE && this.value === (n as UnicodeRange).value;
+  }
+
   repr(buf: Buffer): void {
     buf.str(this.value);
   }
@@ -217,6 +274,10 @@ export class Url extends Node {
 
   constructor(readonly value: Node) {
     super(NodeType.URL);
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.URL && this.value.equals((n as Url).value);
   }
 
   repr(buf: Buffer): void {

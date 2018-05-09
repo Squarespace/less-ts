@@ -1,16 +1,18 @@
-import { Buffer, ExecEnv, IBlockNode, Node, NodeType } from '../common';
+import { Buffer, ExecEnv, IBlock, IBlockNode, Node, NodeType } from '../common';
 import { Directive } from './general';
 import { Definition } from './variable';
+import { arrayEquals } from '../utils';
 
 export const enum BlockFlags {
   REBUILD_VARS = 1,
   HAS_IMPORTS = 2,
-  HAS_MIXIN_CALLS = 4
+  HAS_MIXIN_CALLS = 4,
+  HAS_MIXIN_OR_RULESET = 8
 }
 
-export class Block extends Node {
+export class Block extends Node implements IBlock {
 
-  readonly rules: Node[];
+  readonly rules: Node[] = [];
   charset?: Directive;
   protected variables: { [x: string]: Definition } = {};
 
@@ -20,11 +22,28 @@ export class Block extends Node {
 
   constructor(rules?: Node[]) {
     super(NodeType.BLOCK);
-    this.rules = rules || [];
+    if (rules) {
+      for (const r of rules) {
+        this.add(r);
+      }
+    }
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.BLOCK
+        && arrayEquals(this.rules, (n as Block).rules);
   }
 
   hasImports(): boolean {
     return (this.flags & BlockFlags.HAS_IMPORTS) !== 0;
+  }
+
+  hasMixinCalls(): boolean {
+    return (this.flags & BlockFlags.HAS_MIXIN_CALLS) !== 0;
+  }
+
+  hasMixinDefs(): boolean {
+    return (this.flags & BlockFlags.HAS_MIXIN_OR_RULESET) !== 0;
   }
 
   resolveDefinition(name: string): Definition | undefined {
@@ -70,10 +89,15 @@ export class Block extends Node {
 
   add(n: Node): void {
     this.rules.push(n);
-    if (n.type === NodeType.IMPORT) {
+    const { type } = n;
+    if (type === NodeType.IMPORT) {
       this.flags |= BlockFlags.HAS_IMPORTS;
-    } else if (n.type === NodeType.MIXIN_CALL) {
+    }
+    if (type === NodeType.MIXIN_CALL) {
       this.flags |= BlockFlags.HAS_MIXIN_CALLS;
+    }
+    if (type === NodeType.RULESET || type === NodeType.MIXIN) {
+      this.flags |= BlockFlags.HAS_MIXIN_OR_RULESET;
     }
   }
 
@@ -93,11 +117,11 @@ export class Block extends Node {
 
 export abstract class BlockNode extends Node implements IBlockNode {
 
-  original?: BlockNode;
+  readonly original: BlockNode;
 
-  constructor(readonly type: NodeType, readonly block: Block) {
+  constructor(readonly type: NodeType, readonly block: Block, original?: BlockNode) {
     super(type);
-    this.original = this;
+    this.original = original || this;
   }
 
   repr(buf: Buffer): void {
@@ -112,6 +136,12 @@ export class BlockDirective extends BlockNode {
     readonly name: string,
     block: Block) {
     super(NodeType.BLOCK_DIRECTIVE, block);
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.BLOCK_DIRECTIVE
+        && this.name === (n as BlockDirective).name
+        && this.block.equals((n as BlockDirective).block);
   }
 
   repr(buf: Buffer): void {
@@ -142,12 +172,22 @@ export class GenericBlock extends BlockNode {
     super(NodeType.GENERIC_BLOCK, block);
   }
 
+  equals(n: Node): boolean {
+    return this.type === NodeType.GENERIC_BLOCK
+        && this.block.equals((n as GenericBlock).block);
+  }
+
 }
 
 export class Stylesheet extends BlockNode {
 
   constructor(readonly block: Block) {
     super(NodeType.STYLESHEET, block);
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.STYLESHEET
+        && this.block.equals((n as Stylesheet).block);
   }
 
   repr(buf: Buffer): void {

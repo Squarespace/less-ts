@@ -1,5 +1,6 @@
 import { Buffer, ExecEnv, Node, NodeType } from '../common';
 import { Quoted } from './quoted';
+import { arrayEquals } from '../utils';
 
 export const enum Combinator {
   CHILD = '>',
@@ -25,6 +26,12 @@ export class AttributeElement extends Element {
     super(comb);
   }
 
+  equals(n: Node): boolean {
+    return n instanceof AttributeElement
+        && this.comb === (n as AttributeElement).comb
+        && arrayEquals(this.parts, (n as AttributeElement).parts);
+  }
+
   repr(buf: Buffer): void {
     buf.str('[');
     for (const n of this.parts) {
@@ -47,6 +54,12 @@ export class TextElement extends Element {
     this.wildcard = name === '&';
   }
 
+  equals(n: Node): boolean {
+    return n instanceof TextElement
+        && this.comb === (n as TextElement).comb
+        && this.name === (n as TextElement).name;
+  }
+
   repr(buf: Buffer): void {
     buf.str(this.name);
   }
@@ -62,6 +75,12 @@ export class ValueElement extends Element {
     comb: Combinator | undefined,
     readonly value: Node) {
     super(comb);
+  }
+
+  equals(n: Node): boolean {
+    return n instanceof ValueElement
+        && this.comb === (n as ValueElement).comb
+        && this.value.equals((n as ValueElement).value);
   }
 
   isWildcard(): boolean {

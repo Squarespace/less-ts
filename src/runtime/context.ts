@@ -1,4 +1,4 @@
-import { Buffer, Context, ExecEnv, Node, Options, NodeType, Chars } from '../common';
+import { Buffer, Context, ExecEnv, IBlock, IDefinition, Node, Options, NodeType, Chars } from '../common';
 import { Block, BlockNode, Definition } from '../model';
 import { repeat, whitespace } from '../utils';
 
@@ -92,16 +92,24 @@ export class RuntimeBuffer implements Buffer {
 
 export class RuntimeExecEnv implements ExecEnv {
 
-  protected frames: Block[];
+  frames: IBlock[];
   protected bufindex: number = 0;
 
   constructor(
     readonly ctx: Context,
-    initialStack: Block[]) {
+    initialStack: IBlock[]) {
     this.frames = initialStack || [];
   }
 
-  resolveDefinition(name: string): Definition | undefined {
+  copy(): ExecEnv {
+    return new RuntimeExecEnv(this.ctx, this.frames.slice(0));
+  }
+
+  append(frames: IBlock[]): void {
+    this.frames = this.frames.concat(frames);
+  }
+
+  resolveDefinition(name: string): IDefinition | undefined {
     const len = this.frames.length;
     for (let i = len - 1; i >= 0; i--) {
       const def = this.frames[i].resolveDefinition(name);
@@ -155,6 +163,14 @@ export class RuntimeContext implements Context {
       ruleend: this.compress ? ';' : ';\n',
       selectorsep: this.compress ? ',' : ',\n'
     };
+  }
+
+  enterMixin(): void {
+    // TODO:
+  }
+
+  exitMixin(): void {
+    // TODO:
   }
 
   newEnv(): ExecEnv {

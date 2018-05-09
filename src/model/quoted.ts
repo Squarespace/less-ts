@@ -1,4 +1,5 @@
 import { Buffer, ExecEnv, Node, NodeType } from '../common';
+import { arrayEquals } from '../utils';
 
 export class Quoted extends Node {
 
@@ -19,6 +20,16 @@ export class Quoted extends Node {
         }
       }
     }
+  }
+
+  equals(n: Node): boolean {
+    if (n.type === NodeType.QUOTED) {
+      const o = n as Quoted;
+      return this.delim === o.delim
+          && this.escaped === o.escaped
+          && arrayEquals(this.parts, o.parts);
+    }
+    return false;
   }
 
   repr(buf: Buffer): void {

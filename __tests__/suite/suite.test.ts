@@ -30,7 +30,8 @@ const evaluate = (root: Root, opts: Options): void => {
   const ctx = new RuntimeContext(opts);
   const evaluator = new Evaluator(ctx);
   // const result = sheet.eval(ctx.newEnv()) as Stylesheet;
-  const result = evaluator.evaluate(sheet);
+  const env = ctx.newEnv();
+  const result = evaluator.evaluateStylesheet(env, sheet);
   // console.log(result);
   const css = Renderer.render(ctx, result);
   console.log(css);

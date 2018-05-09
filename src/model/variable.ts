@@ -11,6 +11,12 @@ export class Definition extends Node implements IDefinition {
     super(NodeType.DEFINITION);
   }
 
+  equals(n: Node): boolean {
+    return n.type === NodeType.DEFINITION
+        && this.name === (n as Definition).name
+        && this.value.equals((n as Definition).value);
+  }
+
   repr(buf: Buffer): void {
     buf.str(this.name).str(': ');
     this.value.repr(buf);
@@ -49,6 +55,12 @@ export class Variable extends Node {
       this.indirect = false;
     }
     this.name = name;
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.VARIABLE
+      && this.curly === (n as Variable).curly
+      && this.name === (n as Variable).name;
   }
 
   repr(buf: Buffer): void {

@@ -28,6 +28,13 @@ export class Operation extends Node {
     super(NodeType.OPERATION);
   }
 
+  equals(n: Node): boolean {
+    return n.type === NodeType.OPERATION
+        && this.operator === (n as Operation).operator
+        && this.left.equals((n as Operation).left)
+        && this.right.equals((n as Operation).right);
+  }
+
   repr(buf: Buffer): void {
     buf.str('(');
     this.left.repr(buf);

@@ -63,6 +63,8 @@ export abstract class Node {
    */
   abstract repr(buf: Buffer): void;
 
+  abstract equals(n: Node): boolean;
+
   /**
    * Indicates if this node requires evaluation. Used to short-circuit
    * and avoid unnecessary copying.
@@ -87,6 +89,21 @@ export interface IBlockNode {
 
 }
 
+export interface IBlock {
+
+  readonly rules: Node[];
+
+  /**
+   * Indicates the block contains a RULESET or a MIXIN definition.
+   */
+  hasMixinDefs(): boolean;
+
+ /**
+   * Lookup the definition 'name'
+   */
+  resolveDefinition(name: string): IDefinition | undefined;
+}
+
 /**
  * Definition interface, forward reference.
  */
@@ -100,6 +117,19 @@ export interface Context {
   readonly compress: boolean;
   readonly fastcolor: boolean;
   readonly spacer: string;
+
+  // TODO:
+  // track mixin depth here
+
+  /**
+   * Enter a mixin.
+   */
+  enterMixin(): void;
+
+  /**
+   * Exit a mixin.
+   */
+  exitMixin(): void;
 
   /**
    * Construct a new buffer.
@@ -126,10 +156,23 @@ export interface Context {
  * Execution environment exposed to nodes for evaluation
  */
 export interface ExecEnv {
+
   /**
    * Access to the context for this execution environment.
    */
   ctx: Context;
+
+  /**
+   * Stack frames.
+   */
+  frames: IBlock[];
+
+  /**
+   * Create a copy of this environment for some temporary evals.
+   */
+  copy(): ExecEnv;
+
+  append(frames: IBlock[]): void;
 
   /**
    * Lookup the definition 'name'

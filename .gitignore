@@ -19,6 +19,7 @@ package-deps.json
 *.swp
 *.build.log
 *.build.error.log
+isolate-*.log
 
 /*/**/.vscode/
 

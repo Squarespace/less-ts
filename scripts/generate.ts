@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { join, normalize } from 'path';
-import { execSync } from 'child_process';
+import { exec, execSync} from 'child_process';
 
 const ROOT = normalize(join(__dirname, '..'));
 const LESS_EXT = '.less';
@@ -19,17 +19,49 @@ const prep = () => {
   }
 };
 
+type Callback = () => void;
+
+class Semaphore {
+
+  active: number = 0;
+  waiting: Callback[] = [];
+
+  constructor(readonly max: number) {}
+
+  acquire(cb: Callback): void {
+    if (this.active >= this.max) {
+      this.waiting.push(cb);
+    } else {
+      this.lock(cb);
+    }
+  }
+
+  release(): void {
+    if (this.active === 0) {
+      return;
+    }
+    this.active--;
+    this.lock(this.waiting.pop());
+  }
+
+  private lock(cb: Callback | undefined): void {
+    if (cb) {
+      cb();
+      this.active++;
+    }
+  }
+}
+
 const run = () => {
   prep();
 
+  const slots = new Semaphore(12);
   const names = fs.readdirSync(LESS).filter(n => n.endsWith(LESS_EXT));
   names.forEach(n => {
     const base = join(CSS, n.slice(0, -LESS_EXT.length));
     const src = join(LESS, n);
-    let dst: string;
-    let out: Buffer;
 
-    console.log(`\nprocessing ${src}`);
+    // console.log(`\nprocessing ${src}`);
 
     // TODO: since there are subtle differences in the way Java and JavaScript
     // deal with certain types, like floating point numbers above the max
@@ -41,17 +73,25 @@ const run = () => {
     // console.log(`    saving ${dst}`);
     // fs.writeFileSync(dst, out, { encoding : 'utf-8' });
 
-    console.log('compiling json ast..');
-    out = execSync(`${LESS_CMD} --debug JSONAST ${src}`);
-    dst = base + '.json';
-    console.log(`    saving ${dst}`);
-    fs.writeFileSync(dst, out, { encoding: 'utf-8' });
+    slots.acquire(() => {
+      exec(`${LESS_CMD} --debug JSONAST ${src}`, (e, out, err) => {
+        console.log(' compiled json ast..');
+        const dst = base + '.json';
+        console.log(`    saving ${dst}`);
+        fs.writeFileSync(dst, out, { encoding: 'utf-8' });
+        slots.release();
+      });
+    });
 
-    console.log(' emitting json text repr..');
-    out = execSync(`${LESS_CMD} --debug JSONREPR ${src}`);
-    dst = base + '.txt';
-    console.log(`    saving ${dst}`);
-    fs.writeFileSync(dst, out, { encoding: 'utf-8' });
+    slots.acquire(() => {
+      exec(`${LESS_CMD} --debug JSONREPR ${src}`, (e, out, err) => {
+        console.log('  emitted json text repr..');
+        const dst = base + '.txt';
+        console.log(`    saving ${dst}`);
+        fs.writeFileSync(dst, out, { encoding: 'utf-8' });
+        slots.release();
+      });
+    });
   });
 };
 

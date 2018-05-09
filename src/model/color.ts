@@ -1,4 +1,5 @@
 import { Buffer, Node, NodeType } from '../common';
+import { Anonymous } from './general';
 import { hexchar, hexToRGB, nameToRGB, rgbToName } from '../utils';
 
 export const enum Colorspace {
@@ -39,6 +40,21 @@ export class RGBColor extends BaseColor {
     this.g = chan(g);
     this.b = chan(b);
     this.a = clamp(a, 0, 1.0);
+  }
+
+  equals(n: Node): boolean {
+    if (n instanceof RGBColor) {
+      const o = n as RGBColor;
+      return this.r === o.r
+          && this.g === o.g
+          && this.b === o.b
+          && this.a === o.a;
+    }
+    return false;
+  }
+
+  luma(): number {
+    return (0.2126 * (this.r / 255) + 0.7152 * (this.g / 255) + 0.0722 * (this.b / 255)) * this.a;
   }
 
   repr(buf: Buffer): void {
@@ -101,15 +117,57 @@ export class RGBColor extends BaseColor {
     return this;
   }
 
+  toARGB(): Anonymous {
+    const { r, g, b } = this;
+    const a = Math.round(this.a * 255) | 0;
+    const s = `#${hexchar(a >> 4)}${hexchar(a & 0x0F)}`
+          + `${hexchar(r >> 4)}${hexchar(r & 0x0F)}`
+          + `${hexchar(g >> 4)}${hexchar(g & 0x0F)}`
+          + `${hexchar(b >> 4)}${hexchar(b & 0x0F)}`;
+    return new Anonymous(s);
+  }
+
   toHSL(): HSLColor {
-    return new HSLColor(0, 0, 0);
+    const r = this.r / 255;
+    const g = this.g / 255;
+    const b = this.b / 255;
+    const max = Math.max(Math.max(r, g), b);
+    const min = Math.min(Math.min(r, g), b);
+    const d = max - min;
+    const l = (max + min) / 2.0;
+    let h = 0;
+    let s = 0;
+
+    if (max !== min) {
+      s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+      if ((max - r) === 0) {
+        h = (g - b) / d + (g < b ? 6 : 0);
+      } else if ((max - g) === 0) {
+        h = (b - r) / d + 2;
+      } else if ((max - b) === 0) {
+        h = (r - g) / d + 4;
+      }
+      h /= 6.0;
+    }
+    return new HSLColor(h, s, l, this.a);
   }
 }
 
 export class HSLColor extends BaseColor {
 
-  constructor(h: number, s: number, l: number) {
+  constructor(readonly h: number, readonly s: number, readonly l: number, readonly a: number) {
     super();
+  }
+
+  equals(n: Node): boolean {
+    if (n instanceof HSLColor) {
+      const o = n as HSLColor;
+      return this.h === o.h
+          && this.s === o.s
+          && this.l === o.l
+          && this.a === o.a;
+    }
+    return false;
   }
 
   repr(buf: Buffer): void {
@@ -121,14 +179,46 @@ export class HSLColor extends BaseColor {
   }
 
   toRGB(): RGBColor {
-    // TODO:
-    return new RGBColor(0, 0, 0, 1.0);
+    let r = 0;
+    let g = 0;
+    let b = 0;
+    if (this.s === 0) {
+      r = g = b = this.l;
+    } else {
+      const h = this.h / 360.0;
+      const { l, s } = this;
+      const q = l < 0.5 ? (l * (1 + s)) : (l + s - l * s);
+      const p = 2 * l - q;
+      r = hue(p, q, h + 1 / 3.0);
+      g = hue(p, q, h);
+      b = hue(p, q, h - 1 / 3.0);
+    }
+    return new RGBColor(r * 255, g * 255, b * 255, this.a);
   }
 
   toHSL(): HSLColor {
     return this;
   }
 }
+
+const hue = (p: number, q: number, h: number): number => {
+  if (h < 0) {
+    h += 1.0;
+  }
+  if (h > 1) {
+    h -= 1.0;
+  }
+  if (h < 1 / 6.0) {
+    return p + (q - p) * 6.0 * h;
+  }
+  if (h < 1 / 2.0) {
+    return q;
+  }
+  if (h < 2 / 3.0) {
+    return p + (q - p) * ((2 / 3.0) - h) * 6.0;
+  }
+  return p;
+};
 
 export class KeywordColor extends RGBColor {
 

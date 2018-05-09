@@ -1,5 +1,6 @@
 import { Buffer, ExecEnv, Node, NodeType } from '../common';
 import { Block, BlockNode } from './block';
+import { arrayEquals, safeEquals } from '../utils';
 
 export class Feature extends Node {
 
@@ -7,6 +8,12 @@ export class Feature extends Node {
     readonly property: Node,
     readonly value: Node) {
     super(NodeType.FEATURE);
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.FEATURE
+        && this.property.equals((n as Feature).property)
+        && this.value.equals((n as Feature).value);
   }
 
   repr(buf: Buffer): void {
@@ -45,6 +52,11 @@ export class Features extends Node {
     }
   }
 
+  equals(n: Node): boolean {
+    return n.type === NodeType.FEATURES
+        && arrayEquals(this.features, (n as Features).features);
+  }
+
   repr(buf: Buffer): void {
     const { features } = this;
     const len = features.length;
@@ -79,6 +91,12 @@ export class Media extends BlockNode {
     readonly features: Features | undefined,
     readonly block: Block) {
     super(NodeType.MEDIA, block);
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.MEDIA
+        && safeEquals(this.features, (n as Media).features)
+        && this.block.equals((n as Media).block);
   }
 
   repr(buf: Buffer): void {
