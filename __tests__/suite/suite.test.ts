@@ -37,8 +37,8 @@ const evaluate = (root: Root, opts: Options): void => {
   console.log(css);
 };
 
-// const tests = ['selector-wildcards'];
-const tests = ['comment'];
+const tests = ['selector-wildcards'];
+// const tests = ['comment'];
 
 tests.forEach(n => {
   const opts: Options = {

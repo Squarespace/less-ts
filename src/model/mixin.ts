@@ -222,7 +222,7 @@ export class MixinCall extends Node {
     args: MixinCallArgs | undefined,
     readonly important: boolean | number) {
       super(NodeType.MIXIN_CALL);
-      this.mixinPath = selector.mixinPath();
+      this.mixinPath = selector.mixinPath;
       this.args = args || EMPTY_ARGS;
   }
 

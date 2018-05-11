@@ -190,9 +190,14 @@ export class Evaluator {
       const n = rules[i];
       if (n.type === NodeType.MIXIN_CALL) {
         const result = this.executeMixinCall(env, n as MixinCall);
-        rules.splice(i, 1, ...result.rules);
-        i += result.rules.length - 1;
-
+        // Replace mixin call with resulting rules.
+        const len = result.rules.length;
+        if (len > 0) {
+          rules.splice(i, 1, ...result.rules);
+        } else {
+          rules.splice(i, 1);
+        }
+        i += len - 1;
         // TODO: block flags
       }
     }
@@ -201,7 +206,24 @@ export class Evaluator {
   protected executeMixinCall(env: ExecEnv, call: MixinCall): Block {
     const matcher = new MixinMatcher(env, call);
     const resolver = new MixinResolver(matcher);
-    resolver.resolve(env.frames);
+
+    // Attempt to resolve mixins up the stack. Stop at the first
+    // set of matches.
+    const { frames } = env;
+    const start = frames.length - 1;
+    let found = false;
+    for (let i = start; i >= 0; i--) {
+      if (resolver.match(0, frames[i])) {
+        found = true;
+        break;
+      }
+    }
+
+    if (!found) {
+      return EMPTY_BLOCK;
+    }
+
+    // Avoid constructing empty blocks when we
     const { matches } = resolver;
     if (matches.length === 0) {
       return EMPTY_BLOCK;

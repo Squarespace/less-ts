@@ -41,21 +41,27 @@ export class MixinResolver {
     return false;
   }
 
-  protected match(index: number, block: IBlock): boolean {
+  match(index: number, block: IBlock): boolean {
     if (index >= this.callPathSize || !block.hasMixinDefs()) {
       return false;
     }
 
-    const { rules } = block;
-    const len = rules.length;
-    if (len === 0) {
-      return false;
-    }
-
     let matched = false;
-    for (let i = 0; i < len; i++) {
-      const rule = rules[i];
+    for (const rule of block.rules) {
       if (rule.type === NodeType.RULESET) {
+        const ruleset = rule as Ruleset;
+        // Do some quick checks to avoid scanning into rulesets that
+        // will yield no matches.
+        if (!ruleset.hasMixinPath) {
+          continue;
+        }
+        // Avoid recursing into rulesets that are currently being evaluated
+        // otherwise we hit infinite recursion.
+        const original = ruleset.original as Ruleset;
+        if (original.evaluating) {
+          continue;
+        }
+        // Scan this ruleset for matches.
         if (this.matchRuleset(index, rule as Ruleset)) {
           matched = true;
         }
@@ -69,17 +75,9 @@ export class MixinResolver {
   }
 
   protected matchRuleset(index: number, ruleset: Ruleset): boolean {
-    if (!ruleset.hasMixinPath) {
-      return false;
-    }
-    const original = ruleset.original as Ruleset;
-    if (original.evaluating()) {
-      return false;
-    }
-
     const { selectors } = ruleset.selectors;
     for (const selector of selectors) {
-      const path = selector.mixinPath();
+      const path = selector.mixinPath;
       if (!path) {
         continue;
       }

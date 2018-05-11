@@ -42,7 +42,7 @@ export class Rule extends Node {
 
 export class Ruleset extends BlockNode {
 
-  protected _evaluating: boolean = false;
+  evaluating: boolean = false;
   readonly hasMixinPath: boolean = false;
 
   constructor(
@@ -83,15 +83,11 @@ export class Ruleset extends BlockNode {
     return r;
   }
 
-  evaluating(): boolean {
-    return this._evaluating;
-  }
-
   enter(): void {
-    this._evaluating = true;
+    this.evaluating = true;
   }
 
   exit(): void {
-    this._evaluating = false;
+    this.evaluating = false;
   }
 }

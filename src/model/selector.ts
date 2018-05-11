@@ -7,8 +7,7 @@ export class Selector extends Node {
 
   readonly hasWildcard: boolean;
   readonly evaluate: boolean;
-  private _mixinBuilt: boolean = false;
-  private _mixinPath?: string[];
+  readonly mixinPath: string[] | undefined;
 
   constructor(readonly elements: Element[]) {
     super(NodeType.SELECTOR);
@@ -20,6 +19,7 @@ export class Selector extends Node {
     }
     this.hasWildcard = wildcard;
     this.evaluate = evaluate;
+    this.mixinPath = renderSelectorPath(this);
   }
 
   equals(n: Node): boolean {
@@ -43,21 +43,7 @@ export class Selector extends Node {
     for (const elem of this.elements) {
       tmp.push(elem.eval(env) as Element);
     }
-    const result = new Selector(tmp);
-    result.buildMixinPath();
-    return result;
-  }
-
-  mixinPath(): string[] | undefined {
-    this.buildMixinPath();
-    return this._mixinPath;
-  }
-
-  private buildMixinPath(): void {
-    if (!this._mixinBuilt) {
-      this._mixinPath = renderSelectorPath(this);
-      this._mixinBuilt = true;
-    }
+    return new Selector(tmp);
   }
 }
 
