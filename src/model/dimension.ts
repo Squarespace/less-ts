@@ -66,6 +66,27 @@ export const enum Unit {
   TURN = 'turn',
 }
 
+const UNITS: Unit[] = [
+  Unit.PERCENTAGE,
+  Unit.CM, Unit.MM, Unit.IN, Unit.PX, Unit.PT, Unit.PC,
+  Unit.CH, Unit.EM, Unit.EX, Unit.REM,
+  Unit.VH, Unit.VW, Unit.VMIN, Unit.VMAX, Unit.VM,
+  Unit.FR,
+  Unit.S, Unit.MS,
+  Unit.DPI, Unit.DPCM, Unit.DPPX,
+  Unit.HZ, Unit.KHZ,
+  Unit.DEG, Unit.GRAD, Unit.RAD, Unit.TURN
+];
+
+const UNIT_SET: Set<Unit> = new Set();
+
+for (const u of UNITS) {
+  UNIT_SET.add(u);
+}
+
+export const stringToUnit = (s: string): Unit | undefined =>
+  UNIT_SET.has(s as Unit) ? s as Unit : undefined;
+
 export class Dimension extends Node {
 
   constructor(readonly value: number, readonly unit?: Unit) {

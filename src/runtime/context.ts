@@ -1,5 +1,18 @@
-import { Buffer, Context, ExecEnv, IBlock, IDefinition, Node, Options, NodeType, Chars } from '../common';
+import {
+  Buffer,
+  Context,
+  ExecEnv,
+  Function,
+  IBlock,
+  IDefinition,
+  Node,
+  Options,
+  NodeType,
+  Chars
+} from '../common';
+
 import { Block, BlockNode, Definition } from '../model';
+import { FUNCTIONS } from '../plugins';
 import { repeat, whitespace } from '../utils';
 
 export class RuntimeBuffer implements Buffer {
@@ -190,7 +203,11 @@ export class RuntimeContext implements Context {
   }
 
   renderInto(buf: Buffer, n: Node): void {
-    // TODO: revisit. mirroring Java but we may not need this.
+    // TODO: revisit. mirroring Javas API but we may not need this.
     n.repr(buf);
+  }
+
+  findFunction(name: string): Function | undefined {
+    return FUNCTIONS[name];
   }
 }

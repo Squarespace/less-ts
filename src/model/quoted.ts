@@ -7,7 +7,7 @@ export class Quoted extends Node {
 
   constructor(
     readonly delim: string,
-    readonly escaped: boolean | number,
+    public escaped: boolean | number,
     readonly parts: Node[],
     skipEval: boolean = false) {
       super(NodeType.QUOTED);
@@ -20,6 +20,10 @@ export class Quoted extends Node {
         }
       }
     }
+  }
+
+  copy(): Quoted {
+    return new Quoted(this.delim, this.escaped, this.parts.slice(0));
   }
 
   equals(n: Node): boolean {

@@ -7,6 +7,15 @@ export const enum Colorspace {
   HSL = 1
 }
 
+const HSV_PERMUTATIONS: number[][] = [
+  [0, 3, 1],
+  [2, 0, 1],
+  [1, 0, 3],
+  [1, 2, 0],
+  [3, 1, 0],
+  [0, 1, 2]
+];
+
 export abstract class BaseColor extends Node {
 
   constructor() {
@@ -150,6 +159,22 @@ export class RGBColor extends BaseColor {
       h /= 6.0;
     }
     return new HSLColor(h, s, l, this.a);
+  }
+
+  static fromHSVA(h: number, s: number, v: number, a: number): RGBColor {
+    h *= 360;
+    const i = Math.floor((h / 60) % 6);
+    const f = (h / 60) - i;
+    const vals: number[] = [
+      v,
+      v * (1 - s),
+      v * (1 - f * s),
+      v * (1 - (1 - f) * s)
+    ];
+    const r = vals[HSV_PERMUTATIONS[i][0]] * 255;
+    const g = vals[HSV_PERMUTATIONS[i][1]] * 255;
+    const b = vals[HSV_PERMUTATIONS[i][2]] * 255;
+    return new RGBColor(r, g, b, a);
   }
 }
 

@@ -99,41 +99,31 @@ import {
 } from './types';
 
 /*
- * A parser will not be developed in this first pass. Instead we define a mapping from
- * JSON to LESS that is used to reconstruct the stylesheet. A server component will
- * deliver JSON to the browser and this class will build an executable tree.
+ * A parser will not be developed for this compiler, at least not in the near
+ * term.  Instead we define a mapping from JSON to LESS. A server component will
+ * deliver JSON to the browser and this class will construct a valid executable
+ * instruction tree.
  */
-
 export class Builder {
 
-  // TODO: encode source map info for looking up char/line and filename
-  // This will create a string[] (produced by splitting on a delimiter) that
-  // contains a list of Base64 VLQ. When an error occurs, a node's index value
-  // is used to find the relevant VLQ which resolves the line/char offset and
-  // optional file path. we only attach file paths to block-level nodes, so
-  // the error handling function should know how to do that.
-
-  // Appending char/line offsets and filename index to each node bloats the
-  // JSON by roughly 2x, whereas using the implicit node index and vlq should
-  // add only about 1.25 to 1.5x size, and the vlq would keep the offset info
-  // out of the less instruction tree.
+  // TODO: report errors. we actually don't need line/char numbers strictly
+  // speaking, since we can generate the representation of a given rule
+  // directly from the valid syntax tree. We're only interested in runtime
+  // errors here, not parse errors, so we should be able to reconstitute
+  // enough information about where an error occurred directly from the
+  // currently-executing instruction.
 
   // Also we plan to add a safe mode to this compiler which will report errors
   // in the console but not throw.
-
-  // TODO: use this identifier to index into the line/char offset table
-  private nodeId: number = 0;
 
   constructor(readonly table: string[]) {}
 
   expand(t: NodeJ): Node {
 
-    // TODO: add nodeId to each node. this will be used to index into the vlq for
-    // execution error reporting
-
     // TODO: note that tuple types are not automatically narrowed (yet) by the
     // Typescript compiler. For this reason you see a lot of casts to avoid
-    // adding another intermediate "const x = y as Type" in some cases.
+    // adding another intermediate "const x = y as Type" in some cases. Will revisit
+    // in the future when upgrading the Typescript compiler.
     // https://github.com/Microsoft/TypeScript/issues/23512
 
     switch (t[0]) {
@@ -394,7 +384,7 @@ export class Builder {
 
       case JsonType.STYLESHEET:
       {
-        // TODO: versioning support
+        // TODO: future versioning support
         const block = this.expandBlock((t as StylesheetJ)[2]);
         return new Stylesheet(block);
       }

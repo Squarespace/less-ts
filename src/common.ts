@@ -150,6 +150,11 @@ export interface Context {
    * Render a node into the given buffer.
    */
   renderInto(buf: Buffer, node: Node): void;
+
+  /**
+   * Find a function implementation with the given name.
+   */
+  findFunction(name: string): Function | undefined;
 }
 
 /**
@@ -273,4 +278,15 @@ export interface Buffer extends Options {
    * Close a nested block.
    */
   blockClose(): void;
+}
+
+/**
+ * A plugin function callable by a FunctionCall node.
+ */
+export interface Function {
+
+  /**
+   * Call the function with the given arguments and return the result.
+   */
+  invoke(env: ExecEnv, args: Node[]): Node | undefined;
 }

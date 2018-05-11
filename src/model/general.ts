@@ -1,4 +1,4 @@
-import { Buffer, ExecEnv, Node, NodeType } from '../common';
+import { Buffer, ExecEnv, Function, Node, NodeType } from '../common';
 import { arrayEquals } from '../utils';
 
 export class Alpha extends Node {
@@ -136,10 +136,21 @@ export class Directive extends Node {
 
 export class FunctionCall extends Node {
 
+  readonly evaluate: boolean;
+
   constructor(
     readonly name: string,
-    readonly args: Node[]) {
+    readonly args: Node[],
+    readonly noImpl: boolean = false) {
     super(NodeType.FUNCTION_CALL);
+    let evaluate = false;
+    for (const arg of args) {
+      if (arg.needsEval()) {
+        evaluate = true;
+        break;
+      }
+    }
+    this.evaluate = evaluate;
   }
 
   equals(n: Node): boolean {
@@ -162,11 +173,44 @@ export class FunctionCall extends Node {
     buf.str(')');
   }
 
-  eval(env: ExecEnv): Node {
-    // TODO: resolve function impl
+  needsEval(): boolean {
+    return !this.noImpl || this.evaluate;
+  }
 
-    // TODO:
-    return this;
+  eval(env: ExecEnv): Node {
+    let func: Function | undefined;
+    if (!this.noImpl) {
+      // Check if this function is built-in.
+      func = env.ctx.findFunction(this.name);
+    }
+
+    if (func !== undefined) {
+      // We have an implementation, so call it.
+      const args = this.evalArgs(env);
+      const result = func.invoke(env, args);
+      if (result !== undefined) {
+        return result;
+      }
+    }
+
+    // We either failed to find a function implementation, or the function
+    // returned undefined indicating it cannot be called for some reason.
+    // Fall back to emitting the function's representation with its args
+    // evaluated.
+    return this.evaluate ? new FunctionCall(this.name, this.evalArgs(env), true) : this;
+  }
+
+  private evalArgs(env: ExecEnv): Node[] {
+    const { args } = this;
+    const len = args.length;
+    if (len === 0) {
+      return args;
+    }
+    const res: Node[] = [];
+    for (const arg of args) {
+      res.push(arg.eval(env));
+    }
+    return res;
   }
 }
 
