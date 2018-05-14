@@ -32,22 +32,40 @@ export class MixinResolver {
   }
 
   resolve(frames: IBlock[]): boolean {
+    const prefix = this.callPath[0];
     const start = frames.length - 1;
     for (let i = start; i >= 0; i--) {
-      if (this.match(0, frames[i])) {
-        return true;
+
+      // Prune the mixin search space at the top level. If no paths
+      // have our desired prefix we skip the block entirely.
+
+      const block = frames[i];
+      if (block.mixins && block.mixins.has(prefix)) {
+        if (this.match(0, block)) {
+          return true;
+        }
       }
     }
     return false;
   }
 
   match(index: number, block: IBlock): boolean {
-    if (index >= this.callPathSize || !block.hasMixinDefs()) {
+    if (index >= this.callPathSize || !block.mixins) {
+      return false;
+    }
+
+    // We prune the mixin search space at every level, leveraging
+    // the mixin path prefix index to avoid scanning non-matching blocks.
+    // We also iterate directly over only mixin nodes.
+
+    const segment = this.callPath[index];
+    const mixins = block.mixins.get(segment);
+    if (!mixins) {
       return false;
     }
 
     let matched = false;
-    for (const rule of block.rules) {
+    for (const rule of mixins) {
       if (rule.type === NodeType.RULESET) {
         const ruleset = rule as Ruleset;
         // Do some quick checks to avoid scanning into rulesets that

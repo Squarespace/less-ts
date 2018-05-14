@@ -100,7 +100,7 @@ export class Mixin extends BlockNode {
 
   closure?: ExecEnv;
   private entryCount: number = 0;
-
+  private _mixinPath: string[][];
   constructor(
     readonly name: string,
     readonly params: MixinParams,
@@ -108,6 +108,11 @@ export class Mixin extends BlockNode {
     readonly block: Block,
     original?: Mixin) {
       super(NodeType.MIXIN, block, original);
+      this._mixinPath = [ [name] ];
+  }
+
+  mixinPaths(): string[][] {
+    return this._mixinPath;
   }
 
   enter(): void {

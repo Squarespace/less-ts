@@ -6,14 +6,18 @@ import { arrayEquals } from '../utils';
 export const enum BlockFlags {
   REBUILD_VARS = 1,
   HAS_IMPORTS = 2,
-  HAS_MIXIN_CALLS = 4,
-  HAS_MIXIN_OR_RULESET = 8
+  HAS_MIXIN_CALLS = 4
 }
 
 export class Block extends Node implements IBlock {
 
   readonly rules: Node[] = [];
   charset?: Directive;
+
+  // Ordered list of mixin definitions that share a common mixin path prefix
+  mixins?: Map<string, Node[]>;
+
+  // Cache of variable definitions contained in this block, last definition wins.
   protected variables: { [x: string]: Definition } = {};
 
   // Flags used for triggering var cache rebuilds or skipping blocks
@@ -40,10 +44,6 @@ export class Block extends Node implements IBlock {
 
   hasMixinCalls(): boolean {
     return (this.flags & BlockFlags.HAS_MIXIN_CALLS) !== 0;
-  }
-
-  hasMixinDefs(): boolean {
-    return (this.flags & BlockFlags.HAS_MIXIN_OR_RULESET) !== 0;
   }
 
   resolveDefinition(name: string): Definition | undefined {
@@ -90,14 +90,44 @@ export class Block extends Node implements IBlock {
   add(n: Node): void {
     this.rules.push(n);
     const { type } = n;
-    if (type === NodeType.IMPORT) {
-      this.flags |= BlockFlags.HAS_IMPORTS;
-    }
-    if (type === NodeType.MIXIN_CALL) {
-      this.flags |= BlockFlags.HAS_MIXIN_CALLS;
-    }
-    if (type === NodeType.RULESET || type === NodeType.MIXIN) {
-      this.flags |= BlockFlags.HAS_MIXIN_OR_RULESET;
+    switch (n.type) {
+      case NodeType.IMPORT:
+        this.flags |= BlockFlags.HAS_IMPORTS;
+        break;
+
+      case NodeType.MIXIN_CALL:
+        this.flags |= BlockFlags.HAS_MIXIN_CALLS;
+        break;
+
+      default:
+        if (n instanceof BlockNode) {
+
+          // Optimization for fast prefix matching of mixin paths.
+          // Index the ruleset and mixin paths by the first segment
+          // of their path. This lets is prune the search tree drastically
+          // by (a) ignoring branches with no valid prefix and (b) iterating
+          // over just the mixins when a prefix is valid.
+
+          const paths = (n as BlockNode).mixinPaths();
+          if (paths) {
+            if (!this.mixins) {
+              this.mixins = new Map();
+            }
+
+            for (const path of paths) {
+              const prefix = path[0];
+              if (prefix) {
+                const rec = this.mixins.get(prefix);
+                if (rec) {
+                  rec.push(n);
+                } else {
+                  this.mixins.set(prefix, [n]);
+                }
+              }
+            }
+          }
+        }
+        break;
     }
   }
 
@@ -126,6 +156,10 @@ export abstract class BlockNode extends Node implements IBlockNode {
 
   repr(buf: Buffer): void {
     // NOOP
+  }
+
+  mixinPaths(): string[][] | undefined {
+    return undefined;
   }
 
 }

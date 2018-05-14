@@ -93,10 +93,7 @@ export interface IBlock {
 
   readonly rules: Node[];
 
-  /**
-   * Indicates the block contains a RULESET or a MIXIN definition.
-   */
-  hasMixinDefs(): boolean;
+  mixins?: Map<string, Node[]>;
 
  /**
    * Lookup the definition 'name'

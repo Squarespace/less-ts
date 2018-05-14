@@ -40,6 +40,8 @@ export class Rule extends Node {
   }
 }
 
+const EMPTY_MIXIN_PATHS: string[][] = [];
+
 export class Ruleset extends BlockNode {
 
   evaluating: boolean = false;
@@ -52,6 +54,21 @@ export class Ruleset extends BlockNode {
   ) {
     super(NodeType.RULESET, block, original);
     this.hasMixinPath = selectors.hasMixinPath();
+  }
+
+  mixinPaths(): string[][] | undefined {
+    if (!this.hasMixinPath) {
+      return undefined;
+    }
+    const res: string[][] = [];
+    const { selectors } = this.selectors;
+    for (const selector of selectors) {
+      const { mixinPath } = selector;
+      if (mixinPath) {
+        res.push(mixinPath);
+      }
+    }
+    return res;
   }
 
   equals(n: Node): boolean {
