@@ -174,8 +174,7 @@ export class FunctionCall extends Node {
   }
 
   needsEval(): boolean {
-    // return !this.noImpl || this.evaluate;
-    return false;
+    return !this.noImpl || this.evaluate;
   }
 
   eval(env: ExecEnv): Node {

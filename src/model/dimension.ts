@@ -1,4 +1,5 @@
 import { Buffer, ExecEnv, Node, NodeType } from '../common';
+import { formatDouble } from '../utils';
 
 export const enum Unit {
   PERCENTAGE = '%',
@@ -89,8 +90,11 @@ export const stringToUnit = (s: string): Unit | undefined =>
 
 export class Dimension extends Node {
 
-  constructor(readonly value: number, readonly unit?: Unit) {
+  readonly unit?: Unit;
+
+  constructor(readonly value: number, unit?: Unit) {
     super(NodeType.DIMENSION);
+    this.unit = unit || undefined;
   }
 
   equals(n: Node): boolean {
@@ -102,7 +106,7 @@ export class Dimension extends Node {
   }
 
   repr(buf: Buffer): void {
-    buf.num(this.value);
+    buf.str(formatDouble(this.value));
     if (this.unit) {
       buf.str(this.unit);
     }

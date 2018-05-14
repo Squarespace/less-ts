@@ -92,8 +92,12 @@ export class Variable extends Node {
       return res;
     }
 
+    // Variable is escaped, so we need to build a new variable
+    // reference whose name is the rendered name.
     const { ctx } = env;
-    // TODO: implement escape mode
-    return this;
+    const buf = ctx.newBuffer();
+    buf.startEscape('"');
+    ctx.renderInto(buf, res);
+    return new Variable(`@${buf.toString()}`).eval(env);
   }
 }

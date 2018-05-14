@@ -1,7 +1,17 @@
 import * as fs from 'fs';
 import { join } from 'path';
 
-import { Builder, Context, NodeJ, Options, Renderer, RuntimeContext, Stylesheet, Evaluator } from '../../src';
+import {
+  Builder,
+  Context,
+  NodeJ,
+  LessCompiler,
+  Options,
+  Renderer,
+  RuntimeContext,
+  Stylesheet,
+  Evaluator
+} from '../../src';
 
 const ROOT = join(__dirname, '../data/css');
 const JSON_EXT = '.json';
@@ -18,23 +28,23 @@ interface Root {
 const load = (name: string): [Root, string] => {
   const raw = fs.readFileSync(join(ROOT, name + JSON_EXT)).toString('utf-8');
   const json = JSON.parse(raw) as Root;
-  // const css = fs.readFileSync(join(ROOT, name + '.css')).toString('utf-8');
-  const css = '';
+  const css = fs.readFileSync(join(ROOT, name + '.css')).toString('utf-8');
+  // const css = '';
   return [json, css];
 };
 
-const evaluate = (root: Root, opts: Options): void => {
+const evaluate = (root: Root, opts: Options): string => {
   const builder = new Builder(root.strings);
   const sheet = builder.expand(root.root) as Stylesheet;
 
-  const ctx = new RuntimeContext(opts);
+  const compiler = new LessCompiler(opts);
+  const ctx = compiler.context();
   const evaluator = new Evaluator(ctx);
   // const result = sheet.eval(ctx.newEnv()) as Stylesheet;
   const env = ctx.newEnv();
   const result = evaluator.evaluateStylesheet(env, sheet);
   // console.log(result);
-  const css = Renderer.render(ctx, result);
-  console.log(css);
+  return Renderer.render(ctx, result);
 };
 
 // const tests = ['selector-wildcards'];
@@ -44,14 +54,16 @@ const evaluate = (root: Root, opts: Options): void => {
 tests.forEach(n => {
   const opts: Options = {
     indentSize: 2,
-    fastcolor: true,
+    fastcolor: false,
     compress: false
   };
-  const [json, repr] = load(n);
   test(`suite ${n}.css`, () => {
+    const [json, repr] = load(n);
     const css = evaluate(json, opts);
+    expect(css).toEqual(repr);
   });
 });
+
 // test('test cases', () => {
 //   console.log(tests);
 //   load('grid-1');

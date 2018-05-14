@@ -87,7 +87,7 @@ export class Evaluator {
 
   evaluateRuleset(env: ExecEnv, input: Ruleset, forceImportant: boolean | number): Ruleset {
     const orig = input.original as Ruleset;
-    const n = orig.copy(env);
+    const n = input.copy(env);
     env.push(n);
     orig.enter();
     this.expandMixins(env, n.block);
@@ -110,6 +110,9 @@ export class Evaluator {
     const { rules } = block;
     for (let i = 0; i < rules.length; i++) {
       let n = rules[i];
+      if (n === undefined) {
+        continue;
+      }
       switch (n.type) {
         case NodeType.BLOCK_DIRECTIVE:
           n = this.evaluateBlockDirective(env, n as BlockDirective);
@@ -190,15 +193,20 @@ export class Evaluator {
       const n = rules[i];
       if (n.type === NodeType.MIXIN_CALL) {
         const result = this.executeMixinCall(env, n as MixinCall);
-        // Replace mixin call with resulting rules.
+
         const len = result.rules.length;
         if (len > 0) {
+          // Replace mixin call site with the result
           rules.splice(i, 1, ...result.rules);
         } else {
+          // Snip out the call.
           rules.splice(i, 1);
         }
+
+        // Adjust loop variable based on number of nodes inserted
         i += len - 1;
-        // TODO: block flags
+        block.flags = block.flags || result.flags;
+        block.resetVariableCache();
       }
     }
   }
@@ -207,19 +215,8 @@ export class Evaluator {
     const matcher = new MixinMatcher(env, call);
     const resolver = new MixinResolver(matcher);
 
-    // Attempt to resolve mixins up the stack. Stop at the first
-    // set of matches.
-    const { frames } = env;
-    const start = frames.length - 1;
-    let found = false;
-    for (let i = start; i >= 0; i--) {
-      if (resolver.match(0, frames[i])) {
-        found = true;
-        break;
-      }
-    }
-
-    if (!found) {
+    // Attempt to resolve mixins
+    if (!resolver.resolve(env.frames)) {
       return EMPTY_BLOCK;
     }
 
@@ -245,7 +242,6 @@ export class Evaluator {
           break;
       }
     }
-    // TODO: if calls == 0, error / warning
     return block;
   }
 
@@ -253,6 +249,7 @@ export class Evaluator {
     const { call } = matcher;
     const mixin = (match.mixin as Mixin).copy();
     const params = mixin.params.eval(env) as MixinParams;
+
     const bindings = matcher.bind(params);
     env = env.copy();
     const original = (mixin.original || mixin) as Mixin;
@@ -285,12 +282,18 @@ export class Evaluator {
     const { block } = mixin;
     this.expandMixins(env, block);
     this.evaluateRules(env, block, call.important);
+
+    const buf = env.ctx.newBuffer();
     for (const rule of block.rules) {
       collector.add(rule);
     }
 
     ctx.exitMixin();
     original.exit();
+
+    // Note: env.pop() calls unnecessary here, since we're throwing
+    // away the temporary environment.
+
     return true;
   }
 

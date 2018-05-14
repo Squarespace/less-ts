@@ -100,4 +100,4 @@ export const ARG_PERCENTAGE: ArgValidator = (arg: Node): boolean => {
 };
 
 export const ARG_QUOTED: ArgValidator = (arg: Node): boolean =>
-  arg.type === NodeType.COLOR;
+  arg.type === NodeType.QUOTED;

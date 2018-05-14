@@ -54,7 +54,7 @@ class HSL extends BaseFunction {
     const h = percent(args[0]);
     const s = percent(args[1]);
     const l = percent(args[2]);
-    return new HSLColor(h % 360 / 360.0, s, l, 1.0);
+    return new HSLColor((h % 360) / 360, s, l, 1.0);
   }
 }
 
@@ -69,7 +69,7 @@ class HSLA extends BaseFunction {
     const s = percent(args[1]);
     const l = percent(args[2]);
     const a = percent(args[3]);
-    return new HSLColor(h % 360 / 360.0, s, l, a);
+    return new HSLColor(h % 360 / 360, s, l, a);
   }
 }
 
@@ -83,7 +83,7 @@ class HSV extends BaseFunction {
     const h = percent(args[0]);
     const s = percent(args[1]);
     const v = percent(args[2]);
-    return RGBColor.fromHSVA(h, s, v, 1.0);
+    return RGBColor.fromHSVA(h % 360 / 360, s, v, 1.0);
   }
 }
 
@@ -98,7 +98,7 @@ class HSVA extends BaseFunction {
     const s = percent(args[1]);
     const v = percent(args[2]);
     const a = percent(args[3]);
-    return RGBColor.fromHSVA(h, s, v, a);
+    return RGBColor.fromHSVA(h % 360 / 360, s, v, a);
   }
 }
 

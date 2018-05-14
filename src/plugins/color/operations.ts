@@ -223,6 +223,7 @@ export const OPERATIONS: { [x: string]: Function } = {
   greyscale: new Greyscale(),
   lighten: new Lighten(),
   mix: new Mix(),
+  saturate: new Saturate(),
   shade: new Shade(),
   spin: new Spin(),
   tint: new Tint()

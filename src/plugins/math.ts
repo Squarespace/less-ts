@@ -172,7 +172,7 @@ class Pow extends BaseFunction {
 class Round extends BaseFunction {
 
   constructor() {
-    super('round', 'dd');
+    super('round', 'd:n');
   }
 
   protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {

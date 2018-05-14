@@ -29,7 +29,7 @@ export class Argument extends Node {
   }
 
   eval(env: ExecEnv): Node {
-    return this.needsEval() ? new Argument(this.name, this.value.eval(env)) : this;
+    return this.value.needsEval() ? new Argument(this.name, this.value.eval(env)) : this;
   }
 }
 
@@ -37,7 +37,7 @@ export class Parameter extends Node {
 
   constructor(
     readonly name: string,
-    readonly value: Node,
+    readonly value: Node | undefined,
     readonly variadic: boolean | number) {
     super(NodeType.PARAMETER);
   }
@@ -45,8 +45,8 @@ export class Parameter extends Node {
   equals(n: Node): boolean {
     return n.type === NodeType.PARAMETER
         && this.name === (n as Parameter).name
-        && this.value.equals((n as Parameter).value)
-        && this.variadic === (n as Parameter).variadic;
+        && this.variadic === (n as Parameter).variadic
+        && safeEquals(this.value, (n as Parameter).value);
   }
 
   repr(buf: Buffer): void {
@@ -64,15 +64,42 @@ export class Parameter extends Node {
       buf.str('...');
     }
   }
+
+  needsEval(): boolean {
+    return this.value !== undefined && this.value.needsEval();
+  }
+
+  eval(env: ExecEnv): Node {
+    if (this.needsEval()) {
+      let { value } = this;
+      if (value !== undefined) {
+        value = value.eval(env);
+      }
+      return new Parameter(this.name, value, this.variadic);
+    }
+    return this;
+  }
+
 }
 
 export class MixinParams extends Node {
+
+  readonly evaluate: boolean;
 
   constructor(
     readonly params: Parameter[],
     readonly variadic: boolean | number,
     readonly required: number) {
     super(NodeType.MIXIN_PARAMS);
+    let evaluate = false;
+
+    for (const param of params) {
+      evaluate = evaluate || param.needsEval();
+      if (evaluate) {
+        break;
+      }
+    }
+    this.evaluate = evaluate;
   }
 
   equals(n: Node): boolean {
@@ -94,6 +121,22 @@ export class MixinParams extends Node {
       }
     }
   }
+
+  needsEval(): boolean {
+    return this.evaluate;
+  }
+
+  eval(env: ExecEnv): Node {
+    if (!this.needsEval()) {
+      return this;
+    }
+    const tmp: Parameter[] = [];
+    for (const param of this.params) {
+      tmp.push(param.eval(env) as Parameter);
+    }
+    return new MixinParams(tmp, this.variadic, this.required);
+  }
+
 }
 
 export class Mixin extends BlockNode {
@@ -165,20 +208,18 @@ export class Mixin extends BlockNode {
 
 export class MixinCallArgs extends Node {
 
-  readonly evaluate: boolean;
+  protected evaluate: boolean = false;
 
   constructor(
     readonly delimiter: string,
     readonly args: Argument[]) {
     super(NodeType.MIXIN_ARGS);
-    let evaluate = false;
     for (const arg of args) {
-      evaluate = evaluate || arg.needsEval();
-      if (evaluate) {
+      this.evaluate = this.evaluate || arg.needsEval();
+      if (this.evaluate) {
         break;
       }
     }
-    this.evaluate = evaluate;
   }
 
   equals(n: Node): boolean {
@@ -192,8 +233,19 @@ export class MixinCallArgs extends Node {
   }
 
   eval(env: ExecEnv): Node {
-    // TODO:
-    return this;
+    if (!this.evaluate) {
+      return this;
+    }
+    const res = new MixinCallArgs(this.delimiter, []);
+    for (const arg of this.args) {
+      res.add(arg.eval(env) as Argument);
+    }
+    return res;
+  }
+
+  add(arg: Argument): void {
+    this.args.push(arg);
+    this.evaluate = this.evaluate || arg.needsEval();
   }
 
   repr(buf: Buffer): void {

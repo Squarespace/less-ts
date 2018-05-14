@@ -30,15 +30,15 @@
 .ruleset-recurse .child {
   arg: 1;
 }
-.ruleset-mututal-recurse .black {
+.ruleset-mutual-recurse .black {
   arg: 4;
 }
-.ruleset-mututal-recurse .red {
+.ruleset-mutual-recurse .red {
   arg: 3;
 }
-.ruleset-mututal-recurse .black {
+.ruleset-mutual-recurse .black {
   arg: 2;
 }
-.ruleset-mututal-recurse .red {
+.ruleset-mutual-recurse .red {
   arg: 1;
 }

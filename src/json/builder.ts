@@ -23,6 +23,7 @@ import {
   Guard,
   Import,
   Keyword,
+  KeywordColor,
   Media,
   Mixin,
   MixinCall,
@@ -170,6 +171,10 @@ export class Builder {
       case JsonType.COLOR:
       {
         const o = t as ColorJ;
+        const keyword = this.table[o[5]];
+        if (keyword) {
+          return new KeywordColor(keyword, o[1], o[2], o[3]);
+        }
         return new RGBColor(o[1], o[2], o[3], o[4]);
       }
 

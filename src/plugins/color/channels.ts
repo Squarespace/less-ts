@@ -3,6 +3,8 @@ import { Dimension, Unit } from '../../model';
 import { BaseFunction } from '../base';
 import { hsl, rgb } from './util';
 
+const round = Math.round;
+
 class Alpha extends BaseFunction {
 
   constructor() {
@@ -59,7 +61,7 @@ class Lightness extends BaseFunction {
 
   protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = hsl(args[0]);
-    return new Dimension(c.l * 100, Unit.PERCENTAGE);
+    return new Dimension(round(c.l * 100), Unit.PERCENTAGE);
   }
 }
 
@@ -71,7 +73,7 @@ class Luma extends BaseFunction {
 
   protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = rgb(args[0]);
-    return new Dimension(c.luma() * 100, Unit.PERCENTAGE);
+    return new Dimension(round(c.luma() * 100), Unit.PERCENTAGE);
   }
 }
 
@@ -95,7 +97,7 @@ class Saturation extends BaseFunction {
 
   protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = hsl(args[0]);
-    return new Dimension(c.s * 100, Unit.PERCENTAGE);
+    return new Dimension(round(c.s * 100), Unit.PERCENTAGE);
   }
 
 }

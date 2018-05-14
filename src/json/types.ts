@@ -156,6 +156,8 @@ export interface ColorJ {
   [3]: number;
   // alpha
   [4]: number;
+  // optional keyword
+  [5]: number;
 }
 
 export interface CommentJ {

@@ -1,5 +1,6 @@
 import { Buffer, Context, Node, NodeType } from '../common';
 import {
+  Alpha,
   Assignment,
   AttributeElement,
   BaseColor,
@@ -10,16 +11,24 @@ import {
   Comment,
   Directive,
   Element,
+  Expression,
+  ExpressionList,
+  Feature,
   Features,
+  FunctionCall,
   Import,
   Media,
+  Paren,
+  Quoted,
   RGBColor,
   Rule,
   Ruleset,
   Selector,
   Selectors,
+  Shorthand,
   Stylesheet,
   TextElement,
+  Url,
   ValueElement
 } from '../model';
 import { combineFeatures, combineSelectors } from './combine';
@@ -120,7 +129,7 @@ export class Renderer {
     this.model = new CssModel(ctx);
   }
 
-  static render(ctx: Context, sheet: Stylesheet): String {
+  static render(ctx: Context, sheet: Stylesheet): string {
     return new Renderer(ctx, sheet)._render();
   }
 
@@ -190,15 +199,7 @@ export class Renderer {
 
         case NodeType.RULE:
         {
-          const o = n as Rule;
-          const buf = ctx.newBuffer();
-          o.property.repr(buf);
-          buf.str(buf.chars.rulesep);
-          o.value.repr(buf);
-          if (o.important) {
-            buf.str(' !important');
-          }
-          model.value(buf.toString());
+          model.value(ctx.render(n));
           break;
         }
 
@@ -252,6 +253,187 @@ export class Renderer {
 
 }
 
+export const renderNode = (buf: Buffer, n: Node | undefined): void => {
+  if (n === undefined) {
+    return;
+  }
+
+  switch (n.type) {
+    case NodeType.ALPHA:
+      buf.str('alpha(opacity=');
+      renderNode(buf, (n as Alpha).value);
+      buf.str(')');
+      break;
+
+    case NodeType.ANONYMOUS:
+    case NodeType.DIMENSION:
+    case NodeType.FALSE:
+    case NodeType.KEYWORD:
+    case NodeType.PROPERTY:
+    case NodeType.RATIO:
+    case NodeType.TRUE:
+    case NodeType.UNICODE_RANGE:
+      n.repr(buf);
+      break;
+
+    case NodeType.ASSIGNMENT:
+    {
+      const o = n as Assignment;
+      buf.str(o.name).str('=');
+      renderNode(buf, o.value);
+      break;
+    }
+
+    case NodeType.COLOR:
+      (n as BaseColor).toRGB().repr(buf);
+      break;
+
+    case NodeType.COMMENT:
+    {
+      const o = n as Comment;
+      if (o.block) {
+        buf.str('/*').str(o.body).str('*/');
+      } else {
+        buf.str('//').str(o.body);
+      }
+      if (o.newline) {
+        buf.str('\n');
+      }
+      break;
+    }
+
+    case NodeType.DIRECTIVE:
+    {
+      const o = n as Directive;
+      buf.str(o.name);
+      if (o.value) {
+        buf.str(' ');
+        renderNode(buf, o.value);
+      }
+      break;
+    }
+
+    case NodeType.EXPRESSION:
+      renderList(buf, (n as Expression).values, ' ');
+      break;
+
+    case NodeType.EXPRESSION_LIST:
+      renderList(buf, (n as ExpressionList).values, buf.chars.listsep);
+      break;
+
+    case NodeType.FEATURE:
+    {
+      const o = n as Feature;
+      renderNode(buf, o.property);
+      buf.str(buf.chars.rulesep);
+      renderNode(buf, o.value);
+      break;
+    }
+
+    case NodeType.FEATURES:
+      renderList(buf, (n as Features).features, buf.chars.listsep);
+      break;
+
+    case NodeType.FUNCTION_CALL:
+    {
+      const o = n as FunctionCall;
+      buf.str(o.name).str('(');
+      renderList(buf, o.args, buf.chars.listsep);
+      buf.str(')');
+      break;
+    }
+
+    case NodeType.PAREN:
+      buf.str('(');
+      renderNode(buf, (n as Paren).value);
+      buf.str(')');
+      break;
+
+    case NodeType.QUOTED:
+      renderQuoted(buf, n as Quoted);
+      break;
+
+    case NodeType.RULE:
+    {
+      const o = n as Rule;
+      renderNode(buf, o.property);
+      buf.str(buf.chars.rulesep);
+      renderNode(buf, o.value);
+      if (o.important) {
+        buf.str(' !important');
+      }
+      break;
+    }
+
+    case NodeType.SELECTORS:
+    {
+      const selectors = (n as Selectors).selectors;
+      for (const s of selectors) {
+        renderSelector(buf, s);
+      }
+      break;
+    }
+
+    case NodeType.SELECTOR:
+      renderSelector(buf, n as Selector);
+      break;
+
+    case NodeType.SHORTHAND:
+    {
+      const o = n as Shorthand;
+      renderNode(buf, o.left);
+      buf.str('/');
+      renderNode(buf, o.right);
+      break;
+    }
+
+    case NodeType.URL:
+      buf.str('url(');
+      renderNode(buf, (n as Url).value);
+      buf.str(')');
+      break;
+  }
+};
+
+const renderList = (buf: Buffer, nodes: Node[], sep: string): void => {
+  const len = nodes.length;
+  for (let i = 0; i < len; i++) {
+    if (i > 0) {
+      buf.str(sep);
+    }
+    renderNode(buf, nodes[i]);
+  }
+};
+
+const renderAlpha = (buf: Buffer, n: Alpha): void => {
+  buf.str('alpha(opacity=');
+  renderNode(buf, n.value);
+  buf.str(')');
+};
+
+const renderQuoted = (buf: Buffer, n: Quoted): void => {
+  const { escaped, parts } = n;
+  const delim = escaped ? '' : n.delim;
+  const emit = !buf.inEscape();
+  if (emit) {
+    if (!escaped) {
+      buf.str(delim);
+    }
+    buf.startEscape(delim);
+  }
+  const len = parts.length;
+  for (let i = 0; i < len; i++) {
+    renderNode(buf, parts[i]);
+  }
+
+  if (emit) {
+    buf.endEscape();
+    if (!escaped) {
+      buf.str(delim);
+    }
+  }
+};
+
 /**
  * Render a selector's elements for final output.
  */
@@ -295,5 +477,18 @@ const renderElement = (buf: Buffer, elem: Element, isFirst: boolean, afterWildca
     return;
   }
 
-  elem.repr(buf);
+  if (elem instanceof AttributeElement) {
+    buf.str('[');
+    const { parts } = elem as AttributeElement;
+    for (const part of parts) {
+      renderNode(buf, part);
+    }
+    buf.str(']');
+
+  } else if (elem instanceof TextElement) {
+    (elem as TextElement).repr(buf);
+
+  } else if (elem instanceof ValueElement) {
+    renderNode(buf, (elem as ValueElement).value);
+  }
 };

@@ -60,7 +60,7 @@ export class Condition extends Node {
     const op0 = left.needsEval() ? left.eval(env) : left;
     const op1 = right.needsEval() ? right.eval(env) : right;
 
-    switch (this.operator) {
+    switch (operator) {
       case Operator.ADD:
       case Operator.DIVIDE:
       case Operator.MULTILY:
@@ -94,7 +94,7 @@ export class Condition extends Node {
         break;
 
       case NodeType.DIMENSION:
-        res = compareDimension(op0 as Dimension, right);
+        res = compareDimension(op0 as Dimension, op1);
         break;
 
       case NodeType.KEYWORD:
@@ -234,5 +234,13 @@ const compareDimension = (left: Dimension, right: Node): number => {
   return basevalue < value ? -1 : basevalue > value ? 1 : 0;
 };
 
-const compareKeyword = (left: Keyword, right: Node): number =>
-  right.type === NodeType.KEYWORD ? compareString(left.value, (right as Keyword).value) : -1;
+const compareKeyword = (left: Keyword, right: Node): number => {
+  switch (right.type) {
+    case NodeType.FALSE:
+    case NodeType.KEYWORD:
+    case NodeType.TRUE:
+      return compareString(left.value, (right as Keyword).value);
+    default:
+      return -1;
+  }
+};

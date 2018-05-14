@@ -51,6 +51,56 @@ export const enum NodeType {
   VARIABLE
 }
 
+export const NodeName: { [x: number]: string } = {
+  [NodeType.ALPHA]: 'ALPHA',
+  [NodeType.ANONYMOUS]: 'ANONYMOUS',
+  [NodeType.ARGUMENT]: 'ARGUMENT',
+  [NodeType.ASSIGNMENT]: 'ASSIGNMENT',
+  [NodeType.BLOCK]: 'BLOCK',
+  [NodeType.BLOCK_DIRECTIVE]: 'BLOCK_DIRECTIVE',
+  [NodeType.COLOR]: 'COLOR',
+  [NodeType.COMMENT]: 'COMMENT',
+  [NodeType.CONDITION]: 'CONDITION',
+  [NodeType.DEFINITION]: 'DEFINITION',
+  [NodeType.DIMENSION]: 'DIMENSION',
+  [NodeType.DIRECTIVE]: 'DIRECTIVE',
+  [NodeType.ELEMENT]: 'ELEMENT',
+  [NodeType.EXPRESSION]: 'EXPRESSION',
+  [NodeType.EXPRESSION_LIST]: 'EXPRESSION_LIST',
+  [NodeType.FALSE]: 'FALSE',
+  [NodeType.FEATURE]: 'FEATURE',
+  [NodeType.FEATURES]: 'FEATURES',
+  [NodeType.FUNCTION_CALL]: 'FUNCTION_CALL',
+  [NodeType.GENERIC_BLOCK]: 'GENERIC_BLOCK',
+  [NodeType.GUARD]: 'GUARD',
+  [NodeType.IMPORT]: 'IMPORT',
+  [NodeType.IMPORT_MARKER]: 'IMPORT_MARKER',
+  [NodeType.KEYWORD]: 'KEYWORD',
+  [NodeType.MEDIA]: 'MEDIA',
+  [NodeType.MIXIN]: 'MIXIN',
+  [NodeType.MIXIN_ARGS]: 'MIXIN_ARGS',
+  [NodeType.MIXIN_CALL]: 'MIXIN_CALL',
+  [NodeType.MIXIN_MARKER]: 'MIXIN_MARKER',
+  [NodeType.MIXIN_PARAMS]: 'MIXIN_PARAMS',
+  [NodeType.OPERATION]: 'OPERATION',
+  [NodeType.PARAMETER]: 'PARAMETER',
+  [NodeType.PAREN]: 'PAREN',
+  [NodeType.PARSE_ERROR]: 'PARSE_ERROR',
+  [NodeType.PROPERTY]: 'PROPERTY',
+  [NodeType.QUOTED]: 'QUOTED',
+  [NodeType.RATIO]: 'RATIO',
+  [NodeType.RULE]: 'RULE',
+  [NodeType.RULESET]: 'RULESET',
+  [NodeType.SELECTOR]: 'SELECTOR',
+  [NodeType.SELECTORS]: 'SELECTORS',
+  [NodeType.SHORTHAND]: 'SHORTHAND',
+  [NodeType.STYLESHEET]: 'STYLESHEET',
+  [NodeType.TRUE]: 'TRUE',
+  [NodeType.UNICODE_RANGE]: 'UNICODE_RANGE',
+  [NodeType.URL]: 'URL',
+  [NodeType.VARIABLE]: 'VARIABLE'
+};
+
 /**
  * Base for all nodes.
  */
@@ -94,6 +144,8 @@ export interface IBlock {
   readonly rules: Node[];
 
   mixins?: Map<string, Node[]>;
+
+  dump(buf: Buffer): void;
 
  /**
    * Lookup the definition 'name'
@@ -169,6 +221,8 @@ export interface ExecEnv {
    */
   frames: IBlock[];
 
+  dump(): string;
+
   /**
    * Create a copy of this environment for some temporary evals.
    */
@@ -222,10 +276,13 @@ export interface Chars {
   selectorsep: string;
 }
 
+export const EOF: string = '\0';
+
 /**
  * Buffer used for node rendering.
  */
 export interface Buffer extends Options {
+
   /**
    * Character at the end of the buffer.
    */
@@ -237,9 +294,29 @@ export interface Buffer extends Options {
   chars: Chars;
 
   /**
+   * Currently-active string delimiter, or EOF.
+   */
+  delim: string;
+
+  /**
    * Append a string to the buffer.
    */
   str(s: string): Buffer;
+
+  /**
+   * Indicates the buffer is in escape mode.
+   */
+  inEscape(): boolean;
+
+  /**
+   * Enter quoted escape mode with the given delimiter.
+   */
+  startEscape(delim: string): void;
+
+  /**
+   * Exit quoted escape mode.
+   */
+  endEscape(): void;
 
   /**
    * Append a number to the buffer.

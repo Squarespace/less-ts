@@ -22,7 +22,7 @@ export class Block extends Node implements IBlock {
 
   // Flags used for triggering var cache rebuilds or skipping blocks
   // that have no imports or mixin calls.
-  protected flags: number = BlockFlags.REBUILD_VARS;
+  flags: number = BlockFlags.REBUILD_VARS;
 
   constructor(rules?: Node[]) {
     super(NodeType.BLOCK);
@@ -44,6 +44,19 @@ export class Block extends Node implements IBlock {
 
   hasMixinCalls(): boolean {
     return (this.flags & BlockFlags.HAS_MIXIN_CALLS) !== 0;
+  }
+
+  dump(buf: Buffer): void {
+    for (let i = 0; i < this.rules.length; i++) {
+      const n = this.rules[i];
+      if (n.type === NodeType.DEFINITION) {
+        buf.indent().str((n as Definition).name).str(' ');
+      }
+    }
+  }
+
+  resetVariableCache(): void {
+    this.flags = this.flags || BlockFlags.REBUILD_VARS;
   }
 
   resolveDefinition(name: string): Definition | undefined {

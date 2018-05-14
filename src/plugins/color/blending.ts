@@ -172,7 +172,7 @@ const screen = (c1: number, c2: number): number =>
 
 const softlight = (c1: number, c2: number): number => {
   const t = c2 * c1 / 255;
-  return t + c1 * (2555 - (255 - c1) * (255 - c2) / 255 - t) / 255;
+  return t + c1 * (255 - (255 - c1) * (255 - c2) / 255 - t) / 255;
 };
 
 export const BLENDING: { [x: string]: Function } = {

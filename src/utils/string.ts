@@ -14,8 +14,7 @@ export const whitespace = (ch: string): boolean => {
 };
 
 export const repeat = (s: string, n: number): string => {
-  let r = s;
-  n--;
+  let r = '';
   while (n-- > 0) {
     r += s;
   }
@@ -47,4 +46,16 @@ export const hexvalue = (ch: string): number => {
     return c - Chars.DIGIT_A;
   }
   return 0;
+};
+
+export const formatDouble = (n: number): string => {
+  const q = Math.floor(n);
+  if (q === n) {
+    return n.toString();
+  }
+
+  // Emit floating point values without a leading '0' digit.
+  const s = n < 0 ? '-' : '';
+  const a = Math.abs(n);
+  return s + (a < 1 ? a.toString().substring(1) : a);
 };

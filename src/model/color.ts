@@ -1,6 +1,8 @@
 import { Buffer, Node, NodeType } from '../common';
 import { Anonymous } from './general';
-import { hexchar, hexToRGB, nameToRGB, rgbToName } from '../utils';
+import { formatDouble, hexchar, hexToRGB, nameToRGB, rgbToName } from '../utils';
+
+const round = Math.round;
 
 export const enum Colorspace {
   RGB = 0,
@@ -45,9 +47,9 @@ export class RGBColor extends BaseColor {
 
   constructor(r: number, g: number, b: number, a: number) {
     super();
-    this.r = chan(r);
-    this.g = chan(g);
-    this.b = chan(b);
+    this.r = round(chan(r));
+    this.g = round(chan(g));
+    this.b = round(chan(b));
     this.a = clamp(a, 0, 1.0);
   }
 
@@ -78,7 +80,7 @@ export class RGBColor extends BaseColor {
       buf.num(r).str(listsep);
       buf.num(g).str(listsep);
       buf.num(b).str(listsep);
-      buf.num(a);
+      buf.str(formatDouble(a));
       buf.str(')');
       return;
     }
@@ -92,7 +94,7 @@ export class RGBColor extends BaseColor {
     const b1 = hexchar(b & 0x0F);
 
     // See if we can represent this as a 3-character hex color
-    const hex3 = buf.fastcolor && r0 === r1 && g0 === g1 && b0 === b1;
+    const hex3 = !buf.fastcolor && r0 === r1 && g0 === g1 && b0 === b1;
 
     // If we aren't forcing a hex value here, try to outut a name if
     // if is shorter than the hex representation.
@@ -122,7 +124,7 @@ export class RGBColor extends BaseColor {
     return Colorspace.RGB;
   }
 
-  toRGB(): RGBColor {
+  toRGB(): this {
     return this;
   }
 
@@ -180,8 +182,18 @@ export class RGBColor extends BaseColor {
 
 export class HSLColor extends BaseColor {
 
-  constructor(readonly h: number, readonly s: number, readonly l: number, readonly a: number) {
+  readonly h: number;
+  readonly s: number;
+  readonly l: number;
+  readonly a: number;
+
+  constructor(h: number, s: number, l: number, a: number) {
     super();
+
+    this.h = clamp(h * 360.0, 0, 360);
+    this.s = clamp(s, 0, 1);
+    this.l = clamp(l, 0, 1);
+    this.a = clamp(a, 0, 1);
   }
 
   equals(n: Node): boolean {

@@ -11,6 +11,7 @@ import {
   Parameter,
   Selector
 } from '../model';
+import { safeEquals } from '../utils';
 
 const EMPTY_BLOCK = new GenericBlock(new Block());
 
@@ -88,6 +89,7 @@ export class MixinMatcher {
       if (name) {
         continue;
       }
+
       // Do we have a valid positional parameter? Check for variadic or a
       // value pattern match.
       if (i < paramSize) {
@@ -95,7 +97,7 @@ export class MixinMatcher {
         if (param.variadic && variadic) {
           variadic.add(arg.value);
           continue;
-        } else if (param.name === undefined) {
+        } else if (!param.name) {
           // Pattern match
           continue;
         }
@@ -107,7 +109,7 @@ export class MixinMatcher {
         if (n) {
           bindings[n] = arg.value;
         }
-      } else if (variadic) {
+      } else if (variadic !== undefined) {
         variadic.add(arg.value);
       } else {
         // No names left and no variadic exists to collect the overflow.
@@ -161,7 +163,7 @@ export class MixinMatcher {
     for (let i = 0; i < size; i++) {
       const arg = args[i];
       const param = params[i];
-      if (param.name === undefined && !param.variadic && !this.valueEquals(arg, param)) {
+      if (!param.name && !param.variadic && !this.valueEquals(arg, param)) {
         return false;
       }
     }
@@ -171,9 +173,9 @@ export class MixinMatcher {
   private valueEquals(arg: Argument, param: Parameter): boolean {
     const val1 = arg.value;
     const val2 = param.value;
-    if (!val1.equals(val2)) {
-      const str1 = this.ctx.render(val1);
-      const str2 = this.ctx.render(val2);
+    if (!safeEquals(val1, val2)) {
+      const str1 =  this.ctx.render(val1);
+      const str2 = val2 === undefined ? '' : this.ctx.render(val2);
       if (str1 !== str2) {
         return false;
       }

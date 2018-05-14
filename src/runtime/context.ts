@@ -1,12 +1,14 @@
 import {
   Buffer,
   Context,
+  EOF,
   ExecEnv,
   Function,
   IBlock,
   IDefinition,
   Node,
   Options,
+  NodeName,
   NodeType,
   Chars
 } from '../common';
@@ -26,6 +28,8 @@ export class RuntimeBuffer implements Buffer {
   // Char at end of buffer
   prev: string = '\n';
 
+  delim: string = EOF;
+
   constructor(
     readonly compress: boolean,
     readonly fastcolor: boolean,
@@ -43,10 +47,23 @@ export class RuntimeBuffer implements Buffer {
     );
   }
 
+  inEscape(): boolean {
+    return this.delim !== EOF;
+  }
+
+  startEscape(delim: string): void {
+    this.delim = delim;
+  }
+
+  endEscape(): void {
+    this.delim = EOF;
+  }
+
   reset(): void {
     this.buf = '';
     this.depth = 0;
     this.prev = '\n';
+    this.delim = EOF;
   }
 
   str(s: string): Buffer {
@@ -122,9 +139,21 @@ export class RuntimeExecEnv implements ExecEnv {
     this.frames = this.frames.concat(frames);
   }
 
+  dump(): string {
+    const buf = this.newBuffer();
+    const end = this.frames.length - 1;
+    for (let i = end; i >= 0; i--) {
+      buf.incr();
+      buf.str(`${i}: `);
+      this.frames[i].dump(buf);
+      buf.str('\n');
+    }
+    return buf.toString();
+  }
+
   resolveDefinition(name: string): IDefinition | undefined {
-    const len = this.frames.length;
-    for (let i = len - 1; i >= 0; i--) {
+    const end = this.frames.length - 1;
+    for (let i = end; i >= 0; i--) {
       const def = this.frames[i].resolveDefinition(name);
       if (def) {
         return def;
@@ -154,6 +183,8 @@ export class RuntimeExecEnv implements ExecEnv {
 
 }
 
+export type NodeRenderer = (buf: Buffer, n: Node) => void;
+
 export class RuntimeContext implements Context {
 
   // Buffer-related settings. Used for fast construction of new temp buffers.
@@ -164,7 +195,10 @@ export class RuntimeContext implements Context {
   readonly chars: Chars;
   readonly strictMath: boolean;
 
-  constructor(readonly opts: Options = { compress: false }) {
+  constructor(
+    readonly opts: Options = { compress: false },
+    readonly renderer: NodeRenderer
+  ) {
     this.indentSize = opts.indentSize || 2;
     this.compress = opts.compress || false;
     this.fastcolor = opts.fastcolor === undefined ? true : opts.fastcolor;
@@ -198,13 +232,12 @@ export class RuntimeContext implements Context {
 
   render(n: Node): string {
     const buf = this.newBuffer();
-    n.repr(buf);
+    this.renderer(buf, n);
     return buf.toString();
   }
 
   renderInto(buf: Buffer, n: Node): void {
-    // TODO: revisit. mirroring Javas API but we may not need this.
-    n.repr(buf);
+    this.renderer(buf, n);
   }
 
   findFunction(name: string): Function | undefined {

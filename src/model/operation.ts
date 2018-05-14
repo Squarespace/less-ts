@@ -49,8 +49,10 @@ export class Operation extends Node {
 
   eval(env: ExecEnv): Node {
     const { operator, left, right } = this;
+
     let op0 = cast(left.needsEval() ? left.eval(env) : left);
     let op1 = cast(right.needsEval() ? right.eval(env) : right);
+
     if (op0.type === NodeType.DIMENSION && op1.type === NodeType.COLOR) {
       if (operator === Operator.MULTILY || operator === Operator.ADD) {
         [op0, op1] = [op1, op0];
@@ -126,7 +128,7 @@ const operateDimension = (op: Operator, n0: Dimension, n1: Dimension): Node => {
   const u0 = n0.unit;
   const u1 = n1.unit;
   const unit = u0 ? u0 : u1;
-  const factor = unitConversionFactor(u0, u1);
+  const factor = unitConversionFactor(u1, u0);
   const scaled = n1.value * factor;
   let result = 0.0;
 

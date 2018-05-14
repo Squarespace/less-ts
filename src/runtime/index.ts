@@ -1,3 +1,4 @@
+export * from './compiler';
 export * from './context';
 export * from './css';
 export * from './evaluate';

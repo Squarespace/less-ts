@@ -218,7 +218,7 @@
   ]],
   [RULESET, [SELECTORS, [
     [SELECTOR, [
-      [TEXT_ELEMENT, ' ', '.ruleset-mututal-recurse']
+      [TEXT_ELEMENT, ' ', '.ruleset-mutual-recurse']
     ]]
   ]], [
     [MIXIN_CALL, [SELECTOR, [
