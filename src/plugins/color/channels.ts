@@ -59,7 +59,7 @@ class Lightness extends BaseFunction {
 
   protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = hsl(args[0]);
-    return new Dimension(c.l);
+    return new Dimension(c.l * 100, Unit.PERCENTAGE);
   }
 }
 
@@ -71,7 +71,7 @@ class Luma extends BaseFunction {
 
   protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = rgb(args[0]);
-    return new Dimension(c.luma(), Unit.PERCENTAGE);
+    return new Dimension(c.luma() * 100, Unit.PERCENTAGE);
   }
 }
 
@@ -95,7 +95,7 @@ class Saturation extends BaseFunction {
 
   protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = hsl(args[0]);
-    return new Dimension(c.s);
+    return new Dimension(c.s * 100, Unit.PERCENTAGE);
   }
 
 }

@@ -69,10 +69,10 @@ export class Condition extends Node {
         return false;
 
       case Operator.AND:
-        return truthValue(env, left) && truthValue(env, right);
+        return truthValue(env, op0) && truthValue(env, op1);
 
       case Operator.OR:
-        return truthValue(env, left) || truthValue(env, right);
+        return truthValue(env, op0) || truthValue(env, op1);
 
       default:
         break;
@@ -83,30 +83,30 @@ export class Condition extends Node {
     switch (type) {
       case NodeType.ANONYMOUS:
       {
-        const lval = (left as Anonymous).value;
-        const rval = env.render(right);
+        const lval = (op0 as Anonymous).value;
+        const rval = env.render(op1);
         res = compareString(lval, rval);
         break;
       }
 
       case NodeType.COLOR:
-        res = compareColor(left as BaseColor, right);
+        res = compareColor(op0 as BaseColor, op1);
         break;
 
       case NodeType.DIMENSION:
-        res = compareDimension(left as Dimension, right);
+        res = compareDimension(op0 as Dimension, right);
         break;
 
       case NodeType.KEYWORD:
       case NodeType.TRUE:
       case NodeType.FALSE:
-        res = compareKeyword(left as Keyword, right);
+        res = compareKeyword(op0 as Keyword, op1);
         break;
 
       case NodeType.QUOTED:
       {
-        const lval = env.render(left);
-        const rval = env.render(right);
+        const lval = env.render(op0);
+        const rval = env.render(op1);
         res = compareString(lval, rval);
         break;
       }

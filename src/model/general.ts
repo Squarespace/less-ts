@@ -62,7 +62,7 @@ export class Assignment extends Node {
   }
 
   needsEval(): boolean {
-    return this.needsEval();
+    return this.value.needsEval();
   }
 
   eval(env: ExecEnv): Node {
@@ -174,7 +174,8 @@ export class FunctionCall extends Node {
   }
 
   needsEval(): boolean {
-    return !this.noImpl || this.evaluate;
+    // return !this.noImpl || this.evaluate;
+    return false;
   }
 
   eval(env: ExecEnv): Node {

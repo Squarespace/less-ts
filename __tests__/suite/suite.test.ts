@@ -6,9 +6,9 @@ import { Builder, Context, NodeJ, Options, Renderer, RuntimeContext, Stylesheet,
 const ROOT = join(__dirname, '../data/css');
 const JSON_EXT = '.json';
 
-// const tests = fs.readdirSync(ROOT)
-//   .filter(n => n.endsWith(JSON_EXT))
-//   .map(n => n.slice(0, -JSON_EXT.length));
+const tests = fs.readdirSync(ROOT)
+  .filter(n => n.endsWith(JSON_EXT))
+  .map(n => n.slice(0, -JSON_EXT.length));
 
 interface Root {
   strings: string[];
@@ -37,8 +37,9 @@ const evaluate = (root: Root, opts: Options): void => {
   console.log(css);
 };
 
-const tests = ['selector-wildcards'];
+// const tests = ['selector-wildcards'];
 // const tests = ['comment'];
+// const tests = ['function-css'];
 
 tests.forEach(n => {
   const opts: Options = {
