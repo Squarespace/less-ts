@@ -41,7 +41,7 @@ export class RGBColor extends BaseColor {
   readonly b: number;
   readonly a: number;
 
-  protected _forceHex: boolean = false;
+  forceHex: boolean = false;
 
   constructor(r: number, g: number, b: number, a: number) {
     super();
@@ -60,6 +60,10 @@ export class RGBColor extends BaseColor {
           && this.a === o.a;
     }
     return false;
+  }
+
+  copy(): RGBColor {
+    return new RGBColor(this.r, this.g, this.b, this.a);
   }
 
   luma(): number {
@@ -92,7 +96,7 @@ export class RGBColor extends BaseColor {
 
     // If we aren't forcing a hex value here, try to outut a name if
     // if is shorter than the hex representation.
-    if (!this._forceHex && !buf.fastcolor) {
+    if (!this.forceHex && !buf.fastcolor) {
       const name = rgbToName(r, g, b);
       if (name) {
         const len = name.length;
@@ -116,10 +120,6 @@ export class RGBColor extends BaseColor {
 
   colorspace(): Colorspace {
     return Colorspace.RGB;
-  }
-
-  forceHex(): void {
-    this._forceHex = true;
   }
 
   toRGB(): RGBColor {
