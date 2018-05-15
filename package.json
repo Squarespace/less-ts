@@ -13,9 +13,9 @@
     "lint": "echo 'fixme'",
     "release": "",
     "stress": "echo 'fixme'",
-    "test": "rimraf ./coverage && jest --coverage --verbose -i --no-cache",
+    "test": "rimraf ./coverage && jest --coverage --verbose -i --no-cache --coverageReporters=html",
     "test:codecov": "rimraf ./coverage && jest --coverage --coverageReporters=lcovonly --verbose -i --no-cache",
-    "test:watch": "jest --watch"
+    "test:watch": "jest --watch --coverage --coverageReporters=html"
   },
   "dependencies": {},
   "devDependencies": {

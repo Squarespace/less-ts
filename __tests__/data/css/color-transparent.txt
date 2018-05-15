@@ -20,42 +20,42 @@
   [MIXIN, '.mixin-2', [MIXIN_PARAMS, [
     [PARAMETER, '@color', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '=', [VARIABLE, '@color'], [COLOR, 0, 0, 0, 1.0], false]
+    [CONDITION, '=', [VARIABLE, '@color'], [COLOR, 0, 0, 0, 1.0, null], false]
   ]], [
     [RULE, [PROPERTY, 'content2'], [KEYWORD, 'A'], false]
   ]],
   [MIXIN, '.mixin-2', [MIXIN_PARAMS, [
     [PARAMETER, '@color', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '<>', [VARIABLE, '@color'], [COLOR, 0, 0, 0, 1.0], false]
+    [CONDITION, '<>', [VARIABLE, '@color'], [COLOR, 0, 0, 0, 1.0, null], false]
   ]], [
     [RULE, [PROPERTY, 'content2'], [KEYWORD, 'B'], false]
   ]],
   [MIXIN, '.mixin-3', [MIXIN_PARAMS, [
     [PARAMETER, '@color', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '=', [COLOR, 0, 0, 0, 1.0], [VARIABLE, '@color'], false]
+    [CONDITION, '=', [COLOR, 0, 0, 0, 1.0, null], [VARIABLE, '@color'], false]
   ]], [
     [RULE, [PROPERTY, 'content3'], [KEYWORD, 'A'], false]
   ]],
   [MIXIN, '.mixin-3', [MIXIN_PARAMS, [
     [PARAMETER, '@color', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '<>', [COLOR, 0, 0, 0, 1.0], [VARIABLE, '@color'], false]
+    [CONDITION, '<>', [COLOR, 0, 0, 0, 1.0, null], [VARIABLE, '@color'], false]
   ]], [
     [RULE, [PROPERTY, 'content3'], [KEYWORD, 'B'], false]
   ]],
   [MIXIN, '.mixin-4', [MIXIN_PARAMS, [
     [PARAMETER, '@color', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '=', [COLOR, 0, 0, 0, 1.0], [VARIABLE, '@color'], false]
+    [CONDITION, '=', [COLOR, 0, 0, 0, 1.0, 'transparent'], [VARIABLE, '@color'], false]
   ]], [
     [RULE, [PROPERTY, 'content4'], [KEYWORD, 'A'], false]
   ]],
   [MIXIN, '.mixin-4', [MIXIN_PARAMS, [
     [PARAMETER, '@color', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '<>', [COLOR, 0, 0, 0, 1.0], [VARIABLE, '@color'], false]
+    [CONDITION, '<>', [COLOR, 0, 0, 0, 1.0, 'transparent'], [VARIABLE, '@color'], false]
   ]], [
     [RULE, [PROPERTY, 'content4'], [KEYWORD, 'B'], false]
   ]],
@@ -68,22 +68,22 @@
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.mixin-1']
     ]], [MIXIN_ARGS, 0, [
-      [ARGUMENT, null, [COLOR, 0, 0, 0, 1.0]]
+      [ARGUMENT, null, [COLOR, 0, 0, 0, 1.0, 'transparent']]
     ]], false],
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.mixin-2']
     ]], [MIXIN_ARGS, 0, [
-      [ARGUMENT, null, [COLOR, 0, 0, 0, 1.0]]
+      [ARGUMENT, null, [COLOR, 0, 0, 0, 1.0, 'transparent']]
     ]], false],
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.mixin-3']
     ]], [MIXIN_ARGS, 0, [
-      [ARGUMENT, null, [COLOR, 0, 0, 0, 1.0]]
+      [ARGUMENT, null, [COLOR, 0, 0, 0, 1.0, 'transparent']]
     ]], false],
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.mixin-4']
     ]], [MIXIN_ARGS, 0, [
-      [ARGUMENT, null, [COLOR, 0, 0, 0, 1.0]]
+      [ARGUMENT, null, [COLOR, 0, 0, 0, 1.0, 'transparent']]
     ]], false]
   ]],
   [RULESET, [SELECTORS, [
@@ -94,22 +94,31 @@
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.mixin-1']
     ]], [MIXIN_ARGS, 0, [
-      [ARGUMENT, null, [COLOR, 255, 255, 255, 1.0]]
+      [ARGUMENT, null, [COLOR, 255, 255, 255, 1.0, null]]
     ]], false],
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.mixin-2']
     ]], [MIXIN_ARGS, 0, [
-      [ARGUMENT, null, [COLOR, 255, 255, 255, 1.0]]
+      [ARGUMENT, null, [COLOR, 255, 255, 255, 1.0, null]]
     ]], false],
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.mixin-3']
     ]], [MIXIN_ARGS, 0, [
-      [ARGUMENT, null, [COLOR, 255, 255, 255, 1.0]]
+      [ARGUMENT, null, [COLOR, 255, 255, 255, 1.0, null]]
     ]], false],
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.mixin-4']
     ]], [MIXIN_ARGS, 0, [
-      [ARGUMENT, null, [COLOR, 255, 255, 255, 1.0]]
+      [ARGUMENT, null, [COLOR, 255, 255, 255, 1.0, null]]
     ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'div'],
+      [TEXT_ELEMENT, null, '.emit']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 0, 0, 0, 1.0, 'transparent'], false],
+    [RULE, [PROPERTY, 'color'], [OPERATION, '+', [COLOR, 0, 0, 0, 1.0, 'transparent'], [COLOR, 0, 0, 0, 1.0, null]], false]
   ]]
 ]]

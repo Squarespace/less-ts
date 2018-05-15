@@ -33,7 +33,7 @@
   ]], [
     [RULE, [PROPERTY, 'color'], [EXPRESSION, [
       [COMMENT, ' c ', 1, false],
-      [COLOR, 255, 0, 0, 1.0]
+      [COLOR, 255, 0, 0, 1.0, null]
     ]], false]
   ]]
 ]]

@@ -1,7 +1,7 @@
 [STYLESHEET, 1, [
   [COMMENT, ' Importing variables', 0, true],
   [MIXIN, '.mixin-import-a', [MIXIN_PARAMS, [], false, 0], NULL, [
-    [DEFINITION, '@a', [COLOR, 17, 34, 51, 1.0]]
+    [DEFINITION, '@a', [COLOR, 17, 34, 51, 1.0, null]]
   ]],
   [RULESET, [SELECTORS, [
     [SELECTOR, [
@@ -16,7 +16,7 @@
   [COMMENT, ' Parameter default values', 0, true],
   [MIXIN, '.mixin-defaults', [MIXIN_PARAMS, [
     [PARAMETER, '@num', [DIMENSION, 1, null], false],
-    [PARAMETER, '@color', [COLOR, 0, 0, 255, 1.0], false]
+    [PARAMETER, '@color', [COLOR, 0, 0, 255, 1.0, null], false]
   ], false, 0], NULL, [
     [RULE, [PROPERTY, 'num'], [VARIABLE, '@num'], false],
     [RULE, [PROPERTY, 'color'], [VARIABLE, '@color'], false]
@@ -45,7 +45,7 @@
       [MIXIN_CALL, [SELECTOR, [
         [TEXT_ELEMENT, null, '.mixin-defaults']
       ]], [MIXIN_ARGS, 0, [
-        [ARGUMENT, '@color', [COLOR, 255, 0, 0, 1.0]]
+        [ARGUMENT, '@color', [COLOR, 255, 0, 0, 1.0, null]]
       ]], false]
     ]]
   ]],
@@ -104,13 +104,13 @@
   ]],
   [COMMENT, ' Pattern matching', 0, true],
   [MIXIN, '.mixin-color', [MIXIN_PARAMS, [
-    [PARAMETER, null, [COLOR, 255, 255, 255, 1.0], false],
+    [PARAMETER, null, [COLOR, 255, 255, 255, 1.0, null], false],
     [PARAMETER, null, NULL, true]
   ], true, 1], NULL, [
     [RULE, [PROPERTY, 'color-white'], [VARIABLE, '@arguments'], false]
   ]],
   [MIXIN, '.mixin-color', [MIXIN_PARAMS, [
-    [PARAMETER, null, [COLOR, 0, 0, 0, 1.0], false],
+    [PARAMETER, null, [COLOR, 0, 0, 0, 1.0, null], false],
     [PARAMETER, null, NULL, true]
   ], true, 1], NULL, [
     [RULE, [PROPERTY, 'color-black'], [VARIABLE, '@arguments'], false]
@@ -128,7 +128,7 @@
       [MIXIN_CALL, [SELECTOR, [
         [TEXT_ELEMENT, null, '.mixin-color']
       ]], [MIXIN_ARGS, 0, [
-        [ARGUMENT, null, [COLOR, 255, 255, 255, 1.0]],
+        [ARGUMENT, null, [COLOR, 255, 255, 255, 1.0, null]],
         [ARGUMENT, null, [QUOTED, 0, false, [
           [ANONYMOUS, 'parent-1']
         ]]]
@@ -142,7 +142,7 @@
       [MIXIN_CALL, [SELECTOR, [
         [TEXT_ELEMENT, null, '.mixin-color']
       ]], [MIXIN_ARGS, 0, [
-        [ARGUMENT, null, [COLOR, 0, 0, 0, 1.0]],
+        [ARGUMENT, null, [COLOR, 0, 0, 0, 1.0, null]],
         [ARGUMENT, null, [QUOTED, 0, false, [
           [ANONYMOUS, 'parent-2']
         ]]]

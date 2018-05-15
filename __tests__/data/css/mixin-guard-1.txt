@@ -51,7 +51,7 @@
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '=', [COLOR, 0, 0, 255, 1.0], [VARIABLE, '@a'], false]
+    [CONDITION, '=', [COLOR, 0, 0, 255, 1.0, null], [VARIABLE, '@a'], false]
   ]], [
     [COMMENT, ' (#00f = @a) ', 1, true],
     [RULE, [PROPERTY, '-7'], [VARIABLE, '@a'], false]
@@ -152,7 +152,7 @@
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.m']
     ]], [MIXIN_ARGS, 0, [
-      [ARGUMENT, null, [COLOR, 255, 0, 0, 1.0]]
+      [ARGUMENT, null, [COLOR, 255, 0, 0, 1.0, null]]
     ]], false]
   ]],
   [RULESET, [SELECTORS, [
@@ -163,7 +163,7 @@
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.m']
     ]], [MIXIN_ARGS, 0, [
-      [ARGUMENT, null, [COLOR, 255, 0, 0, 1.0]]
+      [ARGUMENT, null, [COLOR, 255, 0, 0, 1.0, null]]
     ]], false]
   ]],
   [RULESET, [SELECTORS, [
@@ -174,7 +174,7 @@
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.m']
     ]], [MIXIN_ARGS, 0, [
-      [ARGUMENT, null, [COLOR, 0, 0, 255, 1.0]]
+      [ARGUMENT, null, [COLOR, 0, 0, 255, 1.0, null]]
     ]], false]
   ]],
   [RULESET, [SELECTORS, [

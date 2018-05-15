@@ -10,3 +10,7 @@ div {
   content3: B;
   content4: B;
 }
+div.emit {
+  color: transparent;
+  color: #000;
+}

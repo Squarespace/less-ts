@@ -1,1 +1,1 @@
-{"strings":["http://foo.com/foo.css"," Non-less-evaluated imports"],"paths":[null],"positions":["CAA","CAA","GAA","GQA","AAA","IAA","IQA","IYA","AAA","KAA","KQA","KYA","AAA"],"root":[37,1,[[7,1,0,1],[19,[41,[1,0]],0,[-1]],[19,[41,[30,0,0,[[1,0]]]],0,[-1]],[19,[41,[30,1,0,[[1,0]]]],0,[-1]]]]}
+{"strings":["http://foo.com/foo.css"," Non-less-evaluated imports"],"root":[37,1,[[7,1,0,1],[19,[41,[1,0]],0,[-1]],[19,[41,[30,0,0,[[1,0]]]],0,[-1]],[19,[41,[30,1,0,[[1,0]]]],0,[-1]]]]}

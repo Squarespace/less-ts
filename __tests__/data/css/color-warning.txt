@@ -5,7 +5,7 @@
       [TEXT_ELEMENT, ' ', '.color-warnings']
     ]]
   ]], [
-    [RULE, [PROPERTY, 'a1'], [OPERATION, '-', [COLOR, 1, 1, 1, 1.0], [DIMENSION, 1, 'px']], false],
-    [RULE, [PROPERTY, 'a2'], [OPERATION, '+', [COLOR, 0, 0, 0, 1.0], [DIMENSION, 1, 'px']], false]
+    [RULE, [PROPERTY, 'a1'], [OPERATION, '-', [COLOR, 1, 1, 1, 1.0, null], [DIMENSION, 1, 'px']], false],
+    [RULE, [PROPERTY, 'a2'], [OPERATION, '+', [COLOR, 0, 0, 0, 1.0, null], [DIMENSION, 1, 'px']], false]
   ]]
 ]]
