@@ -138,9 +138,6 @@ export class CssModel {
    * Push a block up the stack until it finds its correct parent.
    */
   protected defer(child: CssBlock): void {
-    // if (this.current.accept(child)) {
-    //   return;
-    // }
     const len = this.stack.length;
     for (let i = len - 1; i >= 0; i--) {
       if (this.stack[i].accept(child)) {

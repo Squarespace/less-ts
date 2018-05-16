@@ -1,5 +1,5 @@
 import { Combinator, Selector, Selectors, TextElement } from '../../src/model';
-import { RuntimeBuffer, RuntimeContext } from '../../src/runtime';
+import { LessCompiler } from '../../src/runtime';
 import { combineSelectors } from '../../src/runtime/combine';
 import { cartesianProduct } from '../../src/runtime/utils';
 
@@ -28,7 +28,8 @@ test('cartesian product', () => {
 });
 
 test('combine', () => {
-  const ctx = new RuntimeContext({ compress: false });
+  const compiler = new LessCompiler({ compress: false });
+  const ctx = compiler.context();
   const ancestors = new Selectors([
     new Selector([
       new TextElement(Combinator.DESC, '.foo'),
@@ -43,14 +44,16 @@ test('combine', () => {
       new TextElement(undefined, ':focus')
     ])
   ]);
-  const r = combineSelectors(ancestors, current);
-  const buf = ctx.newBuffer();
-  r.repr(buf);
-  expect(buf.toString()).toEqual('.foo > .quux:focus,\n.bar:focus');
+
+  const { selectors } = combineSelectors(ancestors, current);
+  expect(selectors.length).toEqual(2);
+  expect(ctx.render(selectors[0])).toEqual('.foo > .quux:focus');
+  expect(ctx.render(selectors[1])).toEqual('.bar:focus');
 });
 
 test('combine wildcards', () => {
-  const ctx = new RuntimeContext({ compress: false });
+  const compiler = new LessCompiler({ compress: false });
+  const ctx = compiler.context();
   const ancestors = new Selectors([
     new Selector([
       new TextElement(Combinator.DESC, '.foo'),
@@ -66,9 +69,8 @@ test('combine wildcards', () => {
       new TextElement(undefined, '.classname')
     ])
   ]);
-  const r = combineSelectors(ancestors, current);
-  const buf = ctx.newBuffer();
-  r.repr(buf);
-  console.log(buf.toString());
-  // expect(buf.toString()).toEqual('');
+  const { selectors } = combineSelectors(ancestors, current);
+  expect(selectors.length).toEqual(2);
+  expect(ctx.render(selectors[0])).toEqual('.foo > .quux.classname');
+  expect(ctx.render(selectors[1])).toEqual('.bar.classname');
 });

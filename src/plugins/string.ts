@@ -1,4 +1,5 @@
 import { ExecEnv, Function, Node, NodeType } from '../common';
+import { formatFunctionArgs } from '../errors';
 import { BaseColor, Quoted, Anonymous } from '../model';
 import { BaseFunction } from './base';
 
@@ -45,6 +46,7 @@ class Format extends BaseFunction {
     let i = 0;
     let j = 1;
     let formatters = 0;
+    let error = false;
 
     while (i < len) {
       let ch = format[i];
@@ -70,7 +72,7 @@ class Format extends BaseFunction {
       formatters++;
       if (j >= args.length) {
         i++;
-        // TODO: error
+        error = true;
         continue;
       }
 
@@ -89,6 +91,9 @@ class Format extends BaseFunction {
       buf += value;
       i++;
       j++;
+    }
+    if (error) {
+      env.ctx.errors.push(formatFunctionArgs(formatters, args.length - 1));
     }
     return new Quoted(orig.delim, orig.escaped, [new Anonymous(buf)]);
   }

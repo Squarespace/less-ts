@@ -1,4 +1,5 @@
 import { Buffer, ExecEnv, Node, NodeType } from '../common';
+import { divideByZero, expectedMathOp, incompatibleUnits, invalidOperation } from '../errors';
 import { BaseColor, RGBColor, colorFromName } from './color';
 import { Dimension, unitConversionFactor } from './dimension';
 import { Keyword } from './keyword';
@@ -74,20 +75,25 @@ const cast = (n: Node): Node => {
 };
 
 const operate = (env: ExecEnv, op: Operator, left: Node, right: Node): Node => {
+  const { ctx } = env;
   switch (left.type) {
     case NodeType.COLOR:
       if (right.type === NodeType.DIMENSION) {
         const dim = right as Dimension;
+        if (dim.unit) {
+          ctx.errors.push(incompatibleUnits(dim.unit, 'color'));
+        }
         right = new RGBColor(dim.value, dim.value, dim.value, 1.0);
       }
       if (right.type === NodeType.COLOR) {
-        return operateColor(op, (left as BaseColor).toRGB(), (right as BaseColor).toRGB());
+        return operateColor(env, op, (left as BaseColor).toRGB(), (right as BaseColor).toRGB());
       }
+      ctx.errors.push(invalidOperation(op, ctx.render(left), ctx.render(right)));
       break;
 
     case NodeType.DIMENSION:
       if (right.type === NodeType.DIMENSION) {
-        return operateDimension(op, left as Dimension, right as Dimension);
+        return operateDimension(env, op, left as Dimension, right as Dimension);
       }
       break;
   }
@@ -97,7 +103,7 @@ const operate = (env: ExecEnv, op: Operator, left: Node, right: Node): Node => {
 /**
  * Apply an operator to color arguments.
  */
-const operateColor = (op: Operator, c0: RGBColor, c1: RGBColor): RGBColor => {
+const operateColor = (env: ExecEnv, op: Operator, c0: RGBColor, c1: RGBColor): RGBColor => {
   const { r, g, b } = c1;
   const a = Math.min(1.0, c0.a + c1.a);
   switch (op) {
@@ -117,14 +123,20 @@ const operateColor = (op: Operator, c0: RGBColor, c1: RGBColor): RGBColor => {
       return new RGBColor(c0.r - r, c0.g - g, c0.b - b, a);
 
     default:
+    {
+      const { ctx } = env;
+      ctx.errors.push(invalidOperation(op, ctx.render(c0), ctx.render(c1)));
       return c0;
+    }
   }
 };
+
+const ZERO = new Dimension(0, undefined);
 
 /**
  * Apply an operator to dimension arguments.
  */
-const operateDimension = (op: Operator, n0: Dimension, n1: Dimension): Node => {
+const operateDimension = (env: ExecEnv, op: Operator, n0: Dimension, n1: Dimension): Node => {
   const u0 = n0.unit;
   const u1 = n1.unit;
   const unit = u0 ? u0 : u1;
@@ -136,6 +148,10 @@ const operateDimension = (op: Operator, n0: Dimension, n1: Dimension): Node => {
     case Operator.DIVIDE:
       if (scaled !== 0.0) {
         result = n0.value / scaled;
+      } else {
+        const { ctx } = env;
+        ctx.errors.push(divideByZero(ctx.render(n0)));
+        return ZERO;
       }
       break;
 
@@ -148,8 +164,11 @@ const operateDimension = (op: Operator, n0: Dimension, n1: Dimension): Node => {
       break;
 
     case Operator.ADD:
-    default:
       result = n0.value + scaled;
+      break;
+
+    default:
+      env.ctx.errors.push(expectedMathOp(op));
       break;
   }
   return new Dimension(result, unit);

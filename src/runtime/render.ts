@@ -296,7 +296,7 @@ export const renderNode = (buf: Buffer, n: Node | undefined): void => {
       } else {
         buf.str('//').str(o.body);
       }
-      if (o.newline) {
+      if (o.newline && !buf.compress) {
         buf.str('\n');
       }
       break;

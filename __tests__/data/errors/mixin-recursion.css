@@ -1,0 +1,18 @@
+.parent {
+  color: red;
+}
+.parent .child-1 {
+  font-size: 2px;
+}
+.parent .child-1 .child-3 {
+  font-size: 4px;
+}
+.parent .child-1 .child-3 .child-5 {
+  font-size: 6px;
+}
+.parent .child-1 .child-3 .child-5 .child-7 {
+  font-size: 8px;
+}
+.parent .child-1 .child-3 .child-5 .child-7 .child-9 {
+  font-size: 10px;
+}

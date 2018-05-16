@@ -6,11 +6,11 @@ export abstract class BaseFunction implements Function {
   readonly spec: ArgSpec;
 
   constructor(readonly name: string, spec: string) {
-    this.spec = new ArgSpec(spec);
+    this.spec = new ArgSpec(name, spec);
   }
 
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
-    if (!this.spec.validate(args)) {
+    if (!this.spec.validate(env, args)) {
       return undefined;
     }
     return this._invoke(env, args);

@@ -4,11 +4,16 @@ import { exec, execSync} from 'child_process';
 
 const ROOT = normalize(join(__dirname, '..'));
 const LESS_EXT = '.less';
-const DATA = join(ROOT, '__tests__/data');
-const LESS = join(DATA, 'less');
-const CSS = join(DATA, 'css');
+const SUITE = join(ROOT, '__tests__/data/suite');
+const LESS = join(SUITE, 'less');
+const CSS = join(SUITE, 'css');
 const LESS_CMD = join(ROOT, 'server/less-compiler/lessc');
 const PREP_CMD = join(ROOT, 'scripts/checkout-lessc');
+
+const ERRORS = join(ROOT, '__tests__/data/errors');
+
+const mtime = (f: string) => fs.statSync(f).mtimeMs;
+const newerThan = (a: string, b: string) => mtime(a) > mtime(b);
 
 const prep = () => {
   if (!fs.existsSync(CSS)) {
@@ -52,46 +57,58 @@ class Semaphore {
   }
 }
 
+const rebuild = (src: string, dst: string): boolean =>
+  !fs.existsSync(dst) || newerThan(src, dst) || newerThan(__filename, dst);
+
+const compileAst = (slots: Semaphore, src: string, dst: string): void => {
+  if (rebuild(src, dst)) {
+    slots.acquire(() => {
+      exec(`${LESS_CMD} --debug JSONAST ${src}`, (e, out, err) => {
+        console.log(' compiled json ast..');
+        console.log(`    saving ${dst}`);
+        fs.writeFileSync(dst, out, { encoding: 'utf-8' });
+        slots.release();
+      });
+    });
+  }
+};
+
+const compileRepr = (slots: Semaphore, src: string, dst: string): void => {
+  if (rebuild(src, dst)) {
+    slots.acquire(() => {
+      exec(`${LESS_CMD} --debug JSONREPR ${src}`, (e, out, err) => {
+        console.log('  emitted json text repr..');
+        console.log(`    saving ${dst}`);
+        fs.writeFileSync(dst, out, { encoding: 'utf-8' });
+        slots.release();
+      });
+    });
+  }
+};
+
 const run = () => {
   prep();
 
   const slots = new Semaphore(12);
-  const names = fs.readdirSync(LESS).filter(n => n.endsWith(LESS_EXT));
+  let names = fs.readdirSync(LESS).filter(n => n.endsWith(LESS_EXT));
   names.forEach(n => {
     const base = join(CSS, n.slice(0, -LESS_EXT.length));
     const src = join(LESS, n);
-
-    // console.log(`\nprocessing ${src}`);
 
     // TODO: since there are subtle differences in the way Java and JavaScript
     // deal with certain types, like floating point numbers above the max
     // range, we hand-correct the css test cases.
 
-    // console.log(' compiling css..');
-    // out = execSync(`${LESS_CMD} ${src}`);
-    // dst = base + '.css';
-    // console.log(`    saving ${dst}`);
-    // fs.writeFileSync(dst, out, { encoding : 'utf-8' });
+    compileAst(slots, src, base + '.json');
+    compileRepr(slots, src, base + '.txt');
+  });
 
-    slots.acquire(() => {
-      exec(`${LESS_CMD} --debug JSONAST ${src}`, (e, out, err) => {
-        console.log(' compiled json ast..');
-        const dst = base + '.json';
-        console.log(`    saving ${dst}`);
-        fs.writeFileSync(dst, out, { encoding: 'utf-8' });
-        slots.release();
-      });
-    });
-
-    slots.acquire(() => {
-      exec(`${LESS_CMD} --debug JSONREPR ${src}`, (e, out, err) => {
-        console.log('  emitted json text repr..');
-        const dst = base + '.txt';
-        console.log(`    saving ${dst}`);
-        fs.writeFileSync(dst, out, { encoding: 'utf-8' });
-        slots.release();
-      });
-    });
+  names = fs.readdirSync(ERRORS).filter(n => n.endsWith(LESS_EXT));
+  names.forEach(n => {
+    const base = join(ERRORS, n.slice(0, -LESS_EXT.length));
+    const src = join(ERRORS, n);
+    compileAst(slots, src, base + '.json');
+    compileRepr(slots, src, base + '.txt');
   });
 };
 

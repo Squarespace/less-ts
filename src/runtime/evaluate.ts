@@ -1,4 +1,5 @@
 import { Context, ExecEnv, Node, NodeType } from '../common';
+import { mixinRecurse, mixinUndefined } from '../errors';
 import {
   Block,
   BlockDirective,
@@ -217,14 +218,12 @@ export class Evaluator {
 
     // Attempt to resolve mixins
     if (!resolver.resolve(env.frames)) {
+      const { ctx } = env;
+      ctx.errors.push(mixinUndefined(ctx.render(call.selector)));
       return EMPTY_BLOCK;
     }
 
-    // Avoid constructing empty blocks when we
     const { matches } = resolver;
-    if (matches.length === 0) {
-      return EMPTY_BLOCK;
-    }
 
     const block = new Block();
     let calls = 0;
@@ -273,10 +272,13 @@ export class Evaluator {
 
     const { ctx } = env;
 
-    // TODO: check mixin recursion depth here
+    if (ctx.mixinDepth >= ctx.mixinRecursionLimit) {
+      ctx.errors.push(mixinRecurse(ctx.render(call.selector), ctx.mixinRecursionLimit));
+      return true;
+    }
 
     original.enter();
-    ctx.enterMixin();
+    ctx.mixinDepth++;
 
     env.push(mixin);
     const { block } = mixin;
@@ -288,7 +290,7 @@ export class Evaluator {
       collector.add(rule);
     }
 
-    ctx.exitMixin();
+    ctx.mixinDepth--;
     original.exit();
 
     // Note: env.pop() calls unnecessary here, since we're throwing
@@ -302,11 +304,14 @@ export class Evaluator {
     const { ctx } = env;
     const { ruleset } = match;
 
-    // TODO: check mixin recursion depth
+    if (ctx.mixinDepth >= ctx.mixinRecursionLimit) {
+      ctx.errors.push(mixinRecurse(ctx.render(call.selector), ctx.mixinRecursionLimit));
+      return true;
+    }
 
-    ctx.enterMixin();
+    ctx.mixinDepth++;
     const result = this.evaluateRuleset(env, ruleset, call.important);
-    ctx.exitMixin();
+    ctx.mixinDepth--;
 
     for (const n of result.block.rules) {
       collector.add(n);

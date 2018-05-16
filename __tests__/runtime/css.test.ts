@@ -1,8 +1,9 @@
 import { Node, NodeType } from '../../src/common';
-import { RuntimeContext, CssModel } from '../../src/runtime';
+import { CssModel, LessCompiler } from '../../src/runtime';
 
 test('model', () => {
-  const ctx = new RuntimeContext({ compress: false });
+  const compiler = new LessCompiler({ compress: true });
+  const ctx = compiler.context();
   const model = new CssModel(ctx);
   model.push(NodeType.MEDIA);
   model.header('@media screen');
@@ -14,15 +15,14 @@ test('model', () => {
   model.push(NodeType.RULESET);
   model.header('.foo');
   model.header('.bar');
-  model.value('color: red');
-  model.value('font-size: 10px');
-  model.comment('/* foo */\n');
-  model.value('color: red');
+  model.value('color:red');
+  model.value('font-size:10px');
+  model.comment('/* foo */');
+  model.value('color:red'); // last distinct rule wins
 
   model.pop();
   model.pop();
 
-  // console.log(JSON.stringify(model, undefined, '  '));
   const s = model.render();
-  console.log(s);
+  expect(s).toEqual('@media screen{.foo,.bar{font-size:10px;/* foo */color:red}}');
 });

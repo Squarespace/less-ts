@@ -1,4 +1,5 @@
-import { Buffer, ExecEnv, Node, NodeType } from '../common';
+import { Buffer, ExecEnv, Node, NodeName, NodeType } from '../common';
+import { expectedBoolOp, uncomparableType } from '../errors';
 import { Anonymous } from './general';
 import { BaseColor, RGBColor, colorFromName } from './color';
 import { Dimension, Unit, unitConversionFactor } from './dimension';
@@ -65,8 +66,12 @@ export class Condition extends Node {
       case Operator.DIVIDE:
       case Operator.MULTILY:
       case Operator.SUBTRACT:
-        // Conditions only use boolean operators. ignore.
+      {
+        // Conditions only use boolean operators.
+        const { ctx } = env;
+        ctx.errors.push(expectedBoolOp(ctx.render(this)));
         return false;
+      }
 
       case Operator.AND:
         return truthValue(env, op0) && truthValue(env, op1);
@@ -112,7 +117,7 @@ export class Condition extends Node {
       }
 
       default:
-        // Uncomparable types
+        env.ctx.errors.push(uncomparableType(NodeName[type]));
         return false;
     }
 

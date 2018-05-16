@@ -1,0 +1,15 @@
+.foo(@a) {
+  .child-@{a} {
+    .bar(@a + 1);
+  }
+}
+
+.bar(@b) {
+  font-size: unit(@b, 'px');
+  .foo(@b + 1);
+}
+
+.parent {
+  color: red;
+  .foo(1);
+}

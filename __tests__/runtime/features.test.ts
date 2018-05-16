@@ -1,5 +1,5 @@
 import { Feature, Features, Keyword, Property, Dimension, Unit } from '../../src/model';
-import { RuntimeBuffer, RuntimeContext } from '../../src/runtime';
+import { LessCompiler } from '../../src/runtime';
 import { combineFeatures } from '../../src/runtime/combine';
 
 test('combine', () => {
@@ -17,10 +17,10 @@ test('combine', () => {
     )
   ]);
 
-  const ctx = new RuntimeContext({ compress: false });
-  const r = combineFeatures(ancestors, current);
-  const buf = ctx.newBuffer();
-  r.repr(buf);
-  expect(buf.toString()).toEqual(
-    'screen and min-resolution: 96dpi, min-width: 900px and min-resolution: 96dpi');
+  const compiler = new LessCompiler({ compress: false });
+  const ctx = compiler.context();
+  const { features } = combineFeatures(ancestors, current);
+  expect(features.length).toEqual(2);
+  expect(ctx.render(features[0])).toEqual('screen and min-resolution: 96dpi');
+  expect(ctx.render(features[1])).toEqual('min-width: 900px and min-resolution: 96dpi');
 });

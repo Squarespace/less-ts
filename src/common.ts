@@ -101,6 +101,13 @@ export const NodeName: { [x: number]: string } = {
   [NodeType.VARIABLE]: 'VARIABLE'
 };
 
+export type LessErrorType = 'runtime';
+
+export interface LessError {
+  type: LessErrorType;
+  message: string;
+}
+
 /**
  * Base for all nodes.
  */
@@ -166,19 +173,10 @@ export interface Context {
   readonly compress: boolean;
   readonly fastcolor: boolean;
   readonly spacer: string;
+  mixinDepth: number;
+  mixinRecursionLimit: number;
 
-  // TODO:
-  // track mixin depth here
-
-  /**
-   * Enter a mixin.
-   */
-  enterMixin(): void;
-
-  /**
-   * Exit a mixin.
-   */
-  exitMixin(): void;
+  readonly errors: LessError[];
 
   /**
    * Construct a new buffer.
@@ -267,6 +265,9 @@ export interface Options {
 
   // Enable strict math mode
   readonly strictMath?: boolean;
+
+  // Maximum depth of mixin recursion
+  readonly mixinRecursionLimit?: number;
 }
 
 export interface Chars {

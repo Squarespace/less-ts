@@ -6,6 +6,7 @@ import {
   Context,
   NodeJ,
   LessCompiler,
+  LessError,
   Options,
   Renderer,
   RuntimeContext,
@@ -13,12 +14,8 @@ import {
   Evaluator
 } from '../../src';
 
-const ROOT = join(__dirname, '../data/suite/css');
+const ROOT = join(__dirname, '../data/errors');
 const JSON_EXT = '.json';
-
-const tests = fs.readdirSync(ROOT)
-  .filter(n => n.endsWith(JSON_EXT))
-  .map(n => n.slice(0, -JSON_EXT.length));
 
 interface Root {
   strings: string[];
@@ -28,11 +25,11 @@ interface Root {
 const load = (name: string): [Root, string] => {
   const raw = fs.readFileSync(join(ROOT, name + JSON_EXT)).toString('utf-8');
   const json = JSON.parse(raw) as Root;
-  const css = fs.readFileSync(join(ROOT, name + '.css')).toString('utf-8');
-  return [json, css];
+  const expected = fs.readFileSync(join(ROOT, name + '.css')).toString('utf-8');
+  return [json, expected.trim()];
 };
 
-const evaluate = (root: Root, opts: Options): string => {
+const evaluate = (root: Root, opts: Options): [string, LessError[]] => {
   const builder = new Builder(root.strings);
   const sheet = builder.expand(root.root) as Stylesheet;
 
@@ -41,18 +38,23 @@ const evaluate = (root: Root, opts: Options): string => {
   const evaluator = new Evaluator(ctx);
   const env = ctx.newEnv();
   const result = evaluator.evaluateStylesheet(env, sheet);
-  return Renderer.render(ctx, result);
+  const css = Renderer.render(ctx, result);
+  return [css.trim(), ctx.errors];
 };
 
-tests.forEach(n => {
+test('mixin-recursion', () => {
   const opts: Options = {
     indentSize: 2,
     fastcolor: false,
-    compress: false
+    compress: false,
+    mixinRecursionLimit: 10
   };
-  test(`suite ${n}.css`, () => {
-    const [json, repr] = load(n);
-    const css = evaluate(json, opts);
-    expect(css).toEqual(repr);
-  });
+
+  const [json, expected] = load('mixin-recursion');
+  const [actual, errors] = evaluate(json, opts);
+
+  expect(expected).toEqual(actual);
+  expect(errors.length).toEqual(1);
+  expect(errors[0].type).toEqual('runtime');
+  expect(errors[0].message).toContain('recursion limit of 10');
 });

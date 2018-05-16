@@ -1,4 +1,5 @@
 import { ExecEnv, Function, Node, NodeType } from '../common';
+import { unknownUnit } from '../errors';
 import {
   Anonymous,
   Dimension,
@@ -77,14 +78,18 @@ class UnitFunc extends BaseFunction {
 }
 
 const toUnit = (env: ExecEnv, n: Node): Unit | undefined => {
+  const { ctx } = env;
   let unit: Unit | undefined;
   if (n.type === NodeType.KEYWORD) {
     unit = stringToUnit((n as Keyword).value);
   } else if (n.type === NodeType.QUOTED) {
     const str = (n as Quoted).copy();
     str.escaped = true;
-    const res = env.ctx.render(str);
+    const res = ctx.render(str);
     unit = stringToUnit(res);
+    if (unit === undefined) {
+      ctx.errors.push(unknownUnit(res));
+    }
   }
   return unit;
 };

@@ -6,6 +6,7 @@ import {
   Function,
   IBlock,
   IDefinition,
+  LessError,
   Node,
   Options,
   NodeName,
@@ -183,6 +184,8 @@ export class RuntimeExecEnv implements ExecEnv {
 
 }
 
+const DEFAULT_MIXIN_RECURSION_LIMIT = 64;
+
 export type NodeRenderer = (buf: Buffer, n: Node) => void;
 
 export class RuntimeContext implements Context {
@@ -194,6 +197,11 @@ export class RuntimeContext implements Context {
   readonly spacer: string;
   readonly chars: Chars;
   readonly strictMath: boolean;
+  readonly mixinRecursionLimit: number;
+
+  readonly errors: LessError[] = [];
+
+  mixinDepth: number = 0;
 
   constructor(
     readonly opts: Options = { compress: false },
@@ -204,20 +212,13 @@ export class RuntimeContext implements Context {
     this.fastcolor = opts.fastcolor === undefined ? true : opts.fastcolor;
     this.spacer = repeat(' ', this.indentSize);
     this.strictMath = opts.strictMath || false;
+    this.mixinRecursionLimit = opts.mixinRecursionLimit || DEFAULT_MIXIN_RECURSION_LIMIT;
     this.chars = {
       listsep: this.compress ? ',' : ', ',
       rulesep: this.compress ? ':' : ': ',
       ruleend: this.compress ? ';' : ';\n',
       selectorsep: this.compress ? ',' : ',\n'
     };
-  }
-
-  enterMixin(): void {
-    // TODO:
-  }
-
-  exitMixin(): void {
-    // TODO:
   }
 
   newEnv(): ExecEnv {

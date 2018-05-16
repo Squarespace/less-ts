@@ -1,4 +1,5 @@
-import { Node, NodeType } from '../common';
+import { ExecEnv, Node, NodeType } from '../common';
+import { argCount, argCountIgnore, invalidArg } from '../errors';
 import { BaseColor, Dimension, Unit } from '../model';
 
 export class ArgSpec {
@@ -7,7 +8,7 @@ export class ArgSpec {
   readonly minArgs: number;
   readonly variadic: boolean;
 
-  constructor(spec: string) {
+  constructor(readonly name: string, spec: string) {
     const v: ArgValidator[] = [];
     let minArgs: number = -1;
     let variadic: boolean = false;
@@ -51,15 +52,22 @@ export class ArgSpec {
   /**
    * Validate the arguments are of the expected type.
    */
-  validate(args: Node[]): boolean {
+  validate(env: ExecEnv, args: Node[]): boolean {
+    const { ctx } = env;
     let len = args.length;
     if (len < this.minArgs) {
+      ctx.errors.push(argCount(this.name, this.minArgs, len));
       return false;
+
     } else if (this.variadic || len > this.validators.length) {
+      ctx.errors.push(argCountIgnore(this.name, this.minArgs, len));
       len = this.validators.length;
     }
+
     for (let i = 0; i < len; i++) {
-      if (!this.validators[i](args[i])) {
+      const v = this.validators[i];
+      if (!v.validate(args[i])) {
+        ctx.errors.push(invalidArg(this.name, i + 1, v.type, ctx.render(args[i])));
         return false;
       }
     }
@@ -67,37 +75,59 @@ export class ArgSpec {
   }
 }
 
-export type ArgValidator = (arg: Node) => boolean;
+// export type ArgValidator = (arg: Node) => boolean;
 
-export const ARG_ANY: ArgValidator = (arg: Node): boolean => true;
+export interface ArgValidator {
+  type: string;
+  validate(arg: Node): boolean;
+}
 
-export const ARG_COLOR: ArgValidator = (arg: Node): boolean =>
-  arg.type === NodeType.COLOR;
-
-export const ARG_DIMENSION: ArgValidator = (arg: Node): boolean =>
-  arg.type === NodeType.DIMENSION;
-
-export const ARG_KEYWORD: ArgValidator = (arg: Node): boolean =>
-  arg.type === NodeType.KEYWORD;
-
-export const ARG_NUMBER: ArgValidator = (arg: Node): boolean => {
-  if (arg.type === NodeType.DIMENSION) {
-    if ((arg as Dimension).unit === undefined) {
-      return true;
-    }
-  }
-  return false;
+export const ARG_ANY: ArgValidator = {
+  type: 'any',
+  validate: (arg: Node): boolean => true
 };
 
-export const ARG_PERCENTAGE: ArgValidator = (arg: Node): boolean => {
-  if (arg.type === NodeType.DIMENSION) {
-    const unit = (arg as Dimension).unit;
-    if (unit === undefined || unit === Unit.PERCENTAGE) {
-      return true;
-    }
-  }
-  return false;
+export const ARG_COLOR: ArgValidator = {
+  type: 'color',
+  validate: (arg: Node): boolean => arg.type === NodeType.COLOR
 };
 
-export const ARG_QUOTED: ArgValidator = (arg: Node): boolean =>
-  arg.type === NodeType.QUOTED;
+export const ARG_DIMENSION: ArgValidator = {
+  type: 'dimension',
+  validate: (arg: Node): boolean => arg.type === NodeType.DIMENSION
+};
+
+export const ARG_KEYWORD: ArgValidator = {
+  type: 'keyword',
+  validate: (arg: Node): boolean => arg.type === NodeType.KEYWORD
+};
+
+export const ARG_NUMBER: ArgValidator = {
+  type: 'number',
+  validate: (arg: Node): boolean => {
+    if (arg.type === NodeType.DIMENSION) {
+      if ((arg as Dimension).unit === undefined) {
+        return true;
+      }
+    }
+    return false;
+  }
+};
+
+export const ARG_PERCENTAGE: ArgValidator = {
+  type: 'percentage',
+  validate: (arg: Node): boolean => {
+    if (arg.type === NodeType.DIMENSION) {
+      const unit = (arg as Dimension).unit;
+      if (unit === undefined || unit === Unit.PERCENTAGE) {
+        return true;
+      }
+    }
+    return false;
+  }
+};
+
+export const ARG_QUOTED: ArgValidator = {
+  type: 'quoted',
+  validate: (arg: Node): boolean => arg.type === NodeType.QUOTED
+};

@@ -6,8 +6,11 @@ import { arrayEquals, safeEquals } from '../utils';
 
 export class Argument extends Node {
 
-  constructor(readonly name: string, readonly value: Node) {
+  readonly name?: string;
+
+  constructor(name: string | undefined, readonly value: Node) {
     super(NodeType.ARGUMENT);
+    this.name = name || undefined;
   }
 
   equals(n: Node): boolean {

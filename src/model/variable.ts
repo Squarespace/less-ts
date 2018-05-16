@@ -1,4 +1,5 @@
 import { Buffer, IDefinition, ExecEnv, Node, NodeType } from '../common';
+import { varCircularRef, varUndefined } from '../errors';
 import { Anonymous } from './general';
 
 export class Definition extends Node implements IDefinition {
@@ -29,6 +30,7 @@ export class Definition extends Node implements IDefinition {
 
   dereference(env: ExecEnv): Node {
     if (this.evaluating) {
+      env.ctx.errors.push(varCircularRef(this.name));
       return this.value;
     }
 
@@ -82,8 +84,10 @@ export class Variable extends Node {
   }
 
   eval(env: ExecEnv): Node {
+    const { ctx } = env;
     const def = env.resolveDefinition(this.name);
     if (!def) {
+      ctx.errors.push(varUndefined(this.name));
       return EMPTY;
     }
 
@@ -94,7 +98,6 @@ export class Variable extends Node {
 
     // Variable is escaped, so we need to build a new variable
     // reference whose name is the rendered name.
-    const { ctx } = env;
     const buf = ctx.newBuffer();
     buf.startEscape('"');
     ctx.renderInto(buf, res);

@@ -10,7 +10,7 @@
     "clean": "rimraf ./coverage ./lib && jest --clearCache",
     "clean:full": "rimraf ./node_modules",
     "generate": "ts-node scripts/generate.ts",
-    "lint": "echo 'fixme'",
+    "lint": "tslint -p ./tsconfig.json",
     "release": "",
     "stress": "echo 'fixme'",
     "test": "rimraf ./coverage && jest --coverage --verbose -i --no-cache --coverageReporters=html",
@@ -36,6 +36,9 @@
     "tslint-no-circular-imports": "^0.2.1",
     "typescript": "~2.8.3"
   },
+  "files": [
+    "lib"
+  ],
   "jest": {
     "collectCoverageFrom": [
       "src/**/*.ts"

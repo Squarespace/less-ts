@@ -1,4 +1,5 @@
 import { Context, ExecEnv, Node } from '../common';
+import { argTooMany, internalError, namedArgNotFound } from '../errors';
 import {
   Argument,
   Block,
@@ -31,6 +32,7 @@ export class MixinMatcher {
    */
   bind(mixinParams: MixinParams): GenericBlock {
     if (mixinParams.needsEval()) {
+      this.ctx.errors.push(internalError('Serious error: params must already be evaluated!'));
       return EMPTY_BLOCK;
     }
 
@@ -70,7 +72,8 @@ export class MixinMatcher {
       }
       // Check if named argument does not correspond to a parameter
       if (bindings[name] === undefined) {
-        // TODO: safe mode throws no exceptions for now
+        const callName = this.ctx.render(this.call.selector);
+        this.ctx.errors.push(namedArgNotFound(callName, name));
         continue;
       }
 
@@ -115,7 +118,8 @@ export class MixinMatcher {
         // No names left and no variadic exists to collect the overflow.
         // We should never reach this point since the pattern match would
         // also have failed.
-        // TODO: error handling, ignore for now
+        const callName = this.ctx.render(this.call.selector);
+        this.ctx.errors.push(argTooMany(callName));
         continue;
       }
     }
