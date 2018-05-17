@@ -2,27 +2,27 @@
   [COMMENT, ' Mixin definitions which take variable number of arguments.', 0, true],
   [COMMENT, ' A single mixin call may match one or more of these.', 0, true],
   [COMMENT, ' 1:  [0]', 0, true],
-  [MIXIN, '.mixin', [MIXIN_PARAMS, [], false, 0], NULL, [
+  [MIXIN, '.mixin', [MIXIN_PARAMS, []], NULL, [
     [RULE, [PROPERTY, '-1'], [ANONYMOUS, ''], false],
     [RULE, [PROPERTY, '-1-args'], [VARIABLE, '@arguments', false, false], false]
   ]],
   [COMMENT, ' 2:  [0..1]', 0, true],
   [MIXIN, '.mixin', [MIXIN_PARAMS, [
     [PARAMETER, '@a', [KEYWORD, 'x'], false]
-  ], false, 0], NULL, [
+  ]], NULL, [
     [RULE, [PROPERTY, '-2'], [VARIABLE, '@a', false, false], false],
     [RULE, [PROPERTY, '-2-args'], [VARIABLE, '@arguments', false, false], false]
   ]],
   [COMMENT, ' 3:  [0..N]', 0, true],
   [MIXIN, '.mixin', [MIXIN_PARAMS, [
     [PARAMETER, null, NULL, true]
-  ], true, 0], NULL, [
+  ]], NULL, [
     [RULE, [PROPERTY, '-3-args'], [VARIABLE, '@arguments', false, false], false]
   ]],
   [COMMENT, ' 4:  [1]', 0, true],
   [MIXIN, '.mixin', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
-  ], false, 1], NULL, [
+  ]], NULL, [
     [RULE, [PROPERTY, '-4'], [VARIABLE, '@a', false, false], false],
     [RULE, [PROPERTY, '-4-args'], [VARIABLE, '@arguments', false, false], false]
   ]],
@@ -30,7 +30,7 @@
   [MIXIN, '.mixin', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false],
     [PARAMETER, null, NULL, true]
-  ], true, 1], NULL, [
+  ]], NULL, [
     [RULE, [PROPERTY, '-5'], [VARIABLE, '@a', false, false], false],
     [RULE, [PROPERTY, '-5-args'], [VARIABLE, '@arguments', false, false], false]
   ]],
@@ -38,7 +38,7 @@
   [MIXIN, '.mixin', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false],
     [PARAMETER, '@rest', NULL, true]
-  ], true, 1], NULL, [
+  ]], NULL, [
     [RULE, [PROPERTY, '-6'], [EXPRESSION_LIST, [
       [VARIABLE, '@a', false, false],
       [VARIABLE, '@rest', false, false]
@@ -49,7 +49,7 @@
   [MIXIN, '.mixin', [MIXIN_PARAMS, [
     [PARAMETER, null, [DIMENSION, 1, null], false],
     [PARAMETER, null, NULL, true]
-  ], true, 1], NULL, [
+  ]], NULL, [
     [RULE, [PROPERTY, '-7-args'], [VARIABLE, '@arguments', false, false], false]
   ]],
   [COMMENT, ' 8:  [P, P, 0..N]', 0, true],
@@ -57,7 +57,7 @@
     [PARAMETER, null, [DIMENSION, 1, null], false],
     [PARAMETER, null, [DIMENSION, 2, null], false],
     [PARAMETER, null, NULL, true]
-  ], true, 2], NULL, [
+  ]], NULL, [
     [RULE, [PROPERTY, '-8-args'], [VARIABLE, '@arguments', false, false], false]
   ]],
   [COMMENT, ' 9:  [2..N]', 0, true],
@@ -66,7 +66,7 @@
     [PARAMETER, '@a', NULL, false],
     [PARAMETER, '@b', NULL, false],
     [PARAMETER, null, NULL, true]
-  ], true, 2], NULL, [
+  ]], NULL, [
     [RULE, [PROPERTY, '-9-args'], [VARIABLE, '@arguments', false, false], false]
   ]],
   [RULESET, [SELECTORS, [

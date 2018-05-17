@@ -1,6 +1,6 @@
 [STYLESHEET, 1, [
   [COMMENT, ' Importing variables', 0, true],
-  [MIXIN, '.mixin-import-a', [MIXIN_PARAMS, [], false, 0], NULL, [
+  [MIXIN, '.mixin-import-a', [MIXIN_PARAMS, []], NULL, [
     [DEFINITION, '@a', [COLOR, 17, 34, 51, 1.0, null]]
   ]],
   [RULESET, [SELECTORS, [
@@ -17,7 +17,7 @@
   [MIXIN, '.mixin-defaults', [MIXIN_PARAMS, [
     [PARAMETER, '@num', [DIMENSION, 1, null], false],
     [PARAMETER, '@color', [COLOR, 0, 0, 255, 1.0, null], false]
-  ], false, 0], NULL, [
+  ]], NULL, [
     [RULE, [PROPERTY, 'num'], [VARIABLE, '@num', false, false], false],
     [RULE, [PROPERTY, 'color'], [VARIABLE, '@color', false, false], false]
   ]],
@@ -53,7 +53,7 @@
   [MIXIN, '.mixin-guard', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false],
     [PARAMETER, '@b', [DIMENSION, 0, null], false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '>', [VARIABLE, '@a', false, false], [DIMENSION, 3, null], false],
     [CONDITION, '>', [VARIABLE, '@b', false, false], [DIMENSION, 3, null], false]
   ]], [
@@ -106,13 +106,13 @@
   [MIXIN, '.mixin-color', [MIXIN_PARAMS, [
     [PARAMETER, null, [COLOR, 255, 255, 255, 1.0, null], false],
     [PARAMETER, null, NULL, true]
-  ], true, 1], NULL, [
+  ]], NULL, [
     [RULE, [PROPERTY, 'color-white'], [VARIABLE, '@arguments', false, false], false]
   ]],
   [MIXIN, '.mixin-color', [MIXIN_PARAMS, [
     [PARAMETER, null, [COLOR, 0, 0, 0, 1.0, null], false],
     [PARAMETER, null, NULL, true]
-  ], true, 1], NULL, [
+  ]], NULL, [
     [RULE, [PROPERTY, 'color-black'], [VARIABLE, '@arguments', false, false], false]
   ]],
   [RULESET, [SELECTORS, [
@@ -152,7 +152,7 @@
   [COMMENT, ' Recursion', 0, true],
   [MIXIN, '.mixin-recurse', [MIXIN_PARAMS, [
     [PARAMETER, '@arg', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '>', [VARIABLE, '@arg', false, false], [DIMENSION, 0, null], false]
   ]], [
     [RULESET, [SELECTORS, [
@@ -182,7 +182,7 @@
   [COMMENT, ' Mutual recursion', 0, true],
   [MIXIN, '.mixin-recurse-1', [MIXIN_PARAMS, [
     [PARAMETER, '@arg', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '>', [VARIABLE, '@arg', false, false], [DIMENSION, 0, null], false]
   ]], [
     [RULESET, [SELECTORS, [
@@ -200,7 +200,7 @@
   ]],
   [MIXIN, '.mixin-recurse-2', [MIXIN_PARAMS, [
     [PARAMETER, '@arg', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '>', [VARIABLE, '@arg', false, false], [DIMENSION, 0, null], false]
   ]], [
     [RULESET, [SELECTORS, [

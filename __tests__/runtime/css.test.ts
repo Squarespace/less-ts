@@ -1,5 +1,6 @@
+import { LessCompiler } from '../../src';
 import { Node, NodeType } from '../../src/common';
-import { CssModel, LessCompiler } from '../../src/runtime';
+import { CssModel } from '../../src/runtime';
 
 test('model', () => {
   const compiler = new LessCompiler({ compress: true });

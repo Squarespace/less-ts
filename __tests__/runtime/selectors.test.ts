@@ -1,5 +1,5 @@
+import { LessCompiler } from '../../src';
 import { Combinator, Selector, Selectors, TextElement } from '../../src/model';
-import { LessCompiler } from '../../src/runtime';
 import { combineSelectors } from '../../src/runtime/combine';
 import { cartesianProduct } from '../../src/runtime/utils';
 

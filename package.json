@@ -15,7 +15,7 @@
     "stress": "echo 'fixme'",
     "test": "rimraf ./coverage && jest --coverage --verbose -i --no-cache --coverageReporters=html",
     "test:codecov": "rimraf ./coverage && jest --coverage --coverageReporters=lcovonly --verbose -i --no-cache",
-    "test:watch": "jest --watch --coverage --coverageReporters=html"
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "@types/core-js": "^0.9.46",

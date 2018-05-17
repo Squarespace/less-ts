@@ -4,15 +4,15 @@ import { join } from 'path';
 import {
   Builder,
   Context,
-  NodeJ,
+  Evaluator,
   LessCompiler,
   LessError,
   LessErrorEvent,
+  NodeJ,
   Options,
   Renderer,
   RuntimeContext,
-  Stylesheet,
-  Evaluator
+  Stylesheet
 } from '../../src';
 
 const ROOT = join(__dirname, '../data/errors');

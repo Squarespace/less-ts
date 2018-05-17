@@ -2,7 +2,7 @@
   [COMMENT, ' definitions', 0, true],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '=', [VARIABLE, '@a', false, false], [TRUE], false]
   ]], [
     [COMMENT, ' (@a) ', 1, true],
@@ -10,7 +10,7 @@
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '=', [VARIABLE, '@a', false, false], [KEYWORD, 'true'], false]
   ]], [
     [COMMENT, ' (@a = true) ', 1, true],
@@ -18,7 +18,7 @@
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '<', [VARIABLE, '@a', false, false], [DIMENSION, 10, 'px'], false]
   ]], [
     [COMMENT, ' (@a < 10px) ', 1, true],
@@ -26,7 +26,7 @@
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '>', [VARIABLE, '@a', false, false], [DIMENSION, 10, 'px'], false]
   ]], [
     [COMMENT, ' (@a > 10px) ', 1, true],
@@ -34,7 +34,7 @@
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '<', [DIMENSION, 10, 'px'], [VARIABLE, '@a', false, false], false]
   ]], [
     [COMMENT, ' (10px < @a) ', 1, true],
@@ -42,7 +42,7 @@
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '>', [DIMENSION, 10, 'px'], [VARIABLE, '@a', false, false], false]
   ]], [
     [COMMENT, ' (10px > @a) ', 1, true],
@@ -50,7 +50,7 @@
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '=', [COLOR, 0, 0, 255, 1.0, null], [VARIABLE, '@a', false, false], false]
   ]], [
     [COMMENT, ' (#00f = @a) ', 1, true],
@@ -58,7 +58,7 @@
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '<=', [VARIABLE, '@a', false, false], [DIMENSION, 10, 'px'], false],
     [CONDITION, '>=', [VARIABLE, '@a', false, false], [DIMENSION, 20, 'px'], false]
   ]], [
@@ -67,7 +67,7 @@
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '<=', [VARIABLE, '@a', false, false], [DIMENSION, 10, 'px'], false],
     [CONDITION, '>=', [VARIABLE, '@a', false, false], [DIMENSION, 20, 'px'], false]
   ]], [
@@ -76,7 +76,7 @@
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, 'and', [CONDITION, '<>', [VARIABLE, '@a', false, false], [DIMENSION, 20, 'px'], false], [CONDITION, '<>', [VARIABLE, '@a', false, false], [DIMENSION, 5, 'px'], false], false]
   ]], [
     [COMMENT, ' (@a != 20px) and (@a != 5px) ', 1, true],

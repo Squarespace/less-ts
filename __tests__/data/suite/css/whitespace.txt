@@ -33,7 +33,7 @@
   ]], [
     [MIXIN, '.mixin-0', [MIXIN_PARAMS, [
       [PARAMETER, '@a', [DIMENSION, 12, 'px'], false]
-    ], false, 0], NULL, [
+    ]], NULL, [
       [RULE, [PROPERTY, 'dummy'], [KEYWORD, 'rule'], false]
     ]],
     [MIXIN_CALL, [SELECTOR, [

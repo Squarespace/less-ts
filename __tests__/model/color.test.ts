@@ -1,4 +1,5 @@
 import { HSLColor, KeywordColor, RGBColor } from '../../src/model';
+import { hexvalue, hexToRGB } from '../../src/utils';
 
 test('equals', () => {
   const black1 = new RGBColor(0, 0, 0, 1.0);
@@ -14,4 +15,15 @@ test('equals', () => {
 
   const hslRed = red.toHSL();
   expect(red.equals(hslRed)).toEqual(false);
+});
+
+test('conversion', () => {
+  expect(hexvalue('0')).toEqual(0);
+  expect(hexvalue('5')).toEqual(5);
+  expect(hexvalue('a')).toEqual(10);
+  expect(hexvalue('C')).toEqual(12);
+  expect(hexvalue('f')).toEqual(15);
+  expect(hexvalue('F')).toEqual(15);
+
+  expect(hexToRGB('fff')).toEqual([255, 255, 255]);
 });

@@ -1,7 +1,7 @@
 import { Buffer, ExecEnv, Node, NodeType } from '../common';
 import { divideByZero, expectedMathOp, incompatibleUnits, invalidOperation } from '../errors';
-import { BaseColor, RGBColor, colorFromName } from './color';
-import { Dimension, unitConversionFactor } from './dimension';
+import { colorFromName, BaseColor, RGBColor } from './color';
+import { unitConversionFactor, Dimension } from './dimension';
 import { Keyword } from './keyword';
 
 export const enum Operator {
@@ -13,11 +13,40 @@ export const enum Operator {
   GREATER_THAN_OR_EQUAL = '>=',
   LESS_THAN = '<',
   LESS_THAN_OR_EQUAL = '<=',
-  MULTILY = '*',
+  MULTIPLY = '*',
   NOT_EQUAL = '<>',
   OR = 'or',
   SUBTRACT = '-'
 }
+
+export const parseOperator = (op: string | undefined): Operator | undefined => {
+  if (op === undefined) {
+    return undefined;
+  }
+  switch (op) {
+    case '+': return Operator.ADD;
+    case '/': return Operator.DIVIDE;
+    case '>': return Operator.GREATER_THAN;
+    case '<': return Operator.LESS_THAN;
+    case '*': return Operator.MULTIPLY;
+    case '-': return Operator.SUBTRACT;
+
+    case '=':
+    case '==': return Operator.EQUAL;
+
+    case '>=':
+    case '=>': return Operator.GREATER_THAN_OR_EQUAL;
+
+    case '<=':
+    case '=<': return Operator.LESS_THAN_OR_EQUAL;
+
+    case '!=':
+    case '<>': return Operator.NOT_EQUAL;
+
+    default:
+      return undefined;
+  }
+};
 
 export class Operation extends Node {
 
@@ -55,7 +84,7 @@ export class Operation extends Node {
     let op1 = cast(right.needsEval() ? right.eval(env) : right);
 
     if (op0.type === NodeType.DIMENSION && op1.type === NodeType.COLOR) {
-      if (operator === Operator.MULTILY || operator === Operator.ADD) {
+      if (operator === Operator.MULTIPLY || operator === Operator.ADD) {
         [op0, op1] = [op1, op0];
       } else {
         // TODO:
@@ -116,7 +145,7 @@ const operateColor = (env: ExecEnv, op: Operator, c0: RGBColor, c1: RGBColor): R
         g ? (c0.g / g) : 255,
         b ? (c0.b / b) : 255,
         a);
-    case Operator.MULTILY:
+    case Operator.MULTIPLY:
       return new RGBColor(r * c0.r, g * c0.g, b * c0.b, a);
 
     case Operator.SUBTRACT:
@@ -158,7 +187,7 @@ const operateDimension = (env: ExecEnv, op: Operator, n0: Dimension, n1: Dimensi
       }
       break;
 
-    case Operator.MULTILY:
+    case Operator.MULTIPLY:
       result = n0.value * scaled;
       break;
 

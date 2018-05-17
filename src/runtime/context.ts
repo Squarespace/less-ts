@@ -15,7 +15,7 @@ import {
   Options,
   NodeName,
   NodeType,
-  Chars
+  Separators
 } from '../common';
 
 import { Block, BlockNode, Definition } from '../model';
@@ -39,7 +39,7 @@ export class RuntimeBuffer implements Buffer {
     readonly compress: boolean,
     readonly fastcolor: boolean,
     readonly spacer: string,
-    readonly chars: Chars
+    readonly chars: Separators
   ) {
   }
 
@@ -198,7 +198,7 @@ export class RuntimeContext implements Context {
   readonly compress: boolean;
   readonly fastcolor: boolean;
   readonly spacer: string;
-  readonly chars: Chars;
+  readonly chars: Separators;
   readonly strictMath: boolean;
   readonly mixinRecursionLimit: number;
 

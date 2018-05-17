@@ -197,7 +197,7 @@ export interface Context {
   readonly compress: boolean;
   readonly fastcolor: boolean;
   readonly spacer: string;
-  readonly chars: Chars;
+  readonly chars: Separators;
   mixinDepth: number;
   mixinRecursionLimit: number;
 
@@ -303,7 +303,7 @@ export interface Options {
   readonly mixinRecursionLimit?: number;
 }
 
-export interface Chars {
+export interface Separators {
   listsep: string;
   rulesep: string;
   ruleend: string;
@@ -325,7 +325,7 @@ export interface Buffer extends Options {
   /**
    * Frequently-used character sequences.
    */
-  chars: Chars;
+  chars: Separators;
 
   /**
    * Currently-active string delimiter, or EOF.

@@ -308,10 +308,6 @@ export interface MixinParamsJ {
   [0]: JsonType.MIXIN_PARAMS;
   // parameters
   [1]: NodeJ[];
-  // variadic
-  [2]: number;
-  // number of required arguments
-  [3]: number;
 }
 
 export interface OperationJ {

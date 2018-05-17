@@ -38,11 +38,14 @@ export class Argument extends Node {
 
 export class Parameter extends Node {
 
+  readonly name: string | undefined;
+
   constructor(
-    readonly name: string,
+    name: string | undefined,
     readonly value: Node | undefined,
     readonly variadic: boolean | number) {
     super(NodeType.PARAMETER);
+    this.name = name === null ? undefined : name;
   }
 
   equals(n: Node): boolean {
@@ -88,21 +91,26 @@ export class Parameter extends Node {
 export class MixinParams extends Node {
 
   readonly evaluate: boolean;
+  readonly variadic: boolean;
+  readonly required: number;
 
-  constructor(
-    readonly params: Parameter[],
-    readonly variadic: boolean | number,
-    readonly required: number) {
+  constructor(readonly params: Parameter[]) {
     super(NodeType.MIXIN_PARAMS);
     let evaluate = false;
-
+    let variadic = false;
+    let required = 0;
     for (const param of params) {
       evaluate = evaluate || param.needsEval();
-      if (evaluate) {
-        break;
+      if (param.variadic) {
+        variadic = true;
+      }
+      if (!param.variadic && (param.name === undefined || (param.name !== undefined && param.value === undefined))) {
+        required++;
       }
     }
     this.evaluate = evaluate;
+    this.variadic = variadic;
+    this.required = required;
   }
 
   equals(n: Node): boolean {
@@ -137,7 +145,7 @@ export class MixinParams extends Node {
     for (const param of this.params) {
       tmp.push(param.eval(env) as Parameter);
     }
-    return new MixinParams(tmp, this.variadic, this.required);
+    return new MixinParams(tmp);
   }
 
 }

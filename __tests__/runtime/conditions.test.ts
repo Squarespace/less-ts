@@ -1,6 +1,6 @@
-import { Node, NodeType } from '../../src/common';
+import { LessCompiler, Node, NodeType } from '../../src';
 import { Condition, Dimension, FALSE, Keyword, Operator, RGBColor, TRUE, Unit } from '../../src/model';
-import { LessCompiler, RuntimeExecEnv, RuntimeContext } from '../../src/runtime';
+import { RuntimeContext, RuntimeExecEnv } from '../../src/runtime';
 
 const dim = (n: number, unit?: Unit) => new Dimension(n, unit);
 const kwd = (s: string, t?: NodeType) => new Keyword(s, t);

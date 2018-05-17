@@ -67,7 +67,7 @@ export const enum Unit {
   TURN = 'turn',
 }
 
-const UNITS: Unit[] = [
+export const UNITS: Unit[] = [
   Unit.PERCENTAGE,
   Unit.CM, Unit.MM, Unit.IN, Unit.PX, Unit.PT, Unit.PC,
   Unit.CH, Unit.EM, Unit.EX, Unit.REM,
@@ -80,7 +80,6 @@ const UNITS: Unit[] = [
 ];
 
 const UNIT_SET: Set<Unit> = new Set();
-
 for (const u of UNITS) {
   UNIT_SET.add(u);
 }

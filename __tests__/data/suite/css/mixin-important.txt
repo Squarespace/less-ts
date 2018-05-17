@@ -1,5 +1,5 @@
 [STYLESHEET, 1, [
-  [MIXIN, '.m', [MIXIN_PARAMS, [], false, 0], NULL, [
+  [MIXIN, '.m', [MIXIN_PARAMS, []], NULL, [
     [RULESET, [SELECTORS, [
       [SELECTOR, [
         [TEXT_ELEMENT, ' ', 'a2']
@@ -18,7 +18,7 @@
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
-  ], false, 1], NULL, [
+  ]], NULL, [
     [RULESET, [SELECTORS, [
       [SELECTOR, [
         [TEXT_ELEMENT, ' ', 'a1']

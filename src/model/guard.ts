@@ -1,8 +1,8 @@
 import { Buffer, ExecEnv, Node, NodeName, NodeType } from '../common';
 import { expectedBoolOp, uncomparableType } from '../errors';
 import { Anonymous } from './general';
-import { BaseColor, RGBColor, colorFromName } from './color';
-import { Dimension, Unit, unitConversionFactor } from './dimension';
+import { colorFromName, BaseColor, RGBColor } from './color';
+import { unitConversionFactor, Dimension, Unit } from './dimension';
 import { False, Keyword, True } from './keyword';
 import { Operator } from './operation';
 import { arrayEquals } from '../utils';
@@ -64,7 +64,7 @@ export class Condition extends Node {
     switch (operator) {
       case Operator.ADD:
       case Operator.DIVIDE:
-      case Operator.MULTILY:
+      case Operator.MULTIPLY:
       case Operator.SUBTRACT:
       {
         // Conditions only use boolean operators.

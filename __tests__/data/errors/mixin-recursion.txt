@@ -1,7 +1,7 @@
 [STYLESHEET, 1, [
   [MIXIN, '.foo', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
-  ], false, 1], NULL, [
+  ]], NULL, [
     [RULESET, [SELECTORS, [
       [SELECTOR, [
         [TEXT_ELEMENT, ' ', '.child-'],
@@ -17,7 +17,7 @@
   ]],
   [MIXIN, '.bar', [MIXIN_PARAMS, [
     [PARAMETER, '@b', NULL, false]
-  ], false, 1], NULL, [
+  ]], NULL, [
     [RULE, [PROPERTY, 'font-size'], [FUNCTION_CALL, 'unit', [
       [VARIABLE, '@b', false, false],
       [QUOTED, 0, false, [

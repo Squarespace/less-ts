@@ -34,6 +34,11 @@ const compileAst = (slots: Semaphore, src: string, dst: string): void => {
   if (rebuild(src, dst)) {
     slots.acquire(() => {
       exec(`${LESS_CMD} --debug JSONAST ${src}`, (e, out, err) => {
+        if (e) {
+          console.log(String(e));
+          console.log(err);
+          return;
+        }
         console.log(' compiled json ast..');
         console.log(`    saving ${dst}`);
         fs.writeFileSync(dst, out, { encoding: 'utf-8' });
@@ -47,6 +52,11 @@ const compileRepr = (slots: Semaphore, src: string, dst: string): void => {
   if (rebuild(src, dst)) {
     slots.acquire(() => {
       exec(`${LESS_CMD} --debug JSONREPR ${src}`, (e, out, err) => {
+        if (e) {
+          console.log(String(e));
+          console.log(err);
+          return;
+        }
         console.log('  emitted json text repr..');
         console.log(`    saving ${dst}`);
         fs.writeFileSync(dst, out, { encoding: 'utf-8' });

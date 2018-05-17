@@ -1,7 +1,7 @@
 [STYLESHEET, 1, [
   [MIXIN, '.mixin-1', [MIXIN_PARAMS, [
     [PARAMETER, '@color', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '<=', [FUNCTION_CALL, 'lightness', [
       [VARIABLE, '@color', false, false]
     ]], [DIMENSION, 60, '%'], false]
@@ -10,7 +10,7 @@
   ]],
   [MIXIN, '.mixin-1', [MIXIN_PARAMS, [
     [PARAMETER, '@color', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '>', [FUNCTION_CALL, 'lightness', [
       [VARIABLE, '@color', false, false]
     ]], [DIMENSION, 60, '%'], false]
@@ -19,42 +19,42 @@
   ]],
   [MIXIN, '.mixin-2', [MIXIN_PARAMS, [
     [PARAMETER, '@color', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '=', [VARIABLE, '@color', false, false], [COLOR, 0, 0, 0, 1.0, null], false]
   ]], [
     [RULE, [PROPERTY, 'content2'], [KEYWORD, 'A'], false]
   ]],
   [MIXIN, '.mixin-2', [MIXIN_PARAMS, [
     [PARAMETER, '@color', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '<>', [VARIABLE, '@color', false, false], [COLOR, 0, 0, 0, 1.0, null], false]
   ]], [
     [RULE, [PROPERTY, 'content2'], [KEYWORD, 'B'], false]
   ]],
   [MIXIN, '.mixin-3', [MIXIN_PARAMS, [
     [PARAMETER, '@color', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '=', [COLOR, 0, 0, 0, 1.0, null], [VARIABLE, '@color', false, false], false]
   ]], [
     [RULE, [PROPERTY, 'content3'], [KEYWORD, 'A'], false]
   ]],
   [MIXIN, '.mixin-3', [MIXIN_PARAMS, [
     [PARAMETER, '@color', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '<>', [COLOR, 0, 0, 0, 1.0, null], [VARIABLE, '@color', false, false], false]
   ]], [
     [RULE, [PROPERTY, 'content3'], [KEYWORD, 'B'], false]
   ]],
   [MIXIN, '.mixin-4', [MIXIN_PARAMS, [
     [PARAMETER, '@color', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '=', [COLOR, 0, 0, 0, 1.0, 'transparent'], [VARIABLE, '@color', false, false], false]
   ]], [
     [RULE, [PROPERTY, 'content4'], [KEYWORD, 'A'], false]
   ]],
   [MIXIN, '.mixin-4', [MIXIN_PARAMS, [
     [PARAMETER, '@color', NULL, false]
-  ], false, 1], [GUARD, [
+  ]], [GUARD, [
     [CONDITION, '<>', [COLOR, 0, 0, 0, 1.0, 'transparent'], [VARIABLE, '@color', false, false], false]
   ]], [
     [RULE, [PROPERTY, 'content4'], [KEYWORD, 'B'], false]

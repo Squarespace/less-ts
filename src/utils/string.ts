@@ -40,10 +40,10 @@ export const hexvalue = (ch: string): number => {
     return c - Chars.DIGIT_0;
   }
   if (c >= Chars.DIGIT_a && c <= Chars.DIGIT_f) {
-    return c - Chars.DIGIT_a;
+    return 10 + (c - Chars.DIGIT_a);
   }
   if (c >= Chars.DIGIT_A && c <= Chars.DIGIT_F) {
-    return c - Chars.DIGIT_A;
+    return 10 + (c - Chars.DIGIT_A);
   }
   return 0;
 };

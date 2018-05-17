@@ -205,8 +205,6 @@ export const hexToRGB = (raw: string): ColorFields => {
 
 const comp1 = (ch: string): number => comp2(ch, ch);
 
-const comp2 = (c0: string, c1: string): number => {
-  return (hexvalue(c0) << 4) + hexvalue(c1);
-};
+const comp2 = (c0: string, c1: string): number => (hexvalue(c0) << 4) + hexvalue(c1);
 
 const COLOR_NAMES = new ColorNames();

@@ -129,6 +129,13 @@ export class Block extends Node implements IBlock {
     this.update(n);
   }
 
+  appendBlock(block: Block): void {
+    for (const n of block.rules) {
+      this.rules.push(n);
+      this.update(n);
+    }
+  }
+
   update(n: Node): void {
     const { type } = n;
     switch (n.type) {
