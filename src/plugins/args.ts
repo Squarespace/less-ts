@@ -35,6 +35,9 @@ export class ArgSpec {
         case 'k':
           v.push(ARG_KEYWORD);
           break;
+        case 'n':
+          v.push(ARG_NUMBER);
+          break;
         case 'p':
           v.push(ARG_PERCENTAGE);
           break;

@@ -70,19 +70,18 @@ export class MixinMatcher {
       if (name === undefined) {
         continue;
       }
+
       // Check if named argument does not correspond to a parameter
-      if (bindings[name] === undefined) {
+      const j = names.indexOf(name);
+      if (j === -1) {
         const callName = this.ctx.render(this.call.selector);
         this.ctx.errors.push(namedArgNotFound(callName, name));
         continue;
       }
 
+      // Bind value and remove name from list
       bindings[name] = arg.value;
-      // Remove name from list
-      const j = names.indexOf(name);
-      if (j !== -1) {
-        names.splice(j, 1);
-      }
+      names.splice(j, 1);
     }
 
     // Bind all remaining positional arguments.
