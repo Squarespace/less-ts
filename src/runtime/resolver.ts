@@ -1,4 +1,4 @@
-import { IBlock, NodeType } from '../common';
+import { ExecEnv, IBlock, NodeType } from '../common';
 import { Argument, Block, Mixin, MixinCallArgs, MixinParams, Ruleset, Selector } from '../model';
 import { MixinMatcher } from './mixin';
 
@@ -16,6 +16,8 @@ export interface MixinMatch {
 
 export type MixinResolverMatch = RulesetMatch | MixinMatch;
 
+export type MixinClosureArrow = (mixin: Mixin) => ExecEnv | undefined;
+
 export class MixinResolver {
 
   readonly matches: MixinResolverMatch[] = [];
@@ -24,7 +26,7 @@ export class MixinResolver {
   readonly callPathSize: number;
   readonly endIndex: number;
 
-  constructor(readonly matcher: MixinMatcher) {
+  constructor(readonly matcher: MixinMatcher, readonly closureArrow: MixinClosureArrow) {
     this.args = matcher.args.args;
     this.callPath = matcher.call.mixinPath || [];
     this.callPathSize = this.callPath.length;
@@ -133,8 +135,8 @@ export class MixinResolver {
 
     const env = this.matcher.callEnv.copy();
 
-    const defEnv = mixin.closure;
-    if (defEnv) {
+    const defEnv = this.closureArrow(mixin);
+    if (defEnv !== undefined) {
       env.append(defEnv.frames);
     }
 

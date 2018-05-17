@@ -144,9 +144,8 @@ export class MixinParams extends Node {
 
 export class Mixin extends BlockNode {
 
-  closure?: ExecEnv;
-  private entryCount: number = 0;
   private _mixinPath: string[][];
+
   constructor(
     readonly name: string,
     readonly params: MixinParams,
@@ -161,17 +160,8 @@ export class Mixin extends BlockNode {
     return this._mixinPath;
   }
 
-  enter(): void {
-    this.entryCount++;
-  }
-
-  exit(): void {
-    this.entryCount--;
-  }
-
   copy(): Mixin {
     const result = new Mixin(this.name, this.params, this.guard, this.block.copy(), this.original as Mixin);
-    result.closure = this.closure;
     return result;
   }
 

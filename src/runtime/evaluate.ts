@@ -15,11 +15,17 @@ import {
   Stylesheet,
 } from '../model';
 import { MixinMatcher } from './mixin';
-import { MixinMatch, MixinResolver, RulesetMatch } from './resolver';
+import { MixinMatch, MixinResolver, MixinClosureArrow, RulesetMatch } from './resolver';
 
 const EMPTY_BLOCK = new Block([]);
 
 export class Evaluator {
+
+  // Register closure on a Mixin definition
+  private closures: Map<Mixin, ExecEnv> = new Map();
+
+  private closureArrow: MixinClosureArrow =
+    ((m: Mixin): ExecEnv | undefined => this.closures.get(m));
 
   constructor(readonly ctx: Context) { }
 
@@ -50,10 +56,9 @@ export class Evaluator {
 
       case NodeType.MIXIN:
         {
+          // Attach a closure to this mixin at the point we evaluate its definition.
           const m = (n as Mixin).original as Mixin;
-          if (m.closure === undefined) {
-            m.closure = env.copy();
-          }
+          this.setClosure(env, m);
           return m;
         }
 
@@ -144,10 +149,9 @@ export class Evaluator {
 
         case NodeType.MIXIN:
           {
+            // Attach a closure to this mixin at the point we evaluate its definition.
             const m = (n as Mixin).original as Mixin;
-            if (m.closure === undefined) {
-              m.closure = env.copy();
-            }
+            this.setClosure(env, m);
             break;
           }
 
@@ -184,6 +188,14 @@ export class Evaluator {
     }
   }
 
+  protected setClosure(env: ExecEnv, mixin: Mixin): void {
+    let closure = this.closures.get(mixin);
+    if (closure === undefined) {
+      closure = env.copy();
+      this.closures.set(mixin, closure);
+    }
+  }
+
   protected expandMixins(env: ExecEnv, block: Block): void {
     if (!block.hasMixinCalls()) {
       return;
@@ -214,7 +226,7 @@ export class Evaluator {
 
   protected executeMixinCall(env: ExecEnv, call: MixinCall): Block {
     const matcher = new MixinMatcher(env, call);
-    const resolver = new MixinResolver(matcher);
+    const resolver = new MixinResolver(matcher, this.closureArrow);
 
     // Attempt to resolve mixins
     if (!resolver.resolve(env.frames)) {
@@ -253,7 +265,7 @@ export class Evaluator {
     env = env.copy();
     const original = (mixin.original || mixin) as Mixin;
 
-    const closureEnv = original.closure;
+    const closureEnv = this.closures.get(original);
     if (closureEnv) {
       env.append(closureEnv.frames);
     }
@@ -277,7 +289,6 @@ export class Evaluator {
       return true;
     }
 
-    original.enter();
     ctx.mixinDepth++;
 
     env.push(mixin);
@@ -291,7 +302,6 @@ export class Evaluator {
     }
 
     ctx.mixinDepth--;
-    original.exit();
 
     // Note: env.pop() calls unnecessary here, since we're throwing
     // away the temporary environment.
@@ -318,5 +328,4 @@ export class Evaluator {
     }
     return true;
   }
-
 }
