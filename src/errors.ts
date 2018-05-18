@@ -1,4 +1,4 @@
-import { LessError, LessErrorType } from './common';
+import { IBlockNode, LessError, LessErrorType, Node, IBlock } from './common';
 
 const runtimeError = (message: string): LessError =>
   ({ type: 'runtime', message });
@@ -16,8 +16,8 @@ export const argTooMany = (call: string): LessError =>
 export const divideByZero = (arg: string): LessError =>
   runtimeError(`Attempt to divide ${arg} by zero`);
 
-export const expectedBoolOp = (expr: string): LessError =>
-  runtimeError(`Expected a boolean operator in expression ${expr}`);
+export const expectedBoolOp = (operator: string): LessError =>
+  runtimeError(`Expected a boolean operator in expression, got ${operator}`);
 
 export const expectedMathOp = (op: string): LessError =>
   runtimeError(`Expected math operator, got ${op}`);

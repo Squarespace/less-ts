@@ -81,14 +81,14 @@ const operate = (env: ExecEnv, op: Operator, left: Node, right: Node): Node => {
       if (right.type === NodeType.DIMENSION) {
         const dim = right as Dimension;
         if (dim.unit) {
-          ctx.errors.push(incompatibleUnits(dim.unit, 'color'));
+          env.errors.push(incompatibleUnits(dim.unit, 'color'));
         }
         right = new RGBColor(dim.value, dim.value, dim.value, 1.0);
       }
       if (right.type === NodeType.COLOR) {
         return operateColor(env, op, (left as BaseColor).toRGB(), (right as BaseColor).toRGB());
       }
-      ctx.errors.push(invalidOperation(op, ctx.render(left), ctx.render(right)));
+      env.errors.push(invalidOperation(op, ctx.render(left), ctx.render(right)));
       break;
 
     case NodeType.DIMENSION:
@@ -125,7 +125,7 @@ const operateColor = (env: ExecEnv, op: Operator, c0: RGBColor, c1: RGBColor): R
     default:
     {
       const { ctx } = env;
-      ctx.errors.push(invalidOperation(op, ctx.render(c0), ctx.render(c1)));
+      env.errors.push(invalidOperation(op, ctx.render(c0), ctx.render(c1)));
       return c0;
     }
   }
@@ -140,7 +140,10 @@ const operateDimension = (env: ExecEnv, op: Operator, n0: Dimension, n1: Dimensi
   const u0 = n0.unit;
   const u1 = n1.unit;
   const unit = u0 ? u0 : u1;
-  const factor = unitConversionFactor(u1, u0);
+  let factor = unitConversionFactor(u1, u0);
+  if (factor === 0) {
+    factor = 1.0;
+  }
   const scaled = n1.value * factor;
   let result = 0.0;
 
@@ -150,7 +153,7 @@ const operateDimension = (env: ExecEnv, op: Operator, n0: Dimension, n1: Dimensi
         result = n0.value / scaled;
       } else {
         const { ctx } = env;
-        ctx.errors.push(divideByZero(ctx.render(n0)));
+        env.errors.push(divideByZero(ctx.render(n0)));
         return ZERO;
       }
       break;
@@ -168,7 +171,7 @@ const operateDimension = (env: ExecEnv, op: Operator, n0: Dimension, n1: Dimensi
       break;
 
     default:
-      env.ctx.errors.push(expectedMathOp(op));
+      env.errors.push(expectedMathOp(op));
       break;
   }
   return new Dimension(result, unit);

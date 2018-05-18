@@ -30,7 +30,7 @@ export class Definition extends Node implements IDefinition {
 
   dereference(env: ExecEnv): Node {
     if (this.evaluating) {
-      env.ctx.errors.push(varCircularRef(this.name));
+      env.errors.push(varCircularRef(this.name));
       return this.value;
     }
 
@@ -45,18 +45,11 @@ const EMPTY = new Anonymous('');
 
 export class Variable extends Node {
 
-  readonly name: string;
-  readonly indirect: boolean;
-
-  constructor(name: string, readonly curly: boolean = false) {
+  constructor(
+    readonly name: string,
+    readonly indirect: boolean | number,
+    readonly curly: boolean | number = false) {
     super(NodeType.VARIABLE);
-    if (name.startsWith('@@')) {
-      name = name.substring(1);
-      this.indirect = true;
-    } else {
-      this.indirect = false;
-    }
-    this.name = name;
   }
 
   equals(n: Node): boolean {
@@ -87,7 +80,7 @@ export class Variable extends Node {
     const { ctx } = env;
     const def = env.resolveDefinition(this.name);
     if (!def) {
-      ctx.errors.push(varUndefined(this.name));
+      env.errors.push(varUndefined(this.name));
       return EMPTY;
     }
 
@@ -101,6 +94,6 @@ export class Variable extends Node {
     const buf = ctx.newBuffer();
     buf.startEscape('"');
     ctx.renderInto(buf, res);
-    return new Variable(`@${buf.toString()}`).eval(env);
+    return new Variable(`@${buf.toString()}`, 0, 0).eval(env);
   }
 }

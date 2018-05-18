@@ -9,7 +9,7 @@ class EFunc extends BaseFunction {
     super('e', 's');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const str = args[0] as Quoted;
     const res = new Quoted(str.delim, true, str.parts);
     return new Anonymous(env.ctx.render(res));
@@ -23,7 +23,7 @@ class Escape extends BaseFunction {
     super('escape', 's');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const str = asString(env, args[0], true);
     return new Anonymous(escape(str));
   }
@@ -36,7 +36,7 @@ class Format extends BaseFunction {
     super('%', 's.');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const orig = args[0] as Quoted;
     const format = asString(env, orig, true);
 
@@ -93,7 +93,7 @@ class Format extends BaseFunction {
       j++;
     }
     if (error) {
-      env.ctx.errors.push(formatFunctionArgs(formatters, args.length - 1));
+      env.errors.push(formatFunctionArgs(formatters, args.length - 1));
     }
     return new Quoted(orig.delim, orig.escaped, [new Anonymous(buf)]);
   }

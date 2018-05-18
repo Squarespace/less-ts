@@ -187,6 +187,14 @@ export class FunctionCall extends Node {
     if (func !== undefined) {
       // We have an implementation, so call it.
       const args = this.evalArgs(env);
+      const [ok, errors] = func.validate(env, args);
+      if (!ok) {
+        // Arguments failed to validate, so append an error and return
+        for (const err of errors) {
+          env.errors.push(err);
+        }
+        return this;
+      }
       const result = func.invoke(env, args);
       if (result !== undefined) {
         return result;

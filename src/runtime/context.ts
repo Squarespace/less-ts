@@ -5,9 +5,13 @@ import {
   ExecEnv,
   Function,
   IBlock,
+  IBlockNode,
   IDefinition,
   LessError,
+  LessErrorEvent,
+  LessErrorType,
   Node,
+  NodeRenderer,
   Options,
   NodeName,
   NodeType,
@@ -74,7 +78,7 @@ export class RuntimeBuffer implements Buffer {
   }
 
   num(n: number): Buffer {
-    this.buf += n;
+    this.buf += n; // number should already have been clamped
     this.prev = '0'; // can be any digit
     return this;
   }
@@ -123,12 +127,13 @@ export class RuntimeBuffer implements Buffer {
 
 export class RuntimeExecEnv implements ExecEnv {
 
-  frames: IBlock[];
+  frames: IBlockNode[];
+  errors: LessError[] = [];
   protected bufindex: number = 0;
 
   constructor(
     readonly ctx: Context,
-    initialStack: IBlock[]) {
+    initialStack: IBlockNode[]) {
     this.frames = initialStack || [];
   }
 
@@ -136,7 +141,7 @@ export class RuntimeExecEnv implements ExecEnv {
     return new RuntimeExecEnv(this.ctx, this.frames.slice(0));
   }
 
-  append(frames: IBlock[]): void {
+  append(frames: IBlockNode[]): void {
     this.frames = this.frames.concat(frames);
   }
 
@@ -146,7 +151,7 @@ export class RuntimeExecEnv implements ExecEnv {
     for (let i = end; i >= 0; i--) {
       buf.incr();
       buf.str(`${i}: `);
-      this.frames[i].dump(buf);
+      this.frames[i].block.dump(buf);
       buf.str('\n');
     }
     return buf.toString();
@@ -155,7 +160,7 @@ export class RuntimeExecEnv implements ExecEnv {
   resolveDefinition(name: string): IDefinition | undefined {
     const end = this.frames.length - 1;
     for (let i = end; i >= 0; i--) {
-      const def = this.frames[i].resolveDefinition(name);
+      const def = this.frames[i].block.resolveDefinition(name);
       if (def) {
         return def;
       }
@@ -164,7 +169,7 @@ export class RuntimeExecEnv implements ExecEnv {
   }
 
   push(n: BlockNode): void {
-    this.frames.push(n.block);
+    this.frames.push(n);
   }
 
   pop(): void {
@@ -186,8 +191,6 @@ export class RuntimeExecEnv implements ExecEnv {
 
 const DEFAULT_MIXIN_RECURSION_LIMIT = 64;
 
-export type NodeRenderer = (buf: Buffer, n: Node) => void;
-
 export class RuntimeContext implements Context {
 
   // Buffer-related settings. Used for fast construction of new temp buffers.
@@ -199,7 +202,7 @@ export class RuntimeContext implements Context {
   readonly strictMath: boolean;
   readonly mixinRecursionLimit: number;
 
-  readonly errors: LessError[] = [];
+  readonly errors: LessErrorEvent[] = [];
 
   mixinDepth: number = 0;
 
@@ -220,6 +223,25 @@ export class RuntimeContext implements Context {
       selectorsep: this.compress ? ',' : ',\n'
     };
   }
+
+  captureErrors(node: Node, env: ExecEnv): void {
+    if (env.errors.length > 0) {
+      const errors = env.errors.splice(0);
+      const stack = env.frames.slice(0);
+      this.errors.push({
+        errors,
+        node,
+        stack
+      });
+    }
+  }
+
+  // error(error: LessError, env: ExecEnv): void {
+  //   this.errors.push({
+  //     ...error,
+  //     stack: env.frames.slice(0),
+  //   });
+  // }
 
   newEnv(): ExecEnv {
     return new RuntimeExecEnv(this, []);

@@ -9,9 +9,9 @@
     [SELECTOR, [
       [VALUE_ELEMENT, ' ', [QUOTED, 0, true, [
         [ANONYMOUS, '.'],
-        [VARIABLE, '@a'],
+        [VARIABLE, '@a', false, true],
         [ANONYMOUS, '-'],
-        [VARIABLE, '@b']
+        [VARIABLE, '@b', false, true]
       ]]]
     ]]
   ]], [

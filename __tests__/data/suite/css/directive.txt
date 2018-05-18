@@ -45,8 +45,8 @@
     ]]
   ]], [
     [DIRECTIVE, '@namespace', [EXPRESSION, [
-      [VARIABLE, '@name'],
-      [VARIABLE, '@value']
+      [VARIABLE, '@name', false, false],
+      [VARIABLE, '@value', false, false]
     ]]]
   ]]
 ]]

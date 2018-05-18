@@ -21,7 +21,7 @@ class Color extends BaseFunction {
     super('color', 's');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     let str = args[0] as Quoted;
     str = str.copy();
     str.escaped = true;
@@ -36,7 +36,7 @@ class Convert extends BaseFunction {
     super('convert', 'd*');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const dim = args[0] as Dimension;
     const destUnit = toUnit(env, args[1]);
     const factor = unitConversionFactor(dim.unit, destUnit);
@@ -50,7 +50,7 @@ class GetUnit extends BaseFunction {
     super('get-unit', 'd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const { unit } = args[0] as Dimension;
     if (unit === undefined) {
       return ANON_EMPTY;
@@ -67,7 +67,7 @@ class UnitFunc extends BaseFunction {
     super('unit', 'd:*');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const dim = args[0] as Dimension;
     let unit: Unit | undefined;
     if (args.length >= 2) {
@@ -78,17 +78,16 @@ class UnitFunc extends BaseFunction {
 }
 
 const toUnit = (env: ExecEnv, n: Node): Unit | undefined => {
-  const { ctx } = env;
   let unit: Unit | undefined;
   if (n.type === NodeType.KEYWORD) {
     unit = stringToUnit((n as Keyword).value);
   } else if (n.type === NodeType.QUOTED) {
     const str = (n as Quoted).copy();
     str.escaped = true;
-    const res = ctx.render(str);
+    const res = env.ctx.render(str);
     unit = stringToUnit(res);
     if (unit === undefined) {
-      ctx.errors.push(unknownUnit(res));
+      env.errors.push(unknownUnit(res));
     }
   }
   return unit;

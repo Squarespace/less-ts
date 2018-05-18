@@ -16,7 +16,7 @@ class Abs extends BaseFunction {
     super('abs', 'd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const d = args[0] as Dimension;
     return new Dimension(Math.abs(d.value), d.unit);
   }
@@ -28,7 +28,7 @@ class ASin extends BaseFunction {
     super('asin', 'd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const { value } = (args[0] as Dimension);
     return new Dimension(Math.asin(value), Unit.RAD);
   }
@@ -40,7 +40,7 @@ class ACos extends BaseFunction {
     super('acos', 'd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const { value } = (args[0] as Dimension);
     return new Dimension(Math.acos(value), Unit.RAD);
   }
@@ -52,7 +52,7 @@ class ATan extends BaseFunction {
     super('atan', 'd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const { value } = (args[0] as Dimension);
     return new Dimension(Math.atan(value), Unit.RAD);
   }
@@ -64,7 +64,7 @@ class Ceil extends BaseFunction {
     super('ceil', 'd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const { value, unit } = (args[0] as Dimension);
     return new Dimension(Math.ceil(value), unit);
   }
@@ -76,7 +76,7 @@ class Cos extends BaseFunction {
     super('cos', 'd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     return trigFunction(TrigFunction.COS, args[0]);
   }
 }
@@ -87,7 +87,7 @@ class Floor extends BaseFunction {
     super('floor', 'd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const { value, unit } = (args[0] as Dimension);
     return new Dimension(Math.floor(value), unit);
   }
@@ -99,7 +99,7 @@ class Max extends BaseFunction {
     super('max', '*.');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     return calcMinOrMax(args, false);
   }
 }
@@ -110,7 +110,7 @@ class Min extends BaseFunction {
     super('min', '*.');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     return calcMinOrMax(args, true);
   }
 }
@@ -121,7 +121,7 @@ class Mod extends BaseFunction {
     super('mod', 'dd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const dividend = (args[0] as Dimension);
     const divisor = (args[1] as Dimension).value;
     let res: number = NaN;
@@ -138,7 +138,7 @@ class Percentage extends BaseFunction {
     super('percentage', 'd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const dim = args[0] as Dimension;
     return new Dimension(dim.value * 100, Unit.PERCENTAGE);
   }
@@ -150,7 +150,7 @@ class Pi extends BaseFunction {
     super('pi', '');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     return PI;
   }
 }
@@ -161,7 +161,7 @@ class Pow extends BaseFunction {
     super('pow', 'dd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const base = args[0] as Dimension;
     const exp = args[1] as Dimension;
     const value = Math.pow(base.value, exp.value);
@@ -175,7 +175,7 @@ class Round extends BaseFunction {
     super('round', 'd:n');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     let places = 0.0;
     const len = args.length;
     const dim = args[0] as Dimension;
@@ -193,7 +193,7 @@ class Sin extends BaseFunction {
     super('sin', 'd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     return trigFunction(TrigFunction.SIN, args[0]);
   }
 }
@@ -204,7 +204,7 @@ class Sqrt extends BaseFunction {
     super('sqrt', 'd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const dim = args[0] as Dimension;
     return new Dimension(Math.sqrt(dim.value), dim.unit);
   }
@@ -216,7 +216,7 @@ class Tan extends BaseFunction {
     super('tan', 'd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     return trigFunction(TrigFunction.TAN, args[0]);
   }
 }

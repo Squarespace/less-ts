@@ -1,0 +1,13 @@
+[STYLESHEET, 1, [
+  [DEFINITION, '@foo', [QUOTED, 0, false, [
+    [ANONYMOUS, 'bar']
+  ]]],
+  [DEFINITION, '@bar', [DIMENSION, 12, 'px']],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.parent']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'font-size'], [VARIABLE, '@foo', true, false], false]
+  ]]
+]]

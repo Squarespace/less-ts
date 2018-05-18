@@ -10,7 +10,7 @@ class Extract extends BaseFunction {
     super('extract', '**.');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const arg1 = args[0];
     const arg2 = args[1];
     if (arg1.type !== NodeType.EXPRESSION_LIST && arg2.type !== NodeType.DIMENSION) {
@@ -35,7 +35,7 @@ class Length extends BaseFunction {
     super('length', '*.');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const arg = args[0];
     let size = 1;
     if (arg.type === NodeType.EXPRESSION_LIST) {

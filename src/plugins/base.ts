@@ -1,4 +1,4 @@
-import { ExecEnv, Function, Node } from '../common';
+import { ExecEnv, Function, LessError, Node } from '../common';
 import { ArgSpec } from './args';
 
 export abstract class BaseFunction implements Function {
@@ -9,13 +9,10 @@ export abstract class BaseFunction implements Function {
     this.spec = new ArgSpec(name, spec);
   }
 
-  invoke(env: ExecEnv, args: Node[]): Node | undefined {
-    if (!this.spec.validate(env, args)) {
-      return undefined;
-    }
-    return this._invoke(env, args);
+  validate(env: ExecEnv, args: Node[]): [boolean, LessError[]] {
+    return this.spec.validate(env, args);
   }
 
-  protected abstract _invoke(env: ExecEnv, args: Node[]): Node | undefined;
+  abstract invoke(env: ExecEnv, args: Node[]): Node | undefined;
 
 }

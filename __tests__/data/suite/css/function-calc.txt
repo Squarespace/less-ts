@@ -8,7 +8,7 @@
     [RULE, [PROPERTY, 'width'], [FUNCTION_CALL, 'calc', [
       [QUOTED, 0, true, [
         [ANONYMOUS, '100% + '],
-        [VARIABLE, '@adjust']
+        [VARIABLE, '@adjust', false, true]
       ]]
     ]], false]
   ]]

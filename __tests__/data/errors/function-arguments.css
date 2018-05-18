@@ -1,0 +1,4 @@
+.outer-1 .outer-2 {
+  font-size: round();
+  color: red;
+}

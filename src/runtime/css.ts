@@ -4,7 +4,7 @@
  */
 import 'core-js/library/es6/set';
 
-import { Buffer, Context, NodeType } from '../common';
+import { Buffer, Context, NodeName, NodeType } from '../common';
 import { setOf } from '../utils';
 
 const ACCEPT_BLOCK_DIRECTIVE = setOf(

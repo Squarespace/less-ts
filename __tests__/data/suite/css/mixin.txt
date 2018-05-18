@@ -8,7 +8,7 @@
       [TEXT_ELEMENT, ' ', '.ruleset-1']
     ]]
   ]], [
-    [RULE, [PROPERTY, 'a'], [VARIABLE, '@a'], false],
+    [RULE, [PROPERTY, 'a'], [VARIABLE, '@a', false, false], false],
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.mixin-import-a']
     ]], [MIXIN_ARGS, 0, []], false]
@@ -18,8 +18,8 @@
     [PARAMETER, '@num', [DIMENSION, 1, null], false],
     [PARAMETER, '@color', [COLOR, 0, 0, 255, 1.0, null], false]
   ], false, 0], NULL, [
-    [RULE, [PROPERTY, 'num'], [VARIABLE, '@num'], false],
-    [RULE, [PROPERTY, 'color'], [VARIABLE, '@color'], false]
+    [RULE, [PROPERTY, 'num'], [VARIABLE, '@num', false, false], false],
+    [RULE, [PROPERTY, 'color'], [VARIABLE, '@color', false, false], false]
   ]],
   [RULESET, [SELECTORS, [
     [SELECTOR, [
@@ -54,12 +54,12 @@
     [PARAMETER, '@a', NULL, false],
     [PARAMETER, '@b', [DIMENSION, 0, null], false]
   ], false, 1], [GUARD, [
-    [CONDITION, '>', [VARIABLE, '@a'], [DIMENSION, 3, null], false],
-    [CONDITION, '>', [VARIABLE, '@b'], [DIMENSION, 3, null], false]
+    [CONDITION, '>', [VARIABLE, '@a', false, false], [DIMENSION, 3, null], false],
+    [CONDITION, '>', [VARIABLE, '@b', false, false], [DIMENSION, 3, null], false]
   ]], [
     [RULE, [PROPERTY, 'values'], [EXPRESSION, [
-      [VARIABLE, '@a'],
-      [VARIABLE, '@b']
+      [VARIABLE, '@a', false, false],
+      [VARIABLE, '@b', false, false]
     ]], false]
   ]],
   [RULESET, [SELECTORS, [
@@ -107,13 +107,13 @@
     [PARAMETER, null, [COLOR, 255, 255, 255, 1.0, null], false],
     [PARAMETER, null, NULL, true]
   ], true, 1], NULL, [
-    [RULE, [PROPERTY, 'color-white'], [VARIABLE, '@arguments'], false]
+    [RULE, [PROPERTY, 'color-white'], [VARIABLE, '@arguments', false, false], false]
   ]],
   [MIXIN, '.mixin-color', [MIXIN_PARAMS, [
     [PARAMETER, null, [COLOR, 0, 0, 0, 1.0, null], false],
     [PARAMETER, null, NULL, true]
   ], true, 1], NULL, [
-    [RULE, [PROPERTY, 'color-black'], [VARIABLE, '@arguments'], false]
+    [RULE, [PROPERTY, 'color-black'], [VARIABLE, '@arguments', false, false], false]
   ]],
   [RULESET, [SELECTORS, [
     [SELECTOR, [
@@ -153,19 +153,19 @@
   [MIXIN, '.mixin-recurse', [MIXIN_PARAMS, [
     [PARAMETER, '@arg', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '>', [VARIABLE, '@arg'], [DIMENSION, 0, null], false]
+    [CONDITION, '>', [VARIABLE, '@arg', false, false], [DIMENSION, 0, null], false]
   ]], [
     [RULESET, [SELECTORS, [
       [SELECTOR, [
         [TEXT_ELEMENT, ' ', '.child']
       ]]
     ]], [
-      [RULE, [PROPERTY, 'arg'], [VARIABLE, '@arg'], false]
+      [RULE, [PROPERTY, 'arg'], [VARIABLE, '@arg', false, false], false]
     ]],
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.mixin-recurse']
     ]], [MIXIN_ARGS, 0, [
-      [ARGUMENT, null, [OPERATION, '-', [VARIABLE, '@arg'], [DIMENSION, 1, null]]]
+      [ARGUMENT, null, [OPERATION, '-', [VARIABLE, '@arg', false, false], [DIMENSION, 1, null]]]
     ]], false]
   ]],
   [RULESET, [SELECTORS, [
@@ -183,37 +183,37 @@
   [MIXIN, '.mixin-recurse-1', [MIXIN_PARAMS, [
     [PARAMETER, '@arg', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '>', [VARIABLE, '@arg'], [DIMENSION, 0, null], false]
+    [CONDITION, '>', [VARIABLE, '@arg', false, false], [DIMENSION, 0, null], false]
   ]], [
     [RULESET, [SELECTORS, [
       [SELECTOR, [
         [TEXT_ELEMENT, ' ', '.black']
       ]]
     ]], [
-      [RULE, [PROPERTY, 'arg'], [VARIABLE, '@arg'], false]
+      [RULE, [PROPERTY, 'arg'], [VARIABLE, '@arg', false, false], false]
     ]],
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.mixin-recurse-2']
     ]], [MIXIN_ARGS, 0, [
-      [ARGUMENT, null, [OPERATION, '-', [VARIABLE, '@arg'], [DIMENSION, 1, null]]]
+      [ARGUMENT, null, [OPERATION, '-', [VARIABLE, '@arg', false, false], [DIMENSION, 1, null]]]
     ]], false]
   ]],
   [MIXIN, '.mixin-recurse-2', [MIXIN_PARAMS, [
     [PARAMETER, '@arg', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '>', [VARIABLE, '@arg'], [DIMENSION, 0, null], false]
+    [CONDITION, '>', [VARIABLE, '@arg', false, false], [DIMENSION, 0, null], false]
   ]], [
     [RULESET, [SELECTORS, [
       [SELECTOR, [
         [TEXT_ELEMENT, ' ', '.red']
       ]]
     ]], [
-      [RULE, [PROPERTY, 'arg'], [VARIABLE, '@arg'], false]
+      [RULE, [PROPERTY, 'arg'], [VARIABLE, '@arg', false, false], false]
     ]],
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.mixin-recurse-1']
     ]], [MIXIN_ARGS, 0, [
-      [ARGUMENT, null, [OPERATION, '-', [VARIABLE, '@arg'], [DIMENSION, 1, null]]]
+      [ARGUMENT, null, [OPERATION, '-', [VARIABLE, '@arg', false, false], [DIMENSION, 1, null]]]
     ]], false]
   ]],
   [RULESET, [SELECTORS, [

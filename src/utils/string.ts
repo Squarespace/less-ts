@@ -48,14 +48,20 @@ export const hexvalue = (ch: string): number => {
   return 0;
 };
 
+export const MAX_NUMBER = 1e20;
+export const MIN_NUMBER = -1e20;
+
+export const clampNumber = (n: number): number =>
+  Math.max(MIN_NUMBER, Math.min(n, MAX_NUMBER));
+
 export const formatDouble = (n: number): string => {
   const q = Math.floor(n);
   if (q === n) {
-    return n.toString();
+    return clampNumber(n).toString();
   }
 
   // Emit floating point values without a leading '0' digit.
   const s = n < 0 ? '-' : '';
-  const a = Math.abs(n);
+  const a = clampNumber(Math.abs(n));
   return s + (a < 1 ? a.toString().substring(1) : a);
 };

@@ -170,6 +170,7 @@ export const unitConversionFactor = (from: Unit | undefined, to: Unit | undefine
   if (!from || !to) {
     return 1.0;
   }
+  // Return 0.0 to indicate there is no conversion.
   const f = FACTORS[from];
-  return f ? (f[to] || 1.0) : 1.0;
+  return f ? (f[to] || 0.0) : 0.0;
 };

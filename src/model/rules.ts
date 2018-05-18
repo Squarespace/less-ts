@@ -96,6 +96,7 @@ export class Ruleset extends BlockNode {
 
   copy(env: ExecEnv): Ruleset {
     const selectors = this.selectors.eval(env) as Selectors;
+    env.ctx.captureErrors(this.selectors, env);
     const r = new Ruleset(selectors, this.block.copy(), this.original as Ruleset);
     return r;
   }

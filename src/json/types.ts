@@ -444,4 +444,8 @@ export interface VariableJ {
   [0]: JsonType.VARIABLE;
   // name index
   [1]: number;
+  // indirect
+  [2]: number;
+  // curly
+  [3]: number;
 }

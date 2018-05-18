@@ -425,8 +425,9 @@ export class Builder {
 
       case JsonType.VARIABLE:
       {
-        const name = this.table[(t as VariableJ)[1]];
-        return new Variable(name);
+        const o = t as VariableJ;
+        const name = this.table[o[1]];
+        return new Variable(name, o[2], o[3]);
       }
     }
   }

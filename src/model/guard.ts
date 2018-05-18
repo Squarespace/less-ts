@@ -69,7 +69,7 @@ export class Condition extends Node {
       {
         // Conditions only use boolean operators.
         const { ctx } = env;
-        ctx.errors.push(expectedBoolOp(ctx.render(this)));
+        env.errors.push(expectedBoolOp(operator));
         return false;
       }
 
@@ -117,7 +117,7 @@ export class Condition extends Node {
       }
 
       default:
-        env.ctx.errors.push(uncomparableType(NodeName[type]));
+        env.errors.push(uncomparableType(NodeName[type]));
         return false;
     }
 

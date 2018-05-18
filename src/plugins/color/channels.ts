@@ -11,7 +11,7 @@ class Alpha extends BaseFunction {
     super('alpha', 'c');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = rgb(args[0]);
     return new Dimension(c.a);
   }
@@ -23,7 +23,7 @@ class Blue extends BaseFunction {
     super('blue', 'c');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = rgb(args[0]);
     return new Dimension(c.b);
   }
@@ -35,7 +35,7 @@ class Green extends BaseFunction {
     super('green', 'c');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = rgb(args[0]);
     return new Dimension(c.g);
   }
@@ -47,7 +47,7 @@ class Hue extends BaseFunction {
     super('hue', 'c');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = hsl(args[0]);
     return new Dimension(c.h);
   }
@@ -59,7 +59,7 @@ class Lightness extends BaseFunction {
     super('lightness', 'c');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = hsl(args[0]);
     return new Dimension(round(c.l * 100), Unit.PERCENTAGE);
   }
@@ -71,7 +71,7 @@ class Luma extends BaseFunction {
     super('luma', 'c');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = rgb(args[0]);
     return new Dimension(round(c.luma() * 100), Unit.PERCENTAGE);
   }
@@ -83,7 +83,7 @@ class Red extends BaseFunction {
     super('red', 'c');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = rgb(args[0]);
     return new Dimension(c.r);
   }
@@ -95,7 +95,7 @@ class Saturation extends BaseFunction {
     super('saturation', 'c');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = hsl(args[0]);
     return new Dimension(round(c.s * 100), Unit.PERCENTAGE);
   }

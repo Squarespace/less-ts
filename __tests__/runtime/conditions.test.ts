@@ -1,6 +1,6 @@
 import { Node, NodeType } from '../../src/common';
 import { Condition, Dimension, FALSE, Keyword, Operator, RGBColor, TRUE, Unit } from '../../src/model';
-import { RuntimeExecEnv, RuntimeContext } from '../../src/runtime';
+import { LessCompiler, RuntimeExecEnv, RuntimeContext } from '../../src/runtime';
 
 const dim = (n: number, unit?: Unit) => new Dimension(n, unit);
 const kwd = (s: string, t?: NodeType) => new Keyword(s, t);
@@ -23,8 +23,26 @@ const gt = (a: Node, b: Node, negate: boolean = false) =>
 const gte = (a: Node, b: Node, negate: boolean = false) =>
   cond(Operator.GREATER_THAN_OR_EQUAL, a, b, negate);
 
+test('condition errors', () => {
+  const compiler = new LessCompiler({});
+  const ctx = compiler.context();
+  let c: Condition;
+
+  const five = dim(5);
+  const ten = dim(10);
+
+  const env = ctx.newEnv();
+  c = cond(Operator.ADD, five, ten);
+  c.eval(env);
+  ctx.captureErrors(c, env);
+  expect(ctx.errors.length).toEqual(1);
+  expect(ctx.errors[0].errors[0].type).toEqual('runtime');
+  expect(ctx.errors[0].errors[0].message).toContain('Expected a boolean operator');
+});
+
 test('condition - same types', () => {
-  const ctx = new RuntimeContext();
+  const compiler = new LessCompiler({});
+  const ctx = compiler.context();
   const env = new RuntimeExecEnv(ctx, []);
   let c: Condition;
 
@@ -113,7 +131,8 @@ test('condition - same types', () => {
 });
 
 test('condition - units', () => {
-  const ctx = new RuntimeContext();
+  const compiler = new LessCompiler({});
+  const ctx = compiler.context();
   const env = new RuntimeExecEnv(ctx, []);
   let c: Condition;
 
@@ -142,7 +161,8 @@ test('condition - units', () => {
 });
 
 test('keywords', () => {
-  const ctx = new RuntimeContext();
+  const compiler = new LessCompiler({});
+  const ctx = compiler.context();
   const env = new RuntimeExecEnv(ctx, []);
   let c: Condition;
 

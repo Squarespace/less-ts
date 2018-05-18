@@ -35,7 +35,7 @@
     ]]], false],
     [RULE, [PROPERTY, 'a3'], [URL, [QUOTED, 0, true, [
       [ANONYMOUS, '//'],
-      [VARIABLE, '@domain'],
+      [VARIABLE, '@domain', false, true],
       [ANONYMOUS, '/foo.css']
     ]]], false]
   ]],
@@ -46,7 +46,7 @@
   ]], [
     [RULE, [PROPERTY, 'a1'], [URL, [QUOTED, 0, false, [
       [ANONYMOUS, 'http://'],
-      [VARIABLE, '@domain'],
+      [VARIABLE, '@domain', false, true],
       [ANONYMOUS, '/site.css']
     ]]], false]
   ]]

@@ -2,13 +2,14 @@ import * as fs from 'fs';
 import { join, normalize } from 'path';
 import { exec, execSync} from 'child_process';
 import { Callback, Semaphore } from './util';
+import { POINT_CONVERSION_COMPRESSED } from 'constants';
 
 const ROOT = normalize(join(__dirname, '..'));
 const LESS_EXT = '.less';
 const SUITE = join(ROOT, '__tests__/data/suite');
 const LESS = join(SUITE, 'less');
 const CSS = join(SUITE, 'css');
-const LESS_CMD = join(ROOT, 'server/less-compiler/lessc');
+const LESS_CMD = join(ROOT, 'lessc');
 const PREP_CMD = join(ROOT, 'scripts/checkout-lessc');
 
 const ERRORS = join(ROOT, '__tests__/data/errors');
@@ -21,7 +22,8 @@ const prep = () => {
     fs.mkdirSync(CSS);
   }
   if (!fs.existsSync(LESS_CMD)) {
-    execSync(PREP_CMD);
+    console.error(`Fail: You must symlink the 'lessc' command to the root.`);
+    process.exit(1);
   }
 };
 

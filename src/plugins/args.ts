@@ -1,4 +1,4 @@
-import { ExecEnv, Node, NodeType } from '../common';
+import { ExecEnv, Node, LessError, NodeType } from '../common';
 import { argCount, argCountIgnore, invalidArg } from '../errors';
 import { BaseColor, Dimension, Unit } from '../model';
 
@@ -55,26 +55,30 @@ export class ArgSpec {
   /**
    * Validate the arguments are of the expected type.
    */
-  validate(env: ExecEnv, args: Node[]): boolean {
+  validate(env: ExecEnv, args: Node[]): [boolean, LessError[]] {
+    const errors: LessError[] = [];
     const { ctx } = env;
     let len = args.length;
     if (len < this.minArgs) {
-      ctx.errors.push(argCount(this.name, this.minArgs, len));
-      return false;
+      // not enough arguments to call the function
+      errors.push(argCount(this.name, this.minArgs, len));
+      return [false, errors];
 
     } else if (this.variadic || len > this.validators.length) {
-      ctx.errors.push(argCountIgnore(this.name, this.minArgs, len));
+      // Extra args were provided but we will ignore them
+      errors.push(argCountIgnore(this.name, this.minArgs, len));
       len = this.validators.length;
     }
 
     for (let i = 0; i < len; i++) {
       const v = this.validators[i];
+      // If an argument fails to validate, we can't call the function, so bail out
       if (!v.validate(args[i])) {
-        ctx.errors.push(invalidArg(this.name, i + 1, v.type, ctx.render(args[i])));
-        return false;
+        errors.push(invalidArg(this.name, i + 1, v.type, ctx.render(args[i])));
+        return [false, errors];
       }
     }
-    return true;
+    return [true, errors];
   }
 }
 

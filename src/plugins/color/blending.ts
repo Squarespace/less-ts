@@ -11,7 +11,7 @@ class Average extends BaseFunction {
     super('average', 'cc');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c1 = rgb(args[0]);
     const c2 = rgb(args[1]);
     const r = (c1.r + c2.r) / 2.0;
@@ -28,7 +28,7 @@ class Difference extends BaseFunction {
     super('difference', 'cc');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c1 = rgb(args[0]);
     const c2 = rgb(args[1]);
     const r = abs(c1.r - c2.r);
@@ -44,7 +44,7 @@ class Exclusion extends BaseFunction {
     super('exclusion', 'cc');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c1 = rgb(args[0]);
     const c2 = rgb(args[1]);
     const r = exclusion(c1.r, c2.r);
@@ -61,7 +61,7 @@ class Hardlight extends BaseFunction {
     super('hardlight', 'cc');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c1 = rgb(args[0]);
     const c2 = rgb(args[1]);
     const r = hardlight(c1.r, c2.r);
@@ -77,7 +77,7 @@ class Multiply extends BaseFunction {
     super('multiply', 'cc');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c1 = rgb(args[0]);
     const c2 = rgb(args[1]);
     const r = (c1.r * c2.r) / 255;
@@ -94,7 +94,7 @@ class Negation extends BaseFunction {
     super('negation', 'cc');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c1 = rgb(args[0]);
     const c2 = rgb(args[1]);
     const r = negation(c1.r, c2.r);
@@ -111,7 +111,7 @@ class Overlay extends BaseFunction {
     super('overlay', 'cc');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c1 = rgb(args[0]);
     const c2 = rgb(args[1]);
     const r = overlay(c1.r, c2.r);
@@ -127,7 +127,7 @@ class Screen extends BaseFunction {
     super('screen', 'cc');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c1 = rgb(args[0]);
     const c2 = rgb(args[1]);
     const r = screen(c1.r, c2.r);
@@ -143,7 +143,7 @@ class Softlight extends BaseFunction {
     super('softlight', 'cc');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c1 = rgb(args[0]);
     const c2 = rgb(args[1]);
     const r = softlight(c1.r, c2.r);

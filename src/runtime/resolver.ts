@@ -1,4 +1,4 @@
-import { ExecEnv, IBlock, NodeType } from '../common';
+import { ExecEnv, IBlock, IBlockNode, NodeType } from '../common';
 import { Argument, Block, Mixin, MixinCallArgs, MixinParams, Ruleset, Selector } from '../model';
 import { MixinMatcher } from './mixin';
 
@@ -33,7 +33,7 @@ export class MixinResolver {
     this.endIndex = this.callPathSize - 1;
   }
 
-  resolve(frames: IBlock[]): boolean {
+  resolve(frames: IBlockNode[]): boolean {
     const prefix = this.callPath[0];
     const start = frames.length - 1;
     for (let i = start; i >= 0; i--) {
@@ -41,7 +41,7 @@ export class MixinResolver {
       // Prune the mixin search space at the top level. If no paths
       // have our desired prefix we skip the block entirely.
 
-      const block = frames[i];
+      const { block } = frames[i];
       if (block.mixins && block.mixins.has(prefix)) {
         if (this.match(0, block)) {
           return true;
@@ -133,7 +133,7 @@ export class MixinResolver {
       return this.match(index + 1, mixin.block);
     }
 
-    const env = this.matcher.callEnv.copy();
+    const env = this.matcher.env.copy();
 
     const defEnv = this.closureArrow(mixin);
     if (defEnv !== undefined) {

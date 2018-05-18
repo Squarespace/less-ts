@@ -3,84 +3,84 @@
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '=', [VARIABLE, '@a'], [TRUE], false]
+    [CONDITION, '=', [VARIABLE, '@a', false, false], [TRUE], false]
   ]], [
     [COMMENT, ' (@a) ', 1, true],
-    [RULE, [PROPERTY, '-1'], [VARIABLE, '@a'], false]
+    [RULE, [PROPERTY, '-1'], [VARIABLE, '@a', false, false], false]
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '=', [VARIABLE, '@a'], [KEYWORD, 'true'], false]
+    [CONDITION, '=', [VARIABLE, '@a', false, false], [KEYWORD, 'true'], false]
   ]], [
     [COMMENT, ' (@a = true) ', 1, true],
-    [RULE, [PROPERTY, '-2'], [VARIABLE, '@a'], false]
+    [RULE, [PROPERTY, '-2'], [VARIABLE, '@a', false, false], false]
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '<', [VARIABLE, '@a'], [DIMENSION, 10, 'px'], false]
+    [CONDITION, '<', [VARIABLE, '@a', false, false], [DIMENSION, 10, 'px'], false]
   ]], [
     [COMMENT, ' (@a < 10px) ', 1, true],
-    [RULE, [PROPERTY, '-3'], [VARIABLE, '@a'], false]
+    [RULE, [PROPERTY, '-3'], [VARIABLE, '@a', false, false], false]
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '>', [VARIABLE, '@a'], [DIMENSION, 10, 'px'], false]
+    [CONDITION, '>', [VARIABLE, '@a', false, false], [DIMENSION, 10, 'px'], false]
   ]], [
     [COMMENT, ' (@a > 10px) ', 1, true],
-    [RULE, [PROPERTY, '-4'], [VARIABLE, '@a'], false]
+    [RULE, [PROPERTY, '-4'], [VARIABLE, '@a', false, false], false]
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '<', [DIMENSION, 10, 'px'], [VARIABLE, '@a'], false]
+    [CONDITION, '<', [DIMENSION, 10, 'px'], [VARIABLE, '@a', false, false], false]
   ]], [
     [COMMENT, ' (10px < @a) ', 1, true],
-    [RULE, [PROPERTY, '-5'], [VARIABLE, '@a'], false]
+    [RULE, [PROPERTY, '-5'], [VARIABLE, '@a', false, false], false]
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '>', [DIMENSION, 10, 'px'], [VARIABLE, '@a'], false]
+    [CONDITION, '>', [DIMENSION, 10, 'px'], [VARIABLE, '@a', false, false], false]
   ]], [
     [COMMENT, ' (10px > @a) ', 1, true],
-    [RULE, [PROPERTY, '-6'], [VARIABLE, '@a'], false]
+    [RULE, [PROPERTY, '-6'], [VARIABLE, '@a', false, false], false]
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '=', [COLOR, 0, 0, 255, 1.0, null], [VARIABLE, '@a'], false]
+    [CONDITION, '=', [COLOR, 0, 0, 255, 1.0, null], [VARIABLE, '@a', false, false], false]
   ]], [
     [COMMENT, ' (#00f = @a) ', 1, true],
-    [RULE, [PROPERTY, '-7'], [VARIABLE, '@a'], false]
+    [RULE, [PROPERTY, '-7'], [VARIABLE, '@a', false, false], false]
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '<=', [VARIABLE, '@a'], [DIMENSION, 10, 'px'], false],
-    [CONDITION, '>=', [VARIABLE, '@a'], [DIMENSION, 20, 'px'], false]
+    [CONDITION, '<=', [VARIABLE, '@a', false, false], [DIMENSION, 10, 'px'], false],
+    [CONDITION, '>=', [VARIABLE, '@a', false, false], [DIMENSION, 20, 'px'], false]
   ]], [
     [COMMENT, ' (@a <= 10px), (@a >= 20px) ', 1, true],
-    [RULE, [PROPERTY, '-8'], [VARIABLE, '@a'], false]
+    [RULE, [PROPERTY, '-8'], [VARIABLE, '@a', false, false], false]
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, '<=', [VARIABLE, '@a'], [DIMENSION, 10, 'px'], false],
-    [CONDITION, '>=', [VARIABLE, '@a'], [DIMENSION, 20, 'px'], false]
+    [CONDITION, '<=', [VARIABLE, '@a', false, false], [DIMENSION, 10, 'px'], false],
+    [CONDITION, '>=', [VARIABLE, '@a', false, false], [DIMENSION, 20, 'px'], false]
   ]], [
     [COMMENT, ' (@a =< 10px), (@a => 20px) ', 1, true],
-    [RULE, [PROPERTY, '-9'], [VARIABLE, '@a'], false]
+    [RULE, [PROPERTY, '-9'], [VARIABLE, '@a', false, false], false]
   ]],
   [MIXIN, '.m', [MIXIN_PARAMS, [
     [PARAMETER, '@a', NULL, false]
   ], false, 1], [GUARD, [
-    [CONDITION, 'and', [CONDITION, '<>', [VARIABLE, '@a'], [DIMENSION, 20, 'px'], false], [CONDITION, '<>', [VARIABLE, '@a'], [DIMENSION, 5, 'px'], false], false]
+    [CONDITION, 'and', [CONDITION, '<>', [VARIABLE, '@a', false, false], [DIMENSION, 20, 'px'], false], [CONDITION, '<>', [VARIABLE, '@a', false, false], [DIMENSION, 5, 'px'], false], false]
   ]], [
     [COMMENT, ' (@a != 20px) and (@a != 5px) ', 1, true],
-    [RULE, [PROPERTY, '-10'], [VARIABLE, '@a'], false]
+    [RULE, [PROPERTY, '-10'], [VARIABLE, '@a', false, false], false]
   ]],
   [COMMENT, ' calls', 0, true],
   [RULESET, [SELECTORS, [

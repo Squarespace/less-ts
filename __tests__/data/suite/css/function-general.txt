@@ -90,6 +90,6 @@
   ]], [
     [DEFINITION, '@alpha', [DIMENSION, 0.7, null]],
     [RULE, [PROPERTY, 'c1'], [ALPHA, [DIMENSION, 0.35, null]], false],
-    [RULE, [PROPERTY, 'c2'], [ALPHA, [VARIABLE, '@alpha']], false]
+    [RULE, [PROPERTY, 'c2'], [ALPHA, [VARIABLE, '@alpha', false, false]], false]
   ]]
 ]]

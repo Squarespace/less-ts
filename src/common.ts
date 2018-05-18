@@ -104,8 +104,25 @@ export const NodeName: { [x: number]: string } = {
 export type LessErrorType = 'runtime';
 
 export interface LessError {
+
   type: LessErrorType;
+
   message: string;
+}
+
+// TODO: record node that raised the error (rule level and up) and
+// attach the context. we can snapshot the stack when an error
+// occurs, and sort things out when the error messages are rendered.
+
+export interface LessErrorEvent {
+  // Error messages
+  errors: LessError[];
+
+  // Node where the error was raised
+  node: Node;
+
+  // Block nodes showing context in which the error occurred.
+  stack: IBlockNode[];
 }
 
 /**
@@ -144,6 +161,11 @@ export abstract class Node {
  */
 export interface IBlockNode {
 
+  /**
+   * Block containing the rules attached to this block node.
+   */
+  readonly block: IBlock;
+
 }
 
 export interface IBlock {
@@ -167,16 +189,25 @@ export interface IDefinition {
   dereference(env: ExecEnv): Node;
 }
 
+export type NodeRenderer = (buf: Buffer, n: Node) => void;
+
 export interface Context {
 
   readonly indentSize: number;
   readonly compress: boolean;
   readonly fastcolor: boolean;
   readonly spacer: string;
+  readonly chars: Chars;
   mixinDepth: number;
   mixinRecursionLimit: number;
 
-  readonly errors: LessError[];
+  readonly renderer: NodeRenderer;
+  readonly errors: LessErrorEvent[];
+
+  /**
+   * Capture all errors on the given execution environment.
+   */
+  captureErrors(node: Node, env: ExecEnv): void;
 
   /**
    * Construct a new buffer.
@@ -217,7 +248,9 @@ export interface ExecEnv {
   /**
    * Stack frames.
    */
-  frames: IBlock[];
+  frames: IBlockNode[];
+
+  errors: LessError[];
 
   dump(): string;
 
@@ -226,7 +259,7 @@ export interface ExecEnv {
    */
   copy(): ExecEnv;
 
-  append(frames: IBlock[]): void;
+  append(frames: IBlockNode[]): void;
 
   /**
    * Lookup the definition 'name'
@@ -359,6 +392,11 @@ export interface Buffer extends Options {
  * A plugin function callable by a FunctionCall node.
  */
 export interface Function {
+
+  /**
+   * Validate the arguments to the function and return any errors that occur.
+   */
+  validate(env: ExecEnv, args: Node[]): [boolean, LessError[]];
 
   /**
    * Call the function with the given arguments and return the result.

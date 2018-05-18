@@ -5,13 +5,13 @@
     [RULESET, [SELECTORS, [
       [SELECTOR, [
         [TEXT_ELEMENT, ' ', '.child-'],
-        [VALUE_ELEMENT, null, [VARIABLE, '@a']]
+        [VALUE_ELEMENT, null, [VARIABLE, '@a', false, true]]
       ]]
     ]], [
       [MIXIN_CALL, [SELECTOR, [
         [TEXT_ELEMENT, null, '.bar']
       ]], [MIXIN_ARGS, 0, [
-        [ARGUMENT, null, [OPERATION, '+', [VARIABLE, '@a'], [DIMENSION, 1, null]]]
+        [ARGUMENT, null, [OPERATION, '+', [VARIABLE, '@a', false, false], [DIMENSION, 1, null]]]
       ]], false]
     ]]
   ]],
@@ -19,7 +19,7 @@
     [PARAMETER, '@b', NULL, false]
   ], false, 1], NULL, [
     [RULE, [PROPERTY, 'font-size'], [FUNCTION_CALL, 'unit', [
-      [VARIABLE, '@b'],
+      [VARIABLE, '@b', false, false],
       [QUOTED, 0, false, [
         [ANONYMOUS, 'px']
       ]]
@@ -27,7 +27,7 @@
     [MIXIN_CALL, [SELECTOR, [
       [TEXT_ELEMENT, null, '.foo']
     ]], [MIXIN_ARGS, 0, [
-      [ARGUMENT, null, [OPERATION, '+', [VARIABLE, '@b'], [DIMENSION, 1, null]]]
+      [ARGUMENT, null, [OPERATION, '+', [VARIABLE, '@b', false, false], [DIMENSION, 1, null]]]
     ]], false]
   ]],
   [RULESET, [SELECTORS, [

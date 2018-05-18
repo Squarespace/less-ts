@@ -169,6 +169,7 @@ export class Evaluator {
             } else {
               n = r.eval(env);
             }
+            env.ctx.captureErrors(n, env);
             break;
           }
 
@@ -180,9 +181,6 @@ export class Evaluator {
           n = n.eval(env);
           break;
       }
-
-      // TODO: catch, report errors
-      // if env.hasError()
 
       rules[i] = n;
     }
@@ -201,16 +199,21 @@ export class Evaluator {
       return;
     }
 
+    const { ctx } = env;
     const { rules } = block;
     for (let i = 0; i < rules.length; i++) {
       const n = rules[i];
       if (n.type === NodeType.MIXIN_CALL) {
         const result = this.executeMixinCall(env, n as MixinCall);
+        ctx.captureErrors(n, env);
 
         const len = result.rules.length;
         if (len > 0) {
           // Replace mixin call site with the result
           rules.splice(i, 1, ...result.rules);
+          for (const r of result.rules) {
+            block.update(r);
+          }
         } else {
           // Snip out the call.
           rules.splice(i, 1);
@@ -228,10 +231,11 @@ export class Evaluator {
     const matcher = new MixinMatcher(env, call);
     const resolver = new MixinResolver(matcher, this.closureArrow);
 
+    const { ctx } = env;
+
     // Attempt to resolve mixins
     if (!resolver.resolve(env.frames)) {
-      const { ctx } = env;
-      ctx.errors.push(mixinUndefined(ctx.render(call.selector)));
+      env.errors.push(mixinUndefined(ctx.render(call.selector)));
       return EMPTY_BLOCK;
     }
 
@@ -256,13 +260,13 @@ export class Evaluator {
     return block;
   }
 
-  protected executeMixin(env: ExecEnv, collector: Block, matcher: MixinMatcher, match: MixinMatch): boolean {
+  protected executeMixin(origEnv: ExecEnv, collector: Block, matcher: MixinMatcher, match: MixinMatch): boolean {
     const { call } = matcher;
     const mixin = (match.mixin as Mixin).copy();
-    const params = mixin.params.eval(env) as MixinParams;
+    const params = mixin.params.eval(origEnv) as MixinParams;
 
     const bindings = matcher.bind(params);
-    env = env.copy();
+    const env = origEnv.copy();
     const original = (mixin.original || mixin) as Mixin;
 
     const closureEnv = this.closures.get(original);
@@ -285,7 +289,7 @@ export class Evaluator {
     const { ctx } = env;
 
     if (ctx.mixinDepth >= ctx.mixinRecursionLimit) {
-      ctx.errors.push(mixinRecurse(ctx.render(call.selector), ctx.mixinRecursionLimit));
+      origEnv.errors.push(mixinRecurse(ctx.render(call.selector), ctx.mixinRecursionLimit));
       return true;
     }
 
@@ -296,7 +300,6 @@ export class Evaluator {
     this.expandMixins(env, block);
     this.evaluateRules(env, block, call.important);
 
-    const buf = env.ctx.newBuffer();
     for (const rule of block.rules) {
       collector.add(rule);
     }
@@ -315,7 +318,7 @@ export class Evaluator {
     const { ruleset } = match;
 
     if (ctx.mixinDepth >= ctx.mixinRecursionLimit) {
-      ctx.errors.push(mixinRecurse(ctx.render(call.selector), ctx.mixinRecursionLimit));
+      env.errors.push(mixinRecurse(ctx.render(call.selector), ctx.mixinRecursionLimit));
       return true;
     }
 
@@ -326,6 +329,7 @@ export class Evaluator {
     for (const n of result.block.rules) {
       collector.add(n);
     }
+
     return true;
   }
 }

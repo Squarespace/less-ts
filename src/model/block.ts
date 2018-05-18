@@ -56,7 +56,7 @@ export class Block extends Node implements IBlock {
   }
 
   resetVariableCache(): void {
-    this.flags = this.flags || BlockFlags.REBUILD_VARS;
+    this.flags |= BlockFlags.REBUILD_VARS;
   }
 
   resolveDefinition(name: string): Definition | undefined {
@@ -102,6 +102,10 @@ export class Block extends Node implements IBlock {
 
   add(n: Node): void {
     this.rules.push(n);
+    this.update(n);
+  }
+
+  update(n: Node): void {
     const { type } = n;
     switch (n.type) {
       case NodeType.IMPORT:
@@ -154,7 +158,7 @@ export class Block extends Node implements IBlock {
         this.variables[(rule as Definition).name] = rule as Definition;
       }
     }
-    this.flags = this.flags & ~BlockFlags.REBUILD_VARS;
+    this.flags &= ~BlockFlags.REBUILD_VARS;
   }
 }
 

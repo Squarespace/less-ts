@@ -9,7 +9,7 @@ class RGB extends BaseFunction {
     super('rgb', 'ppp');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const r = scaled(args[0], 256);
     const g = scaled(args[1], 256);
     const b = scaled(args[2], 256);
@@ -23,7 +23,7 @@ class RGBA extends BaseFunction {
     super('rgba', 'pppp');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const r = scaled(args[0], 256);
     const g = scaled(args[1], 256);
     const b = scaled(args[2], 256);
@@ -38,7 +38,7 @@ class ARGB extends BaseFunction {
     super('argb', 'c');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = rgb(args[0]);
     return c.toARGB();
   }
@@ -50,7 +50,7 @@ class HSL extends BaseFunction {
     super('hsl', 'ppp');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const h = percent(args[0]);
     const s = percent(args[1]);
     const l = percent(args[2]);
@@ -64,7 +64,7 @@ class HSLA extends BaseFunction {
     super('hsla', 'pppp');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const h = percent(args[0]);
     const s = percent(args[1]);
     const l = percent(args[2]);
@@ -79,7 +79,7 @@ class HSV extends BaseFunction {
     super('hsv', 'ppp');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const h = percent(args[0]);
     const s = percent(args[1]);
     const v = percent(args[2]);
@@ -93,7 +93,7 @@ class HSVA extends BaseFunction {
     super('hsva', 'pppp');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const h = percent(args[0]);
     const s = percent(args[1]);
     const v = percent(args[2]);

@@ -21,10 +21,10 @@ export class MixinMatcher {
   readonly ctx: Context;
   readonly args: MixinCallArgs;
 
-  constructor(readonly callEnv: ExecEnv, readonly call: MixinCall) {
-    this.ctx = callEnv.ctx;
+  constructor(readonly env: ExecEnv, readonly call: MixinCall) {
+    this.ctx = env.ctx;
     const { args } = call;
-    this.args = args ? args.eval(callEnv) as MixinCallArgs : args;
+    this.args = args ? args.eval(env) as MixinCallArgs : args;
   }
 
   /**
@@ -32,11 +32,11 @@ export class MixinMatcher {
    */
   bind(mixinParams: MixinParams): GenericBlock {
     if (mixinParams.needsEval()) {
-      this.ctx.errors.push(internalError('Serious error: params must already be evaluated!'));
+      this.env.errors.push(internalError('Serious error: params must already be evaluated!'));
       return EMPTY_BLOCK;
     }
 
-    const { ctx } = this.callEnv;
+    const { ctx } = this.env;
     const { params } = mixinParams;
     const paramSize = params.length;
 
@@ -75,7 +75,7 @@ export class MixinMatcher {
       const j = names.indexOf(name);
       if (j === -1) {
         const callName = this.ctx.render(this.call.selector);
-        this.ctx.errors.push(namedArgNotFound(callName, name));
+        this.env.errors.push(namedArgNotFound(callName, name));
         continue;
       }
 
@@ -118,7 +118,7 @@ export class MixinMatcher {
         // We should never reach this point since the pattern match would
         // also have failed.
         const callName = this.ctx.render(this.call.selector);
-        this.ctx.errors.push(argTooMany(callName));
+        this.env.errors.push(argTooMany(callName));
         continue;
       }
     }

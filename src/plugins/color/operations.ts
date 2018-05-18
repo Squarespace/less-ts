@@ -12,7 +12,7 @@ class Contrast extends BaseFunction {
     super('constrast', '*:ccp');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const arg = args[0];
     if (arg === undefined || arg.type !== NodeType.COLOR) {
       return undefined;
@@ -38,7 +38,7 @@ class Darken extends BaseFunction {
     super('darken', 'cp');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = hsl(args[0]);
     const value = num(args[1]) * 0.01;
     return new HSLColor(c.h / 360, c.s, c.l - value, c.a);
@@ -51,7 +51,7 @@ class Desaturate extends BaseFunction {
     super('desaturate', 'cp');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = hsl(args[0]);
     const value = num(args[1]) * 0.01;
     return new HSLColor(c.h / 360, c.s - value, c.l, c.a);
@@ -64,7 +64,7 @@ class Fade extends BaseFunction {
     super('fade', 'cp');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = rgb(args[0]);
     const alpha = num(args[1]) * 0.01;
     return new RGBColor(c.r, c.g, c.b, alpha);
@@ -77,7 +77,7 @@ class FadeIn extends BaseFunction {
     super('fadein', 'cp');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = rgb(args[0]);
     const amt = num(args[1]) * 0.01;
     return new RGBColor(c.r, c.g, c.b, c.a + amt);
@@ -90,7 +90,7 @@ class FadeOut extends BaseFunction {
     super('fadeout', 'cp');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = rgb(args[0]);
     const amt = num(args[1]) * 0.01;
     return new RGBColor(c.r, c.g, c.b, c.a - amt);
@@ -103,7 +103,7 @@ class Greyscale extends BaseFunction {
     super('greyscale', 'c');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = hsl(args[0]);
     return new HSLColor(c.h / 360, 0, c.l, c.a);
   }
@@ -115,7 +115,7 @@ class Lighten extends BaseFunction {
     super('lighten', 'cp');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = hsl(args[0]);
     const val = num(args[1]) * 0.01;
     return new HSLColor(c.h / 360, c.s, c.l + val, c.a);
@@ -128,7 +128,7 @@ class Mix extends BaseFunction {
     super('mix', 'cc:d');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c1 = rgb(args[0]);
     const c2 = rgb(args[1]);
     let wt = 0.5;
@@ -145,7 +145,7 @@ class Saturate extends BaseFunction {
     super('saturate', 'cp');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = hsl(args[0]);
     const val = num(args[1]) * 0.01;
     return new HSLColor(c.h / 360, c.s + val, c.l, c.a);
@@ -158,7 +158,7 @@ class Shade extends BaseFunction {
     super('shade', 'cd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = rgb(args[0]);
     const dim = args[1] as Dimension;
     return mix(BLACK, c, dim.value * 0.01);
@@ -171,7 +171,7 @@ class Spin extends BaseFunction {
     super('spin', 'cp');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = hsl(args[0]);
     const amt = args[1] as Dimension;
     let { value } = amt;
@@ -190,7 +190,7 @@ class Tint extends BaseFunction {
     super('tint', 'cd');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = rgb(args[0]);
     const dim = args[1] as Dimension;
     const wt = dim.value * 0.01;

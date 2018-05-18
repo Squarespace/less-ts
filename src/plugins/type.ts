@@ -8,7 +8,7 @@ class IsColor extends BaseFunction {
     super('iscolor', '*');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     return args[0].type === NodeType.COLOR ? TRUE : FALSE;
   }
 }
@@ -19,7 +19,7 @@ class DimensionUnit extends BaseFunction {
     super(name, '*');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const arg = args[0];
     return arg.type === NodeType.DIMENSION && (arg as Dimension).unit === this.unit ? TRUE : FALSE;
   }
@@ -40,7 +40,7 @@ class IsKeyword extends BaseFunction {
     super('iskeyword', '*');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     switch (args[0].type) {
       case NodeType.FALSE:
       case NodeType.KEYWORD:
@@ -58,7 +58,7 @@ class IsNumber extends BaseFunction {
     super('isnumber', '*');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     return args[0].type === NodeType.DIMENSION ? TRUE : FALSE;
   }
 }
@@ -85,7 +85,7 @@ class IsString extends BaseFunction {
     super('isstring', '*');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     return args[0].type === NodeType.QUOTED ? TRUE : FALSE;
   }
 
@@ -97,7 +97,7 @@ class IsUnit extends BaseFunction {
     super('isunit', '**');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     if (args[0].type !== NodeType.DIMENSION) {
       return FALSE;
     }
@@ -124,7 +124,7 @@ class IsUrl extends BaseFunction {
     super('isurl', '*');
   }
 
-  protected _invoke(env: ExecEnv, args: Node[]): Node | undefined {
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
     return args[0].type === NodeType.URL ? TRUE : FALSE;
   }
 

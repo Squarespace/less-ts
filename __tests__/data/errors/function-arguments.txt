@@ -1,0 +1,17 @@
+[STYLESHEET, 1, [
+  [DEFINITION, '@size', [DIMENSION, 12, null]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.outer-1']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.outer-2']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'font-size'], [FUNCTION_CALL, 'round', []], false],
+      [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0, null], false]
+    ]]
+  ]]
+]]
