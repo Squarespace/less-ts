@@ -1,6 +1,7 @@
 import * as fs from 'fs';
 import { join, normalize } from 'path';
 import { exec, execSync} from 'child_process';
+import { Callback, Semaphore } from './util';
 
 const ROOT = normalize(join(__dirname, '..'));
 const LESS_EXT = '.less';
@@ -23,39 +24,6 @@ const prep = () => {
     execSync(PREP_CMD);
   }
 };
-
-type Callback = () => void;
-
-class Semaphore {
-
-  active: number = 0;
-  waiting: Callback[] = [];
-
-  constructor(readonly max: number) {}
-
-  acquire(cb: Callback): void {
-    if (this.active >= this.max) {
-      this.waiting.push(cb);
-    } else {
-      this.lock(cb);
-    }
-  }
-
-  release(): void {
-    if (this.active === 0) {
-      return;
-    }
-    this.active--;
-    this.lock(this.waiting.pop());
-  }
-
-  private lock(cb: Callback | undefined): void {
-    if (cb) {
-      cb();
-      this.active++;
-    }
-  }
-}
 
 const rebuild = (src: string, dst: string): boolean =>
   !fs.existsSync(dst) || newerThan(src, dst) || newerThan(__filename, dst);
