@@ -3,11 +3,34 @@ import { Directive } from './general';
 import { Definition } from './variable';
 import { arrayEquals } from '../utils';
 
+/**
+ * NOTE: We depend on Map.keys iteration.
+ * This can be removed once IE 11 support is no longer needed.
+ */
+import 'core-js/library/es6/map';
+
 export const enum BlockFlags {
   REBUILD_VARS = 1,
   HAS_IMPORTS = 2,
   HAS_MIXIN_CALLS = 4
 }
+
+export const copyMixins = (map: Map<string, Node[]>): Map<string, Node[]> => {
+  const r: Map<string, Node[]> = new Map();
+  const keys = map.keys();
+  while (true) {
+    const e = keys.next();
+    if (e.done) {
+      break;
+    }
+    const key = e.value;
+    const value = map.get(key);
+    if (value) {
+      r.set(key, value.slice(0));
+    }
+  }
+  return r;
+};
 
 export class Block extends Node implements IBlock {
 
@@ -97,6 +120,7 @@ export class Block extends Node implements IBlock {
     const r = new Block(this.rules.slice(0));
     r.charset = this.charset;
     r.flags = this.flags;
+    r.mixins = this.mixins === undefined ? undefined : copyMixins(this.mixins);
     return r;
   }
 

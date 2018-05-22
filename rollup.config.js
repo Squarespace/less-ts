@@ -1,14 +1,29 @@
-import typescript from 'rollup-plugin-typescript';
+import resolve from 'rollup-plugin-node-resolve';
+import typescript from 'rollup-plugin-typescript2';
 
 export default {
-  entry: './src/index.ts',
+  entry: './src/generate.ts',
   plugins: [
     typescript({
+      tsconfigOverride: { 
+        compilerOptions: {
+          allowJs: true,
+          module: 'esnext',
+          declaration: false
+        }
+      },
       typescript: require('typescript')
-    })
+    }),
+    resolve()
   ],
-  format: 'cjs',
+  format: 'es',
   sourceMap: true,
-  dest: 'dist/dist.js'
+  dest: 'dist/generate.js',
+  external: [
+    'core-js/library/modules/es6.set',
+    'fs',
+    'path',
+    'cluster'
+  ]
 }
 
