@@ -20,7 +20,7 @@
   "dependencies": {
     "@types/core-js": "^0.9.46",
     "core-js": "^2.5.5"
-	},
+  },
   "devDependencies": {
     "@types/glob": "^5.0.34",
     "@types/jest": "^22.2.3",
@@ -58,5 +58,5 @@
       "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     }
   },
-  "version": "0.0.1"
+  "version": "0.5.0"
 }
