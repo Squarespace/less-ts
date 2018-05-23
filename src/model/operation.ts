@@ -140,6 +140,7 @@ const operateDimension = (env: ExecEnv, op: Operator, n0: Dimension, n1: Dimensi
   const u0 = n0.unit;
   const u1 = n1.unit;
   const unit = u0 ? u0 : u1;
+
   let factor = unitConversionFactor(u1, u0);
   if (factor === 0) {
     factor = 1.0;
@@ -154,7 +155,6 @@ const operateDimension = (env: ExecEnv, op: Operator, n0: Dimension, n1: Dimensi
       } else {
         const { ctx } = env;
         env.errors.push(divideByZero(ctx.render(n0)));
-        return ZERO;
       }
       break;
 

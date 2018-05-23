@@ -222,13 +222,15 @@ const compareDimension = (left: Dimension, right: Node): number => {
     return -1;
   }
 
-  const basevalue = left.value;
-  const baseunit = left.unit;
-
   const rval = (right as Dimension);
+
+  const basevalue = left.value;
+  const baseunit = left.unit === Unit.PERCENTAGE ? undefined : left.unit;
+  const unit = rval.unit === Unit.PERCENTAGE ? undefined : rval.unit;
+
   let value = rval.value;
   let factor = 1.0;
-  if (baseunit !== rval.unit) {
+  if (baseunit !== unit) {
     factor = unitConversionFactor(rval.unit, baseunit);
     if (factor === 0) {
       // Units are not compatible
