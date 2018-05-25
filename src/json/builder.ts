@@ -450,7 +450,10 @@ export class Builder {
   expandBlock(nodes: NodeJ[]): Block {
     const block = new Block();
     for (const n of nodes) {
-      block.add(this.expand(n));
+      const o = this.expand(n);
+      if (o !== undefined) {
+        block.add(o);
+      }
     }
     return block;
   }

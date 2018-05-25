@@ -148,6 +148,9 @@ export class Renderer {
   protected renderBlock(block: Block, includeImports: boolean): void {
     const { ctx, env, model } = this;
     for (const n of block.rules) {
+      if (n === undefined) {
+        continue;
+      }
       switch (n.type) {
         case NodeType.BLOCK_DIRECTIVE:
         {
