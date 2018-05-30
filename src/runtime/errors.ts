@@ -1,6 +1,6 @@
 import { Buffer, IBlockNode, LessErrorEvent, Node, NodeRenderer, NodeType, Options } from '../common';
 import { RuntimeContext } from './context';
-import { BlockDirective, BlockNode, Media, MixinCall, Mixin, Rule, Ruleset } from '../model';
+import { BlockDirective, BlockNode, Media, Mixin, MixinCall, Rule, Ruleset } from '../model';
 
 export class ErrorFormatter {
 

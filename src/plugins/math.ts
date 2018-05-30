@@ -1,5 +1,5 @@
 import { ExecEnv, Function, Node, NodeType } from '../common';
-import { Dimension, ExpressionList, Unit, unitConversionFactor } from '../model';
+import { unitConversionFactor, Dimension, ExpressionList, Unit } from '../model';
 import { BaseFunction } from './base';
 
 const PI = new Dimension(Math.PI);

@@ -1,4 +1,4 @@
-import { Element, Expression, Keyword, Selector, Selectors, Features } from '../model';
+import { Element, Expression, Features, Keyword, Selector, Selectors } from '../model';
 import { cartesianProduct } from './utils';
 
 const KEYWORD_AND = new Keyword('and');

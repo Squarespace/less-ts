@@ -1,5 +1,5 @@
 import { ExecEnv, Function, Node, NodeType } from '../../common';
-import { Dimension, Unit, RGBColor, HSLColor } from '../../model';
+import { Dimension, HSLColor, RGBColor, Unit } from '../../model';
 import { BaseFunction } from '../base';
 import { hsl, rgb } from './util';
 

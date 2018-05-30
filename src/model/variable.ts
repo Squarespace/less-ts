@@ -1,4 +1,4 @@
-import { Buffer, IDefinition, ExecEnv, Node, NodeType } from '../common';
+import { Buffer, ExecEnv, IDefinition, Node, NodeType } from '../common';
 import { varCircularRef, varUndefined } from '../errors';
 import { Anonymous } from './general';
 

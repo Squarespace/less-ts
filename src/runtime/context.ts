@@ -1,8 +1,8 @@
 import {
   Buffer,
   Context,
-  EOF,
   ExecEnv,
+  EOF,
   Function,
   IBlock,
   IBlockNode,
@@ -11,10 +11,10 @@ import {
   LessErrorEvent,
   LessErrorType,
   Node,
-  NodeRenderer,
-  Options,
   NodeName,
+  NodeRenderer,
   NodeType,
+  Options,
   Separators
 } from '../common';
 

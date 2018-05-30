@@ -1,14 +1,14 @@
 import { ExecEnv, Function, Node, NodeType } from '../common';
 import { unknownUnit } from '../errors';
 import {
+  stringToUnit,
+  unitConversionFactor,
   Anonymous,
   Dimension,
   Keyword,
   Quoted,
   RGBColor,
-  Unit,
-  stringToUnit,
-  unitConversionFactor
+  Unit
 } from '../model';
 import { BaseFunction } from './base';
 

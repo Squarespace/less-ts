@@ -15,7 +15,7 @@ import {
   Stylesheet,
 } from '../model';
 import { MixinMatcher } from './mixin';
-import { MixinMatch, MixinResolver, MixinClosureArrow, RulesetMatch } from './resolver';
+import { MixinClosureArrow, MixinMatch, MixinResolver, RulesetMatch } from './resolver';
 
 const EMPTY_BLOCK = new Block([]);
 

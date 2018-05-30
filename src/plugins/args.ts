@@ -1,4 +1,4 @@
-import { ExecEnv, Node, LessError, NodeType } from '../common';
+import { ExecEnv, LessError, Node, NodeType } from '../common';
 import { argCount, argCountIgnore, invalidArg } from '../errors';
 import { BaseColor, Dimension, Unit } from '../model';
 

@@ -1,5 +1,5 @@
 import { LessCompiler } from '../../src';
-import { Feature, Features, Keyword, Property, Dimension, Unit } from '../../src/model';
+import { Dimension, Feature, Features, Keyword, Property, Unit } from '../../src/model';
 import { combineFeatures } from '../../src/runtime/combine';
 
 test('combine', () => {

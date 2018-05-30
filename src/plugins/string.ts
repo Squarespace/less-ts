@@ -1,6 +1,6 @@
 import { ExecEnv, Function, Node, NodeType } from '../common';
 import { formatFunctionArgs } from '../errors';
-import { BaseColor, Quoted, Anonymous } from '../model';
+import { Anonymous, BaseColor, Quoted } from '../model';
 import { BaseFunction } from './base';
 
 class EFunc extends BaseFunction {
