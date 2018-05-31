@@ -159,10 +159,25 @@ export class RuntimeExecEnv implements ExecEnv {
 
   resolveDefinition(name: string): IDefinition | undefined {
     const end = this.frames.length - 1;
-    for (let i = end; i >= 0; i--) {
-      const def = this.frames[i].block.resolveDefinition(name);
-      if (def) {
-        return def;
+    if (this.ctx.nocache) {
+      for (let i = end; i >= 0; i--) {
+        const { rules } = this.frames[i].block;
+        for (let j = rules.length - 1; j >= 0; j--) {
+          const rule = rules[j];
+          if (rule && rule.type === NodeType.DEFINITION) {
+            const def = rule as Definition;
+            if (def.name === name) {
+              return def;
+            }
+          }
+        }
+      }
+    } else {
+      for (let i = end; i >= 0; i--) {
+        const def = this.frames[i].block.resolveDefinition(name);
+        if (def) {
+          return def;
+        }
       }
     }
     return undefined;
@@ -199,6 +214,7 @@ export class RuntimeContext implements Context {
   readonly fastcolor: boolean;
   readonly spacer: string;
   readonly chars: Separators;
+  readonly nocache: boolean;
   readonly strictMath: boolean;
   readonly mixinRecursionLimit: number;
 
@@ -215,6 +231,7 @@ export class RuntimeContext implements Context {
     this.fastcolor = opts.fastcolor === undefined ? true : opts.fastcolor;
     this.spacer = repeat(' ', this.indentSize);
     this.strictMath = opts.strictMath || false;
+    this.nocache = opts.nocache || false;
     this.mixinRecursionLimit = opts.mixinRecursionLimit || DEFAULT_MIXIN_RECURSION_LIMIT;
     this.chars = {
       listsep: this.compress ? ',' : ', ',

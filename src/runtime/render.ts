@@ -124,28 +124,34 @@ export class Renderer {
   readonly env: RenderEnv;
   readonly model: CssModel;
 
-  protected constructor(readonly ctx: Context, readonly sheet: Stylesheet) {
+  protected constructor(readonly ctx: Context) {
     this.env = new RenderEnv(ctx);
     this.model = new CssModel(ctx);
   }
 
   static render(ctx: Context, sheet: Stylesheet): string {
-    return new Renderer(ctx, sheet)._render();
+    return new Renderer(ctx)._render(sheet);
   }
 
-  protected _render(): string {
-    const { block } = this.sheet;
+  static renderNode(ctx: Context, rule: Node): string {
+    const renderer = new Renderer(ctx);
+    renderer._renderBlock(new Block([rule]), false);
+    return renderer.model.render();
+  }
+
+  protected _render(sheet: Stylesheet): string {
+    const { block } = sheet;
     if (block.charset) {
       this.model.value(this.ctx.render(block.charset));
     }
+    this.env.push(sheet);
     this.renderImports(block);
-    this.renderBlock(block, false);
-    this.env.push(this.sheet);
+    this._renderBlock(block, false);
     this.env.pop();
     return this.model.render();
   }
 
-  protected renderBlock(block: Block, includeImports: boolean): void {
+  protected _renderBlock(block: Block, includeImports: boolean): void {
     const { ctx, env, model } = this;
     for (const n of block.rules) {
       if (n === undefined) {
@@ -158,7 +164,7 @@ export class Renderer {
           env.push(o);
           model.push(NodeType.BLOCK_DIRECTIVE);
           model.header(o.name);
-          this.renderBlock(o.block, true);
+          this._renderBlock(o.block, true);
           model.pop();
           env.pop();
           break;
@@ -227,7 +233,7 @@ export class Renderer {
       }
     }
 
-    this.renderBlock(r.block, true);
+    this._renderBlock(r.block, true);
     this.model.pop();
     this.env.pop();
   }

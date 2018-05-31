@@ -197,6 +197,7 @@ export interface Context {
   readonly compress: boolean;
   readonly fastcolor: boolean;
   readonly spacer: string;
+  readonly nocache: boolean;
   readonly chars: Separators;
   mixinDepth: number;
   mixinRecursionLimit: number;
@@ -298,6 +299,9 @@ export interface Options {
 
   // Enable strict math mode
   readonly strictMath?: boolean;
+
+  // Disable internal caches
+  readonly nocache?: boolean;
 
   // Maximum depth of mixin recursion
   readonly mixinRecursionLimit?: number;

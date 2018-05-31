@@ -49,6 +49,8 @@ export class Parselets {
   static PRIMARY_SUB: Parselet[];
   static PROPERTY: Parselet[];
   static QUOTED: Parselet[];
+  static RULE: Parselet[];
+  static RULESET: Parselet[];
   static RULE_KEY: Parselet[];
   static SELECTOR: Parselet[];
   static SELECTORS: Parselet[];
