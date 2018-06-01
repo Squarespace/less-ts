@@ -3,6 +3,10 @@ import { cartesianProduct } from './utils';
 
 const KEYWORD_AND = new Keyword('and');
 
+/**
+ * Merges a set of selectors with one or more ancestors. This computes the cartesian
+ * product of the two sets of selectors, and handles wildcard replacement.
+ */
 export const combineSelectors = (ancestors: Selectors, current: Selectors): Selectors => {
   const result = new Selectors([]);
   for (const selector of current.selectors) {
@@ -49,6 +53,10 @@ export const flatten = (selectors: Selector[][], result: Selectors): void => {
   }
 };
 
+/**
+ * Merges a set of MEDIA features with one or more ancestors. This computes the cartesian
+ * product of the two sets of features.
+ */
 export const combineFeatures = (ancestors: Features, current: Features): Features => {
   const result = new Features([]);
   for (const node of current.features) {

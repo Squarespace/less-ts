@@ -1,5 +1,5 @@
 /*
- * NOTE: We depend on Set.keys traversal insertion order.
+ * NOTE: We depend on Set.keys traversal by insertion order.
  * This can be removed once IE 11 support is no longer needed.
  */
 import 'core-js/library/es6/set';
@@ -35,12 +35,11 @@ export class CssModel {
   /**
    * We intern the strings added to the model for a few reasons:
    *
-   * 1. To ensure uniqueness: only one occurrency of a line inside a block
-   * 2. To distinguish between comments and rules, when both are strings and
-   *    we don't have control over hashCode / equals. Comments are negative
-   *    offsets and rules are positive.
-   * 3. To save slightly on memory usage, avoiding adding duplicate strings
-   *    to sets inside blocks.
+   * 1. To ensure uniqueness: only one occurrence of a line inside a block
+   * 2. To distinguish between comments and rules, when both are strings.
+   *    Comments are represented by negative offsets and rules are positive.
+   * 3. To reduce slightly on string duplication. For example, if "color: red"
+   *    is used in multiple blocks, we map it to a single identifier.
    */
   private stringMap: Map<string, number> = new Map();
   private strings: string[] = [''];
@@ -49,12 +48,21 @@ export class CssModel {
     this.current = new CssBlock(NodeType.STYLESHEET);
   }
 
+  /**
+   * Render the model to a string.
+   */
   render(): string {
     const buf = this.ctx.newBuffer();
     this.renderBlock(buf, this.current);
     return buf.toString();
   }
 
+  /**
+   * Push a block into the model. The model will move the block up the
+   * stack until it finds an acceptable parent. For example, MEDIA
+   * nodes can only be defined at the outermost scope. RULESET can
+   * have a MEDIA or BLOCK_DIRECTIVE node as a parent, etc.
+   */
   push(type: NodeType): void {
     this.stack.push(this.current);
     const child = new CssBlock(type);
@@ -62,6 +70,9 @@ export class CssModel {
     this.current = child;
   }
 
+  /**
+   * Pop the current block off the stack.
+   */
   pop(): void {
     const parent = this.current.parent;
     if (parent) {
@@ -73,15 +84,24 @@ export class CssModel {
     }
   }
 
+  /**
+   * Append a header string to the model.
+   */
   header(s: string): void {
     this.current.headers.push(s);
   }
 
+  /**
+   * Append a comment string to the model.
+   */
   comment(s: string): void {
     const id = -this.intern(s);
     this.current.add(id);
   }
 
+  /**
+   * Append a rule string to the model.
+   */
   value(s: string): void {
     const id = this.intern(s);
     this.current.add(id);
@@ -130,6 +150,10 @@ export class CssModel {
     }
   }
 
+  /**
+   * Fetch a string with the given id. Note we need to invert the
+   * negative indices (for comment strings)
+   */
   protected get(i: number): string {
     return this.strings[i < 0 ? -i : i];
   }
@@ -160,6 +184,11 @@ export class CssModel {
   }
 }
 
+/**
+ * A generic CSS block having a parent, one or more headers and
+ * zero or more rules. Empty blocks will be filtered from the
+ * model.
+ */
 export class CssBlock {
 
   parent: CssBlock | undefined;
@@ -168,7 +197,7 @@ export class CssBlock {
   // Set of block types that are allowed to be children of this block.
   readonly filter: Set<NodeType>;
 
-  // List of header (RULESET selectors, MEDIA features)
+  // List of header strings (e.g. RULESET selectors, MEDIA features)
   readonly headers: string[] = [];
 
   // Rules inside this block. A number references an interned string.
@@ -193,6 +222,9 @@ export class CssBlock {
     }
   }
 
+  /**
+   * Add a string with the given identifier to this block.
+   */
   add(id: number): void {
     // Set entries are always traversed in order of insertion. To ensure the last
     // unique rule wins, we must always attempt to remove and then add the element.
@@ -203,6 +235,10 @@ export class CssBlock {
     this.populated = true;
   }
 
+  /**
+   * Check if the given block type can be a child of ourselves. If so, add
+   * it, set its parent and return true. Otherwise return false.
+   */
   accept(block: CssBlock): boolean {
     if (this.filter.has(block.type)) {
       this.nodes.add(block);
