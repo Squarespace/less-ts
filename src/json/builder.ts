@@ -100,10 +100,15 @@ import {
 } from './types';
 
 /*
- * A parser will not be developed for this compiler, at least not in the near
- * term.  Instead we define a mapping from JSON to LESS. A server component will
- * deliver JSON to the browser and this class will construct a valid executable
- * instruction tree.
+ * This class translates JSON to LESS. A server component will deliver JSON to the
+ * browser and this class will construct a valid executable instruction tree.
+ *
+ * The goal is to improve startup time for evaluating LESS in the browser, by
+ * (1) parsing JSON using the browser's native parser and (2) rapidly translating
+ * the JSON into a tree of LESS model objects.
+ *
+ * Each JSON node translates directly to a constructor call on a model object of
+ * the mirror type.
  */
 export class Builder {
 
