@@ -133,6 +133,12 @@ export class Renderer {
     return new Renderer(ctx)._render(sheet);
   }
 
+  static renderBlock(ctx: Context, block: Block): string {
+    const renderer = new Renderer(ctx);
+    renderer._renderBlock(block, false);
+    return renderer.model.render();
+  }
+
   static renderNode(ctx: Context, rule: Node): string {
     const renderer = new Renderer(ctx);
     renderer._renderBlock(new Block([rule]), false);
