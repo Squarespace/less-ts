@@ -1,56 +1,28 @@
 {
-  "name": "@squarespace/less-ts",
+  "private": true,
+  "name": "cldr-engine-monorepo",
   "author": "Patrick Hensley <pathensley@gmail.com>",
   "license": "Apache-2.0",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
   "scripts": {
-    "build": "tsc -p ./tsconfig.build.json",
-    "build:watch": "tsc -p ./tsconfig.build.json -w",
-    "clean": "rimraf ./coverage ./lib && jest --clearCache",
-    "clean:full": "rimraf ./node_modules",
-    "generate": "ts-node scripts/generate.ts",
-    "lint": "tslint -p ./tsconfig.json",
-    "release": "",
-    "stress": "echo 'fixme'",
-    "test": "rimraf ./coverage && jest --coverage --verbose -i --no-cache --coverageReporters=html",
-    "test:codecov": "rimraf ./coverage && jest --coverage --coverageReporters=lcovonly --verbose -i --no-cache",
-    "test:watch": "jest --watch"
+    "build": "lerna run build",
+		"release": "lerna run clean && lerna run build && lerna publish --force-publish=* --npm-client=npm --registry=http://localhost:4873/",
+		"test": "lerna run test"
   },
-  "dependencies": {
-    "@types/core-js": "^0.9.46",
-    "core-js": "^2.5.5"
-  },
-  "devDependencies": {
-    "@types/glob": "^5.0.34",
-    "@types/jest": "^22.2.3",
-    "@types/lodash": "4.14.104",
-    "@types/node": "8.10.10",
-    "core-js": "^2.5.5",
-    "glob": "^7.1.2",
-    "jest": "^22.4.3",
-    "rimraf": "^2.6.2",
-    "rollup": "^0.58.2",
-    "rollup-plugin-typescript2": "^0.14.0",
-    "ts-jest": "22.4.2",
-    "ts-node": "6.0.1",
-    "tslint": "5.9.1",
-    "tslint-no-circular-imports": "^0.2.1",
-    "typescript": "~2.8.3"
-  },
-  "files": [
-    "lib"
+  "workspaces": [
+    "packages/*"
   ],
   "jest": {
     "collectCoverageFrom": [
-      "src/**/*.ts"
+      "packages/*/src/**/*.ts",
+      "!packages/*/src/**/index.ts",
+      "!packages/*/src/cli/**/*.ts",
+      "!packages/*/src/**/*.d.ts"
     ],
     "moduleFileExtensions": [
       "js",
       "ts",
       "tsx"
     ],
-    "moduleNameMapper": {},
     "testMatch": [
       "**/__tests__/**/*.test.ts"
     ],
@@ -58,5 +30,14 @@
       "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     }
   },
-  "version": "0.5.5"
+  "dependencies": {
+    "@types/jest": "^23.1.1",
+    "jest": "^23.1.0",
+    "lerna": "^2.11.0",
+    "ts-jest": "^22.4.6",
+    "ts-node": "^6.1.2",
+    "tslint": "^5.10.0",
+    "tslint-no-circular-imports": "^0.5.0",
+    "typescript": "2.8.3"
+  }
 }
