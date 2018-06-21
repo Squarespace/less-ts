@@ -21,7 +21,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@squarespace/less-ts": "^0.7.0",
+    "@squarespace/less-ts": "^0.7.1",
     "@types/yargs": "^11.0.0",
     "yargs": "^11.0.0"
   },
@@ -43,7 +43,7 @@
     "typescript": "~2.8.3"
   },
   "files": [
-		"bin",
+    "bin",
     "lib"
   ],
   "jest": {
@@ -63,5 +63,5 @@
       "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     }
   },
-  "version": "0.7.0"
+  "version": "0.7.1"
 }
