@@ -15,13 +15,7 @@
     "noFallthroughCasesInSwitch": false,
     "baseUrl": ".",
     "paths": {
+			"@squarespace/*": ["packages/*/"]
     }
-  },
-  "include": [
-    "src/**/*.ts",
-    "__tests__/**/*.ts"
-  ],
-  "exclude": [
-    "node_modules/**/*"
-  ]
+  }
 }

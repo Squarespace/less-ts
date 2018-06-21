@@ -6,7 +6,5 @@ if [[ $REG != *"registry.npmjs.org"* ]] ; then
     exit 1
 fi
 
-yarn clean
-yarn build
-yarn publish
+yarn release
 

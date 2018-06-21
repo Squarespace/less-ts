@@ -5,8 +5,10 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "lerna run build",
-		"release": "lerna run clean && lerna run build && lerna publish --force-publish=* --npm-client=npm --registry=http://localhost:4873/",
-		"test": "lerna run test"
+    "lint": "lerna run build && lerna run lint",
+    "release": "lerna run clean && lerna run build && lerna publish --force-publish=* --npm-client=npm",
+    "test": "lerna run test",
+    "test:codecov": "rimraf ./coverage && jest --coverage --coverageReporters=lcovonly --verbose -i --no-cache"
   },
   "workspaces": [
     "packages/*"
@@ -37,7 +39,7 @@
     "ts-jest": "^22.4.6",
     "ts-node": "^6.1.2",
     "tslint": "^5.10.0",
-    "tslint-no-circular-imports": "^0.5.0",
+    "tslint-no-circular-imports": "^0.2.1",
     "typescript": "2.8.3"
   }
 }
