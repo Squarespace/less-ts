@@ -5,6 +5,7 @@
   "license": "Apache-2.0",
   "scripts": {
     "build": "lerna run build",
+		"build:watch": "lerna run build:watch --parallel",
     "lint": "lerna run build && lerna run lint",
     "release": "lerna run clean && lerna run build && lerna publish --force-publish=* --npm-client=npm",
     "test": "lerna run test",

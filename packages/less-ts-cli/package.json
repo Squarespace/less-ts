@@ -1,0 +1,67 @@
+{
+  "name": "@squarespace/less-ts-cli",
+  "author": "Patrick Hensley <pathensley@gmail.com>",
+  "license": "Apache-2.0",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
+  "bin": {
+    "lessc": "./bin/lessc.js"
+  },
+  "scripts": {
+    "build": "tsc -p ./tsconfig.build.json",
+    "build:watch": "tsc -p ./tsconfig.build.json -w",
+    "clean": "rimraf ./coverage ./lib && jest --clearCache",
+    "clean:full": "rimraf ./node_modules",
+    "generate": "ts-node scripts/generate.ts",
+    "lint": "tslint -p ./tsconfig.json",
+    "release": "",
+    "stress": "echo 'fixme'",
+    "test": "rimraf ./coverage && jest --coverage --verbose -i --no-cache --coverageReporters=html",
+    "test:codecov": "rimraf ./coverage && jest --coverage --coverageReporters=lcovonly --verbose -i --no-cache",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "@squarespace/less-ts": "^0.7.0",
+    "@types/yargs": "^11.0.0",
+    "yargs": "^11.0.0"
+  },
+  "devDependencies": {
+    "@types/glob": "^5.0.34",
+    "@types/jest": "^22.2.3",
+    "@types/lodash": "4.14.104",
+    "@types/node": "8.10.10",
+    "core-js": "^2.5.5",
+    "glob": "^7.1.2",
+    "jest": "^22.4.3",
+    "rimraf": "^2.6.2",
+    "rollup": "^0.58.2",
+    "rollup-plugin-typescript2": "^0.14.0",
+    "ts-jest": "22.4.2",
+    "ts-node": "6.0.1",
+    "tslint": "5.9.1",
+    "tslint-no-circular-imports": "^0.2.1",
+    "typescript": "~2.8.3"
+  },
+  "files": [
+		"bin",
+    "lib"
+  ],
+  "jest": {
+    "collectCoverageFrom": [
+      "src/**/*.ts"
+    ],
+    "moduleFileExtensions": [
+      "js",
+      "ts",
+      "tsx"
+    ],
+    "moduleNameMapper": {},
+    "testMatch": [
+      "**/__tests__/**/*.test.ts"
+    ],
+    "transform": {
+      "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+    }
+  },
+  "version": "0.7.0"
+}
