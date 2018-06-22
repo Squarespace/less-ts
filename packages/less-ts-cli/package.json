@@ -9,7 +9,7 @@
     "url": "https://github.com/squarespace/less-ts"
   },
   "bin": {
-    "lessc": "./bin/lessc.js"
+    "slessc": "./bin/lessc.js"
   },
   "scripts": {
     "build": "tsc -p ./tsconfig.build.json",
