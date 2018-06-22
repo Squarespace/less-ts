@@ -32,7 +32,8 @@ const run = (y: yargs.Arguments): void => {
       console.log(result);
     }
   } catch (e) {
-    console.error(`Error ${parse ? 'parsing' : 'compiling'} ${path}`);
+    console.error(`An error occurred ${parse ? 'parsing' : 'compiling'} ${path}:\n`);
+    console.error(e.message);
   }
 };
 
