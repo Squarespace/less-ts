@@ -1,7 +1,7 @@
 import { Node } from '../../common';
 import { Chars } from '../types';
 import { LessStream, Parselet } from '../stream';
-import { Comment } from '../..';
+import { Comment } from '../../model/general';
 
 export class CommentParselet implements Parselet {
   parse(stm: LessStream): Node | undefined {
