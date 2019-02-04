@@ -1,5 +1,5 @@
 import { Node } from '../../common';
-import { isKeywordStart, Chars } from '../types';
+import { isKeywordStart } from '../types';
 import { LessStream, Parselet } from '../stream';
 import { colorFromName, Keyword } from '../../model';
 

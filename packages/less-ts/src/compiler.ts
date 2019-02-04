@@ -1,4 +1,4 @@
-import { Context, LessError, LessErrorEvent, Node, Options } from './common';
+import { Context, LessErrorEvent, Node, Options } from './common';
 import { Stylesheet } from './model';
 import { renderNode, Evaluator, Renderer, RuntimeContext } from './runtime';
 import { LessStream, Parselet, STYLESHEET } from './parser';

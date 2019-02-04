@@ -1,5 +1,5 @@
 import { Node } from '../../common';
-import { isCallStart, Chars } from '../types';
+import { isCallStart } from '../types';
 import { LessStream, Parselet } from '../stream';
 import { UnicodeRange } from '../../model';
 import { FunctionCallParselet } from './function';

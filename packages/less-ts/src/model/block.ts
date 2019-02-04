@@ -1,4 +1,4 @@
-import { Buffer, ExecEnv, IBlock, IBlockNode, Node, NodeType } from '../common';
+import { Buffer, IBlock, IBlockNode, Node, NodeType } from '../common';
 import { Directive } from './general';
 import { Definition } from './variable';
 import { arrayEquals } from '../utils';

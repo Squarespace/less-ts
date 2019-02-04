@@ -1,8 +1,7 @@
 import { Context, Node } from '../common';
 import { repeat, whitespace } from '../utils';
-import { isSkippable, Chars } from './types';
+import { isSkippable } from './types';
 import { UNITS } from '../model';
-import { RuntimeBuffer } from '../runtime';
 
 /**
  * Parses a fragment of the LESS syntax.

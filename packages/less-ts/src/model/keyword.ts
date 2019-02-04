@@ -1,4 +1,4 @@
-import { Buffer, ExecEnv, Node, NodeType } from '../common';
+import { Buffer, Node, NodeType } from '../common';
 import { KeywordColor } from './color';
 
 export class Keyword extends Node {

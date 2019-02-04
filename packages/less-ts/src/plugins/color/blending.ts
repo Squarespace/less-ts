@@ -1,5 +1,5 @@
-import { ExecEnv, Function, Node, NodeType } from '../../common';
-import { BaseColor, RGBColor } from '../../model';
+import { ExecEnv, Function, Node } from '../../common';
+import { RGBColor } from '../../model';
 import { BaseFunction } from '../base';
 import { rgb } from './util';
 

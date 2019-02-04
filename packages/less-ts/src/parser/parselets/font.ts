@@ -1,7 +1,7 @@
-import { Node, NodeType } from '../../common';
+import { Node } from '../../common';
 import { Anonymous, Expression, ExpressionList, Ratio, Shorthand } from '../../model';
 import { LessStream, Parselet, Parselets } from '../stream';
-import { isDigit, isPropertyStart, isRuleStart, Chars } from '../types';
+import { isDigit, Chars } from '../types';
 
 export class FontParselet implements Parselet {
 

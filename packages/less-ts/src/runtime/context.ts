@@ -15,7 +15,7 @@ import {
   Separators
 } from '../common';
 
-import { Block, BlockNode, Definition } from '../model';
+import { BlockNode, Definition } from '../model';
 import { FUNCTIONS } from '../plugins';
 import { repeat, whitespace } from '../utils';
 

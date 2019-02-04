@@ -1,7 +1,7 @@
 import { Node, NodeType } from '../../common';
 import { isCallStart, Chars } from '../types';
 import { LessStream, Parselet, Parselets } from '../stream';
-import { Alpha, Anonymous, Assignment, Dimension, FunctionCall, Url, Variable } from '../../model';
+import { Alpha, Anonymous, Assignment, Dimension, FunctionCall, Url } from '../../model';
 
 export class AlphaParselet implements Parselet {
 

@@ -1,5 +1,5 @@
-import { Node, NodeType } from '../../common';
-import { isDimensionStart, Chars } from '../types';
+import { Node } from '../../common';
+import { isDimensionStart } from '../types';
 import { LessStream, Parselet } from '../stream';
 import { Dimension, Unit } from '../../model';
 

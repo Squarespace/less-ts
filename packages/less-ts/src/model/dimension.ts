@@ -1,4 +1,4 @@
-import { Buffer, ExecEnv, Node, NodeType } from '../common';
+import { Buffer, Node, NodeType } from '../common';
 import { formatDouble } from '../utils';
 
 export const enum Unit {

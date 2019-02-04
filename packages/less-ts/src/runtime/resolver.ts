@@ -1,5 +1,5 @@
 import { ExecEnv, IBlock, IBlockNode, NodeType } from '../common';
-import { Argument, Block, Mixin, MixinCallArgs, MixinParams, Ruleset, Selector } from '../model';
+import { Argument, Mixin, MixinParams, Ruleset, Selector } from '../model';
 import { MixinMatcher } from './mixin';
 
 export interface RulesetMatch {

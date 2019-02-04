@@ -5,7 +5,6 @@ import {
   Argument,
   Block,
   Combinator,
-  Condition,
   Element,
   ExpressionList,
   Guard,

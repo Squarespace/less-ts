@@ -1,6 +1,6 @@
 import { ExecEnv, LessError, Node, NodeType } from '../common';
 import { argCount, argCountIgnore, invalidArg } from '../errors';
-import { BaseColor, Dimension, Unit } from '../model';
+import { Dimension, Unit } from '../model';
 
 export class ArgSpec {
 

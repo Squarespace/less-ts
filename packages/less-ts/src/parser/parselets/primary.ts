@@ -1,7 +1,7 @@
 import { Node, NodeType } from '../../common';
 import { Chars } from '../types';
 import { LessStream, Parselet, Parselets } from '../stream';
-import { Block, Guard, Ruleset, Selectors, Stylesheet } from '../../model';
+import { Block, Ruleset, Selectors, Stylesheet } from '../../model';
 
 export class PrimaryParselet implements Parselet {
 

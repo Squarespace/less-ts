@@ -9,8 +9,7 @@ import {
   MixinCall,
   MixinCallArgs,
   MixinParams,
-  Parameter,
-  Selector
+  Parameter
 } from '../model';
 import { safeEquals } from '../utils';
 
