@@ -8,7 +8,7 @@
 		"build:watch": "lerna run build:watch --parallel",
     "lint": "lerna run build && lerna run lint",
     "release": "lerna run clean && lerna run build && lerna publish --force-publish=* --npm-client=npm",
-    "test": "lerna run test",
+    "test": "rimraf ./coverage && jest --coverage --verbose -i --no-cache",
     "test:codecov": "rimraf ./coverage && jest --coverage --coverageReporters=lcovonly --verbose -i --no-cache",
     "test:watch": "jest --watch"
   },
@@ -21,6 +21,12 @@
       "!packages/*/src/**/index.ts",
       "!packages/*/src/cli/**/*.ts",
       "!packages/*/src/**/*.d.ts"
+    ],
+    "coverageReporters": [
+      "json",
+      "lcov",
+      "text",
+      "html"
     ],
     "moduleFileExtensions": [
       "js",
@@ -41,7 +47,7 @@
     "ts-jest": "^22.4.6",
     "ts-node": "^6.1.2",
     "tslint": "^5.10.0",
-    "tslint-no-circular-imports": "^0.2.1",
+    "tslint-no-circular-imports": "^0.6.1",
     "typescript": "2.8.3"
   }
 }

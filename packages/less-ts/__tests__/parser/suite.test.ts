@@ -19,7 +19,7 @@ const compare = (name: string): void => {
   const expected = fs.readFileSync(dst).toString('utf-8').trimRight();
   const actual = COMPILER.compile(source);
 
-  expect(actual).toEqual(expected);
+  expect(actual.css).toEqual(expected);
 
   // Generate canonical representation and re-parse it, then compare
 

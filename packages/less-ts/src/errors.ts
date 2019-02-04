@@ -1,4 +1,4 @@
-import { IBlock, IBlockNode, LessError, LessErrorType, Node } from './common';
+import { LessError } from './common';
 
 const runtimeError = (message: string): LessError =>
   ({ type: 'runtime', message });
