@@ -22,18 +22,6 @@ class Abs extends BaseFunction {
   }
 }
 
-class ASin extends BaseFunction {
-
-  constructor() {
-    super('asin', 'd');
-  }
-
-  invoke(env: ExecEnv, args: Node[]): Node | undefined {
-    const { value } = (args[0] as Dimension);
-    return new Dimension(Math.asin(value), Unit.RAD);
-  }
-}
-
 class ACos extends BaseFunction {
 
   constructor() {
@@ -43,6 +31,18 @@ class ACos extends BaseFunction {
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const { value } = (args[0] as Dimension);
     return new Dimension(Math.acos(value), Unit.RAD);
+  }
+}
+
+class ASin extends BaseFunction {
+
+  constructor() {
+    super('asin', 'd');
+  }
+
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
+    const { value } = (args[0] as Dimension);
+    return new Dimension(Math.asin(value), Unit.RAD);
   }
 }
 
