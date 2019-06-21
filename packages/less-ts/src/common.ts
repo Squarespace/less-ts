@@ -101,55 +101,11 @@ export const NodeName: { [x: number]: string } = {
   [NodeType.VARIABLE]: 'VARIABLE'
 };
 
-export const NodeTypes: { [x: string]: number } = {
-  'ALPHA': NodeType.ALPHA,
-  'ANONYMOUS': NodeType.ANONYMOUS,
-  'ARGUMENT': NodeType.ARGUMENT,
-  'ASSIGNMENT': NodeType.ASSIGNMENT,
-  'BLOCK': NodeType.BLOCK,
-  'BLOCK_DIRECTIVE': NodeType.BLOCK_DIRECTIVE,
-  'COLOR': NodeType.COLOR,
-  'COMMENT': NodeType.COMMENT,
-  'CONDITION': NodeType.CONDITION,
-  'DEFINITION': NodeType.DEFINITION,
-  'DIMENSION': NodeType.DIMENSION,
-  'DIRECTIVE': NodeType.DIRECTIVE,
-  'ELEMENT': NodeType.ELEMENT,
-  'EXPRESSION': NodeType.EXPRESSION,
-  'EXPRESSION_LIST': NodeType.EXPRESSION_LIST,
-  'FALSE': NodeType.FALSE,
-  'FEATURE': NodeType.FEATURE,
-  'FEATURES': NodeType.FEATURES,
-  'FUNCTION_CALL': NodeType.FUNCTION_CALL,
-  'GENERIC_BLOCK': NodeType.GENERIC_BLOCK,
-  'GUARD': NodeType.GUARD,
-  'IMPORT': NodeType.IMPORT,
-  'IMPORT_MARKER': NodeType.IMPORT_MARKER,
-  'KEYWORD': NodeType.KEYWORD,
-  'MEDIA': NodeType.MEDIA,
-  'MIXIN': NodeType.MIXIN,
-  'MIXIN_ARGS': NodeType.MIXIN_ARGS,
-  'MIXIN_CALL': NodeType.MIXIN_CALL,
-  'MIXIN_MARKER': NodeType.MIXIN_MARKER,
-  'MIXIN_PARAMS': NodeType.MIXIN_PARAMS,
-  'OPERATION': NodeType.OPERATION,
-  'PARAMETER': NodeType.PARAMETER,
-  'PAREN': NodeType.PAREN,
-  'PARSE_ERROR': NodeType.PARSE_ERROR,
-  'PROPERTY': NodeType.PROPERTY,
-  'QUOTED': NodeType.QUOTED,
-  'RATIO': NodeType.RATIO,
-  'RULE': NodeType.RULE,
-  'RULESET': NodeType.RULESET,
-  'SELECTOR': NodeType.SELECTOR,
-  'SELECTORS': NodeType.SELECTORS,
-  'SHORTHAND': NodeType.SHORTHAND,
-  'STYLESHEET': NodeType.STYLESHEET,
-  'TRUE': NodeType.TRUE,
-  'UNICODE_RANGE': NodeType.UNICODE_RANGE,
-  'URL': NodeType.URL,
-  'VARIABLE': NodeType.VARIABLE
-};
+export const NodeTypes = Object.keys(NodeName).map(Number).reduce((p, c) => {
+  const v = NodeName[c];
+  p[v] = c;
+  return p;
+}, {} as { [x: string]: number });
 
 export type LessErrorType = 'runtime';
 
