@@ -276,17 +276,17 @@ export class Evaluator {
 
     env.push(bindings);
 
+    const { ctx } = env;
     const { guard } = mixin;
     if (guard) {
       // Execute the guard condition. If it returns false, we return immediately
       // but return true to indicate we found and evaluated at least one mixin definition.
       const result = guard.eval(env);
       if (result.equals(FALSE)) {
+        ctx.captureErrors(mixin, env);
         return true;
       }
     }
-
-    const { ctx } = env;
 
     if (ctx.mixinDepth >= ctx.mixinRecursionLimit) {
       origEnv.errors.push(mixinRecurse(ctx.render(call.selector), ctx.mixinRecursionLimit));
@@ -309,6 +309,7 @@ export class Evaluator {
     // Note: env.pop() calls unnecessary here, since we're throwing
     // away the temporary environment.
 
+    ctx.captureErrors(mixin, env);
     return true;
   }
 
