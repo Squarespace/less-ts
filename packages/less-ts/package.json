@@ -22,15 +22,15 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@types/core-js": "^0.9.46",
-    "core-js": "^2.5.5"
+    "@types/core-js": "^2.5.2",
+    "core-js": "^3.3.2"
   },
   "devDependencies": {
     "@types/glob": "^5.0.34",
     "@types/jest": "^22.2.3",
     "@types/lodash": "4.14.104",
     "@types/node": "8.10.10",
-    "core-js": "^2.5.5",
+    "core-js": "^3.3.2",
     "glob": "^7.1.2",
     "jest": "^22.4.3",
     "rimraf": "^2.6.2",

@@ -6,6 +6,7 @@
   "scripts": {
     "build": "lerna run build",
 		"build:watch": "lerna run build:watch --parallel",
+		"clean": "lerna run clean",
     "lint": "lerna run build && lerna run lint",
     "release": "lerna run clean && lerna run build && lerna publish --force-publish=* --npm-client=npm",
     "test": "rimraf ./coverage && jest --coverage --verbose -i --no-cache",
