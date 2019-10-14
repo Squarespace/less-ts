@@ -2,7 +2,7 @@
  * NOTE: We depend on Set.keys traversal by insertion order.
  * This can be removed once IE 11 support is no longer needed.
  */
-import 'core-js/library/es6/set';
+import 'core-js/es/set';
 
 import { Buffer, Context, NodeType } from '../common';
 import { setOf } from '../utils';

@@ -1,12 +1,12 @@
 {
   "private": true,
-  "name": "cldr-engine-monorepo",
+  "name": "less-ts-monorepo",
   "author": "Patrick Hensley <pathensley@gmail.com>",
   "license": "Apache-2.0",
   "scripts": {
     "build": "lerna run build",
-		"build:watch": "lerna run build:watch --parallel",
-		"clean": "lerna run clean",
+    "build:watch": "lerna run build:watch --parallel",
+    "clean": "lerna run clean",
     "lint": "lerna run build && lerna run lint",
     "release": "lerna run clean && lerna run build && lerna publish --force-publish=* --npm-client=npm",
     "test": "rimraf ./coverage && jest --coverage --verbose -i --no-cache",
@@ -43,6 +43,7 @@
   },
   "dependencies": {
     "@types/jest": "^23.1.1",
+    "core-js": "3.3.2",
     "jest": "^23.1.0",
     "lerna": "^2.11.0",
     "ts-jest": "^22.4.6",

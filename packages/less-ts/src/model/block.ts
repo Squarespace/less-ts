@@ -7,7 +7,7 @@ import { arrayEquals } from '../utils';
  * NOTE: We depend on Map.keys iteration.
  * This can be removed once IE 11 support is no longer needed.
  */
-import 'core-js/library/es6/map';
+import 'core-js/es/map';
 
 export const enum BlockFlags {
   REBUILD_VARS = 1,
