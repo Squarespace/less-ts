@@ -29,7 +29,10 @@ const run = (y: yargs.Arguments): void => {
       console.error(`Parse of '${path}' successful`);
     } else {
       const result = compiler.compile(source);
-      console.log(result);
+      console.log(result.css);
+      for (const err of result.errors) {
+        console.log(`Error ${err}`);
+      }
     }
   } catch (e) {
     console.error(`An error occurred ${parse ? 'parsing' : 'compiling'} ${path}:\n`);
