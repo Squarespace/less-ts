@@ -136,7 +136,7 @@ export interface LessErrorEvent {
  */
 export abstract class Node {
 
-  constructor(readonly type: NodeType) {}
+  constructor(readonly type: NodeType) { }
 
   /**
    * Append this node's representation to the buffer.
@@ -182,9 +182,9 @@ export interface IBlock {
 
   dump(buf: Buffer): void;
 
- /**
-   * Lookup the definition 'name'
-   */
+  /**
+    * Lookup the definition 'name'
+    */
   resolveDefinition(name: string): IDefinition | undefined;
 }
 
@@ -341,6 +341,11 @@ export interface Buffer extends Options {
    * Currently-active string delimiter, or EOF.
    */
   delim: string;
+
+  /**
+   * Number of decimal points for fractional values.
+   */
+  numericScale?: number;
 
   /**
    * Append a string to the buffer.

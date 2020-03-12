@@ -57,9 +57,9 @@ export class RGBColor extends BaseColor {
     if (n instanceof RGBColor) {
       const o = n as RGBColor;
       return this.r === o.r
-          && this.g === o.g
-          && this.b === o.b
-          && this.a === o.a;
+        && this.g === o.g
+        && this.b === o.b
+        && this.a === o.a;
     }
     return false;
   }
@@ -69,7 +69,15 @@ export class RGBColor extends BaseColor {
   }
 
   luma(): number {
-    return (0.2126 * (this.r / 255) + 0.7152 * (this.g / 255) + 0.0722 * (this.b / 255)) * this.a;
+    let r = this.r / 255;
+    let g = this.g / 255;
+    let b = this.b / 255;
+
+    r = (r <= 0.03928) ? r / 12.92 : Math.pow(((r + 0.055) / 1.055), 2.4);
+    g = (g <= 0.03928) ? g / 12.92 : Math.pow(((g + 0.055) / 1.055), 2.4);
+    b = (b <= 0.03928) ? b / 12.92 : Math.pow(((b + 0.055) / 1.055), 2.4);
+
+    return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   }
 
   repr(buf: Buffer): void {
@@ -132,9 +140,9 @@ export class RGBColor extends BaseColor {
     const { r, g, b } = this;
     const a = Math.round(this.a * 255) | 0;
     const s = `#${hexchar(a >> 4)}${hexchar(a & 0x0F)}`
-          + `${hexchar(r >> 4)}${hexchar(r & 0x0F)}`
-          + `${hexchar(g >> 4)}${hexchar(g & 0x0F)}`
-          + `${hexchar(b >> 4)}${hexchar(b & 0x0F)}`;
+      + `${hexchar(r >> 4)}${hexchar(r & 0x0F)}`
+      + `${hexchar(g >> 4)}${hexchar(g & 0x0F)}`
+      + `${hexchar(b >> 4)}${hexchar(b & 0x0F)}`;
     return new Anonymous(s);
   }
 
@@ -200,9 +208,9 @@ export class HSLColor extends BaseColor {
     if (n instanceof HSLColor) {
       const o = n as HSLColor;
       return this.h === o.h
-          && this.s === o.s
-          && this.l === o.l
-          && this.a === o.a;
+        && this.s === o.s
+        && this.l === o.l
+        && this.a === o.a;
     }
     return false;
   }
@@ -279,4 +287,4 @@ export const colorFromName = (name: string): RGBColor | undefined => {
 const chan = (n: number): number => clamp(n, 0, 255);
 
 const clamp = (n: number, lo: number, hi: number): number =>
-   Math.min(hi, Math.max(n, lo));
+  Math.min(hi, Math.max(n, lo));

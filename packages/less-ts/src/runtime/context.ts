@@ -37,6 +37,9 @@ export class RuntimeBuffer implements Buffer {
   // Delimiter used to maintain state when we're emitting a quoted string
   delim: string = EOF;
 
+  // Maximum number of digits after the decimal point for numbers
+  numericScale: number = 8;
+
   constructor(
     readonly compress: boolean,
     readonly fastcolor: boolean,

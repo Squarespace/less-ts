@@ -15,7 +15,8 @@
     [RULE, [PROPERTY, 'a9'], [DIMENSION, -1.0E-6, null], false],
     [RULE, [PROPERTY, 'a10'], [DIMENSION, 1.000000000005E11, null], false],
     [RULE, [PROPERTY, 'a11'], [DIMENSION, -1.00000001, null], false],
-    [RULE, [PROPERTY, 'a12'], [DIMENSION, -0.99999999, null], false]
+    [RULE, [PROPERTY, 'a12'], [DIMENSION, -0.99999999, null], false],
+    [RULE, [PROPERTY, 'a13'], [DIMENSION, 123.456456456456, null], false]
   ]],
   [RULESET, [SELECTORS, [
     [SELECTOR, [

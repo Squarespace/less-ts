@@ -73,7 +73,22 @@ class Luma extends BaseFunction {
 
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = rgb(args[0]);
-    return new Dimension(round(c.luma() * 100), Unit.PERCENTAGE);
+    return new Dimension(c.luma() * c.a * 100, Unit.PERCENTAGE);
+  }
+}
+
+class Luminance extends BaseFunction {
+  constructor() {
+    super('luminance', 'c');
+  }
+
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
+    const c = rgb(args[0]);
+    const luminance =
+      (0.2126 * c.r / 255)
+      + (0.7152 * c.g / 255)
+      + (0.0722 * c.b / 255);
+    return new Dimension(Math.round(luminance * c.a * 100), Unit.PERCENTAGE);
   }
 }
 
@@ -109,7 +124,7 @@ export const CHANNELS: { [x: string]: Function } = {
   hue: new Hue(),
   lightness: new Lightness(),
   luma: new Luma(),
-  luminance: new Luma(),
+  luminance: new Luminance(),
   red: new Red(),
   saturation: new Saturation()
 };
