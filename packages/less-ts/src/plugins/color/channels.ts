@@ -109,6 +109,7 @@ export const CHANNELS: { [x: string]: Function } = {
   hue: new Hue(),
   lightness: new Lightness(),
   luma: new Luma(),
+  luminance: new Luma(),
   red: new Red(),
   saturation: new Saturation()
 };

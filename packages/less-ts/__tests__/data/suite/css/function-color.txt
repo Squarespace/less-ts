@@ -105,6 +105,13 @@
         [DIMENSION, 0.4, null],
         [DIMENSION, 0.3, null]
       ]]
+    ]], false],
+    [RULE, [PROPERTY, 'b10'], [FUNCTION_CALL, 'luminance', [
+      [FUNCTION_CALL, 'hsl', [
+        [DIMENSION, 0.5, null],
+        [DIMENSION, 0.4, null],
+        [DIMENSION, 0.3, null]
+      ]]
     ]], false]
   ]],
   [RULESET, [SELECTORS, [
@@ -252,6 +259,9 @@
     [RULE, [PROPERTY, 'd12'], [FUNCTION_CALL, 'saturate', [
       [COLOR, 85, 85, 85, 1.0, null],
       [DIMENSION, 10, '%']
+    ]], false],
+    [RULE, [PROPERTY, 'd13'], [FUNCTION_CALL, 'luminance', [
+      [COLOR, 170, 187, 204, 1.0, null]
     ]], false]
   ]],
   [RULESET, [SELECTORS, [
