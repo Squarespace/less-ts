@@ -22,7 +22,6 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@types/core-js": "^2.5.2",
     "core-js": "^3.3.2"
   },
   "devDependencies": {
