@@ -61,5 +61,5 @@
       "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
     }
   },
-  "version": "1.0.2"
+  "version": "1.0.3"
 }
