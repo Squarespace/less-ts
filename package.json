@@ -7,6 +7,7 @@
     "build": "lerna run build",
     "build:watch": "lerna run build:watch --parallel",
     "clean": "lerna run clean",
+    "clean:full": "lerna run clean:full && rimraf node_modules yarn.lock",
     "lint": "lerna run build && lerna run lint",
     "release": "lerna run clean && lerna run build && lerna publish --force-publish=* --npm-client=npm",
     "test": "rimraf ./coverage && jest --coverage --verbose -i --no-cache",
@@ -38,18 +39,19 @@
       "**/__tests__/**/*.test.ts"
     ],
     "transform": {
-      "^.+\\.(ts|tsx)$": "<rootDir>/node_modules/ts-jest/preprocessor.js"
+      "^.+\\.(ts|tsx)$": "ts-jest"
     }
   },
   "dependencies": {
-    "@types/jest": "^23.1.1",
+    "@types/jest": "^25.2.1",
     "core-js": "3.3.2",
-    "jest": "^23.1.0",
+    "jest": "^25.4.0",
     "lerna": "^2.11.0",
-    "ts-jest": "^22.4.6",
+    "rimraf": "^3.0.2",
+    "ts-jest": "^25.4.0",
     "ts-node": "^6.1.2",
     "tslint": "^5.10.0",
     "tslint-no-circular-imports": "^0.6.1",
-    "typescript": "2.8.3"
+    "typescript": "3.8.x"
   }
 }
