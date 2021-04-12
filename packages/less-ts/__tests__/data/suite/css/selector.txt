@@ -60,5 +60,27 @@
     ]], [
       [RULE, [PROPERTY, 'font-size'], [DIMENSION, 1, 'px'], false]
     ]]
+  ]],
+  [DEFINITION, '@theme', [KEYWORD, 'foo']],
+  [DEFINITION, '@selector', [QUOTED, 1, true, [
+    [ANONYMOUS, '.'],
+    [VARIABLE, '@theme', false, true]
+  ]]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [VALUE_ELEMENT, ' ', [VARIABLE, '@selector', false, true]],
+      [TEXT_ELEMENT, null, 'red']
+    ]]
+  ]], [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '#'],
+        [VALUE_ELEMENT, null, [VARIABLE, '@theme', false, true]],
+        [TEXT_ELEMENT, null, '.'],
+        [VALUE_ELEMENT, null, [VARIABLE, '@theme', false, true]]
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0, null], false]
+    ]]
   ]]
 ]]

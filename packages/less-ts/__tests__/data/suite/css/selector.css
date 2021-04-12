@@ -7,3 +7,6 @@
 > * + .parent > .parent foo {
   font-size: 1px;
 }
+.foored #foo.foo {
+  color: red;
+}

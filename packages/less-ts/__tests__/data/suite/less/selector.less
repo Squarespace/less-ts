@@ -17,3 +17,12 @@
         font-size: 1px;
     }
 }
+
+@theme: foo;
+@selector: ~".@{theme}";
+@{selector}red {
+  #@{theme}.@{theme} {
+    color: red;
+  }
+}
+
