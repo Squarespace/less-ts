@@ -82,5 +82,46 @@
     ]], [
       [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0, null], false]
     ]]
+  ]],
+  [DEFINITION, '@num', [DIMENSION, 3, null]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', ':nth-child'],
+      [VALUE_ELEMENT, null, [PAREN, [VARIABLE, '@num', false, true]]],
+      [TEXT_ELEMENT, null, ':nth-child'],
+      [VALUE_ELEMENT, null, [PAREN, [VARIABLE, '@num', false, false]]]
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'second-use'], [KEYWORD, 'deprecated'], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.foo'],
+      [ATTR_ELEMENT, null, [
+        [QUOTED, 1, false, [
+          [ANONYMOUS, 'bar']
+        ]],
+        [ANONYMOUS, '='],
+        [QUOTED, 1, false, [
+          [ANONYMOUS, 'baz']
+        ]]
+      ]]
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.foo'],
+      [ATTR_ELEMENT, null, [
+        [QUOTED, 1, false, [
+          [ANONYMOUS, 'bar']
+        ]],
+        [ANONYMOUS, '~='],
+        [ANONYMOUS, 'baz']
+      ]]
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0, null], false]
   ]]
 ]]

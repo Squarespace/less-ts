@@ -1,0 +1,404 @@
+[STYLESHEET, 1, [
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.comma-delimited']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'text-shadow'], [EXPRESSION_LIST, [
+      [EXPRESSION, [
+        [DIMENSION, -1, 'px'],
+        [DIMENSION, -1, 'px'],
+        [DIMENSION, 1, 'px'],
+        [COLOR, 255, 0, 0, 1.0, null]
+      ]],
+      [EXPRESSION, [
+        [DIMENSION, 6, 'px'],
+        [DIMENSION, 5, 'px'],
+        [DIMENSION, 5, 'px'],
+        [COLOR, 255, 255, 0, 1.0, null]
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, '-moz-box-shadow'], [EXPRESSION_LIST, [
+      [EXPRESSION, [
+        [DIMENSION, 0, 'pt'],
+        [DIMENSION, 0, 'pt'],
+        [DIMENSION, 2, 'px'],
+        [FUNCTION_CALL, 'rgba', [
+          [DIMENSION, 255, null],
+          [DIMENSION, 255, null],
+          [DIMENSION, 255, null],
+          [DIMENSION, 0.4, null]
+        ]],
+        [KEYWORD, 'inset']
+      ]],
+      [EXPRESSION, [
+        [DIMENSION, 0, 'pt'],
+        [DIMENSION, 4, 'px'],
+        [DIMENSION, 6, 'px'],
+        [FUNCTION_CALL, 'rgba', [
+          [DIMENSION, 255, null],
+          [DIMENSION, 255, null],
+          [DIMENSION, 255, null],
+          [DIMENSION, 0.4, null]
+        ]],
+        [KEYWORD, 'inset']
+      ]]
+    ]], false]
+  ]],
+  [BLOCK_DIRECTIVE, '@font-face', [
+    [RULE, [PROPERTY, 'font-family'], [KEYWORD, 'Headline'], false],
+    [RULE, [PROPERTY, 'unicode-range'], [EXPRESSION_LIST, [
+      [UNICODE_RANGE, 'U+??????'],
+      [UNICODE_RANGE, 'U+0???'],
+      [UNICODE_RANGE, 'U+0-7F'],
+      [UNICODE_RANGE, 'U+A5']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.other']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, '-moz-transform'], [EXPRESSION, [
+      [FUNCTION_CALL, 'translate', [
+        [DIMENSION, 0, null],
+        [DIMENSION, 11, 'em']
+      ]],
+      [FUNCTION_CALL, 'rotate', [
+        [DIMENSION, -90, 'deg']
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'transform'], [FUNCTION_CALL, 'rotatex', [
+      [DIMENSION, 45, 'deg']
+    ]], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.item'],
+      [ATTR_ELEMENT, null, [
+        [ANONYMOUS, 'data-cra_zy-attr1b-ut3'],
+        [ANONYMOUS, '='],
+        [ANONYMOUS, 'bold']
+      ]]
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'font-weight'], [KEYWORD, 'bold'], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'p'],
+      [TEXT_ELEMENT, null, ':not'],
+      [TEXT_ELEMENT, null, '([class*=\"lead\"])']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 0, 0, 0, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'input'],
+      [ATTR_ELEMENT, null, [
+        [ANONYMOUS, 'type'],
+        [ANONYMOUS, '='],
+        [QUOTED, 1, false, [
+          [ANONYMOUS, 'text']
+        ]]
+      ]],
+      [TEXT_ELEMENT, null, '.class'],
+      [TEXT_ELEMENT, null, '#id'],
+      [ATTR_ELEMENT, null, [
+        [ANONYMOUS, 'attr'],
+        [ANONYMOUS, '='],
+        [ANONYMOUS, '32']
+      ]],
+      [TEXT_ELEMENT, null, ':not'],
+      [TEXT_ELEMENT, null, '(1)']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 255, 255, 255, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'div'],
+      [TEXT_ELEMENT, null, '#id'],
+      [TEXT_ELEMENT, null, '.class'],
+      [ATTR_ELEMENT, null, [
+        [ANONYMOUS, 'a'],
+        [ANONYMOUS, '='],
+        [ANONYMOUS, '1']
+      ]],
+      [ATTR_ELEMENT, null, [
+        [ANONYMOUS, 'b'],
+        [ANONYMOUS, '='],
+        [ANONYMOUS, '2']
+      ]],
+      [TEXT_ELEMENT, null, '.class'],
+      [TEXT_ELEMENT, null, ':not'],
+      [TEXT_ELEMENT, null, '(1)']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 255, 255, 255, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'ul'],
+      [TEXT_ELEMENT, null, '.comma'],
+      [TEXT_ELEMENT, '>', 'li'],
+      [TEXT_ELEMENT, null, ':not'],
+      [TEXT_ELEMENT, null, '(:only-child)'],
+      [TEXT_ELEMENT, null, '::after']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 255, 255, 255, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'ol'],
+      [TEXT_ELEMENT, null, '.comma'],
+      [TEXT_ELEMENT, '>', 'li'],
+      [TEXT_ELEMENT, null, ':nth-last-child'],
+      [TEXT_ELEMENT, null, '(2)'],
+      [TEXT_ELEMENT, null, '::after']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 255, 255, 255, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'li'],
+      [TEXT_ELEMENT, null, ':nth-child'],
+      [TEXT_ELEMENT, null, '(4n+1)']
+    ]],
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'li'],
+      [TEXT_ELEMENT, null, ':nth-child'],
+      [TEXT_ELEMENT, null, '(-5n)']
+    ]],
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'li'],
+      [TEXT_ELEMENT, null, ':nth-child'],
+      [TEXT_ELEMENT, null, '(-n+2)']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 255, 255, 255, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'a'],
+      [ATTR_ELEMENT, null, [
+        [ANONYMOUS, 'href'],
+        [ANONYMOUS, '^='],
+        [QUOTED, 1, false, [
+          [ANONYMOUS, 'http://']
+        ]]
+      ]]
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 0, 0, 0, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'a'],
+      [ATTR_ELEMENT, null, [
+        [ANONYMOUS, 'href'],
+        [ANONYMOUS, '$='],
+        [QUOTED, 1, false, [
+          [ANONYMOUS, 'http://']
+        ]]
+      ]]
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 0, 0, 0, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'form'],
+      [ATTR_ELEMENT, null, [
+        [ANONYMOUS, 'data-disabled']
+      ]]
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 0, 0, 0, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'p'],
+      [TEXT_ELEMENT, null, '::before']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 0, 0, 0, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '#issue322']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, '-webkit-animation'], [EXPRESSION, [
+      [KEYWORD, 'anim2'],
+      [DIMENSION, 7, 's'],
+      [KEYWORD, 'infinite'],
+      [KEYWORD, 'ease-in-out']
+    ]], false]
+  ]],
+  [BLOCK_DIRECTIVE, '@-webkit-keyframes frames', [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '0%']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'border'], [DIMENSION, 1, 'px'], false]
+    ]],
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '5.5%']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'border'], [DIMENSION, 2, 'px'], false]
+    ]],
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '100%']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'border'], [DIMENSION, 3, 'px'], false]
+    ]]
+  ]],
+  [BLOCK_DIRECTIVE, '@keyframes fontbulger1', [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', 'to']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'font-size'], [DIMENSION, 15, 'px'], false]
+    ]],
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', 'from']
+      ]],
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', 'to']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'font-size'], [DIMENSION, 12, 'px'], false]
+    ]],
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '0%']
+      ]],
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '100%']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'font-size'], [DIMENSION, 12, 'px'], false]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.units']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'font'], [EXPRESSION_LIST, [
+      [EXPRESSION, [
+        [SHORTHAND, [DIMENSION, 1.2, 'rem'], [DIMENSION, 2, 'rem']]
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'font'], [EXPRESSION_LIST, [
+      [EXPRESSION, [
+        [SHORTHAND, [DIMENSION, 8, 'vw'], [DIMENSION, 9, 'vw']]
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'font'], [EXPRESSION_LIST, [
+      [EXPRESSION, [
+        [SHORTHAND, [DIMENSION, 10, 'vh'], [DIMENSION, 12, 'vh']]
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'font'], [EXPRESSION_LIST, [
+      [EXPRESSION, [
+        [SHORTHAND, [DIMENSION, 12, 'vm'], [DIMENSION, 15, 'vm']]
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'font'], [EXPRESSION_LIST, [
+      [EXPRESSION, [
+        [SHORTHAND, [DIMENSION, 12, 'vmin'], [DIMENSION, 15, 'vmin']]
+      ]]
+    ]], false],
+    [RULE, [PROPERTY, 'font'], [EXPRESSION_LIST, [
+      [EXPRESSION, [
+        [SHORTHAND, [DIMENSION, 1.2, 'ch'], [DIMENSION, 1.5, 'ch']]
+      ]]
+    ]], false]
+  ]],
+  [BLOCK_DIRECTIVE, '@supports ( box-shadow: 2px 2px 2px black ) or\n          ( -moz-box-shadow: 2px 2px 2px black )', [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', '.outline']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'box-shadow'], [EXPRESSION, [
+        [DIMENSION, 2, 'px'],
+        [DIMENSION, 2, 'px'],
+        [DIMENSION, 2, 'px'],
+        [COLOR, 0, 0, 0, 1.0, null]
+      ]], false],
+      [RULE, [PROPERTY, '-moz-box-shadow'], [EXPRESSION, [
+        [DIMENSION, 2, 'px'],
+        [DIMENSION, 2, 'px'],
+        [DIMENSION, 2, 'px'],
+        [COLOR, 0, 0, 0, 1.0, null]
+      ]], false]
+    ]]
+  ]],
+  [BLOCK_DIRECTIVE, '@-x-document url-prefix(\"\"github.com\"\")', [
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', 'h1']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0, null], false]
+    ]]
+  ]],
+  [BLOCK_DIRECTIVE, '@viewport', [
+    [RULE, [PROPERTY, 'font-size'], [DIMENSION, 10, 'px'], false]
+  ]],
+  [DIRECTIVE, '@namespace', [EXPRESSION, [
+    [KEYWORD, 'foo'],
+    [URL, [ANONYMOUS, 'http://www.example.com']]
+  ]]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'foo'],
+      [TEXT_ELEMENT, '|', 'h1']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 0, 0, 255, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'foo'],
+      [TEXT_ELEMENT, '|', '*']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 255, 255, 0, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, '|', 'h1']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '*'],
+      [TEXT_ELEMENT, '|', 'h1']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 0, 128, 0, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'h1']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 0, 128, 0, 1.0, null], false]
+  ]]
+]]

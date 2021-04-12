@@ -26,3 +26,15 @@
   }
 }
 
+@num: 3;
+:nth-child(@{num}):nth-child(@num) {
+  second-use: deprecated;
+}
+
+.foo["bar"="baz"] {
+  color: red;
+}
+
+.foo["bar"~=baz] {
+  color: red;
+}

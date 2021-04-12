@@ -1,0 +1,62 @@
+[STYLESHEET, 1, [
+  [DEFINITION, '@ugly', [COLOR, 255, 0, 255, 1.0, null]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.escape\\|random\\|char']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.mixin\\!tUp']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'font-weight'], [KEYWORD, 'bold'], false]
+  ]],
+  [COMMENT, ' class=\"404\"', 0, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.\\34 04']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'background'], [COLOR, 255, 0, 0, 1.0, null], false],
+    [RULESET, [SELECTORS, [
+      [SELECTOR, [
+        [TEXT_ELEMENT, ' ', 'strong']
+      ]]
+    ]], [
+      [RULE, [PROPERTY, 'color'], [VARIABLE, '@ugly', false, false], false],
+      [MIXIN_CALL, [SELECTOR, [
+        [TEXT_ELEMENT, null, '.mixin\\!tUp']
+      ]], NULL, false]
+    ]]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '.trailingTest\\+']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 255, 0, 0, 1.0, null], false]
+  ]],
+  [COMMENT, ' This hideous test of hideousness checks for the selector \"blockquote\" with various permutations of hex escapes ', 1, true],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', '\\62\\6c\\6f \\63 \\6B \\0071 \\000075o\\74 e']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'color'], [COLOR, 192, 192, 192, 1.0, null], false]
+  ]],
+  [RULESET, [SELECTORS, [
+    [SELECTOR, [
+      [ATTR_ELEMENT, ' ', [
+        [ANONYMOUS, 'ng\\:cloak']
+      ]]
+    ]],
+    [SELECTOR, [
+      [TEXT_ELEMENT, ' ', 'ng\\:form']
+    ]]
+  ]], [
+    [RULE, [PROPERTY, 'display'], [KEYWORD, 'none'], false]
+  ]]
+]]
