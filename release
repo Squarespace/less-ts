@@ -8,7 +8,7 @@ fi
 
 lerna run clean
 lerna run build
-lerna publish --force-publish=* --npm-client=npm $ARGS
+lerna publish --force-publish=* $ARGS
 
 
 
