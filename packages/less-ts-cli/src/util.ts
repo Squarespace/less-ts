@@ -6,7 +6,7 @@ export interface ProjectInfo {
 }
 
 export const getPackageInfo = (): ProjectInfo => {
-  const path = join(__dirname, '..', '..', '..', 'package.json');
+  const path = join(__dirname, '..', 'package.json');
   const raw = fs.readFileSync(path, { encoding: 'utf-8' });
   const { version } = JSON.parse(raw);
   return { version };
