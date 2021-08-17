@@ -25,7 +25,7 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "@squarespace/less-ts": "^1.1.1",
+    "@squarespace/less-ts": "^1.1.2",
     "@types/yargs": "^11.0.0",
     "yargs": "^11.0.0"
   },
@@ -66,5 +66,5 @@
       "^.+\\.(ts|tsx)$": "ts-jest"
     }
   },
-  "version": "1.1.1"
+  "version": "1.1.2"
 }
