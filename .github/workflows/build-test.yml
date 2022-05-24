@@ -1,0 +1,43 @@
+name: Build and Test
+
+on:
+  push:
+    branches:
+    - actions
+    - main
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [14.x, 16.x]
+
+    steps:
+      - uses: actions/checkout@v1
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - name: Install Yarn
+        run: npm install -g yarn
+
+      - name: Build
+        run: |
+          yarn
+          yarn clean
+          yarn lint
+
+      - name: Test
+        run: yarn test:codecov
+
+#      - uses: codecov/codecov-action@v1
+#        if: matrix.node-version == '16.x'
+#        with:
+#          file: ./coverage/lcov.info
+#          name: codecov-umbrella
+#          fail_ci_if_error: true
+
