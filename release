@@ -8,7 +8,5 @@ fi
 
 lerna run clean
 lerna run build
-lerna publish --force-publish=* $ARGS
-
-
+lerna publish --force-publish=* --concurrency=1 --no-verify-access $ARGS
 
