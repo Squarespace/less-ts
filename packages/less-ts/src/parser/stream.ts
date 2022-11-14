@@ -13,7 +13,7 @@ export interface Parselet {
 export type Mark = [number, number, number, number];
 
 export const enum StreamFlags {
-  OPENSPACE
+  OPENSPACE = 1
 }
 
 const { min, max } = Math;
