@@ -6,7 +6,6 @@ import { hsl, rgb } from './util';
 const round = Math.round;
 
 class Alpha extends BaseFunction {
-
   constructor() {
     super('alpha', 'c');
   }
@@ -18,7 +17,6 @@ class Alpha extends BaseFunction {
 }
 
 class Blue extends BaseFunction {
-
   constructor() {
     super('blue', 'c');
   }
@@ -30,7 +28,6 @@ class Blue extends BaseFunction {
 }
 
 class Green extends BaseFunction {
-
   constructor() {
     super('green', 'c');
   }
@@ -42,7 +39,6 @@ class Green extends BaseFunction {
 }
 
 class Hue extends BaseFunction {
-
   constructor() {
     super('hue', 'c');
   }
@@ -54,7 +50,6 @@ class Hue extends BaseFunction {
 }
 
 class Lightness extends BaseFunction {
-
   constructor() {
     super('lightness', 'c');
   }
@@ -66,7 +61,6 @@ class Lightness extends BaseFunction {
 }
 
 class Luma extends BaseFunction {
-
   constructor() {
     super('luma', 'c');
   }
@@ -84,16 +78,12 @@ class Luminance extends BaseFunction {
 
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const c = rgb(args[0]);
-    const luminance =
-      (0.2126 * c.r / 255)
-      + (0.7152 * c.g / 255)
-      + (0.0722 * c.b / 255);
+    const luminance = (0.2126 * c.r) / 255 + (0.7152 * c.g) / 255 + (0.0722 * c.b) / 255;
     return new Dimension(Math.round(luminance * c.a * 100), Unit.PERCENTAGE);
   }
 }
 
 class Red extends BaseFunction {
-
   constructor() {
     super('red', 'c');
   }
@@ -105,7 +95,6 @@ class Red extends BaseFunction {
 }
 
 class Saturation extends BaseFunction {
-
   constructor() {
     super('saturation', 'c');
   }
@@ -114,7 +103,6 @@ class Saturation extends BaseFunction {
     const c = hsl(args[0]);
     return new Dimension(round(c.s * 100), Unit.PERCENTAGE);
   }
-
 }
 
 export const CHANNELS: { [x: string]: Function } = {
@@ -126,5 +114,5 @@ export const CHANNELS: { [x: string]: Function } = {
   luma: new Luma(),
   luminance: new Luminance(),
   red: new Red(),
-  saturation: new Saturation()
+  saturation: new Saturation(),
 };

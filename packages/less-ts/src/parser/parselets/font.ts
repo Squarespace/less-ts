@@ -4,7 +4,6 @@ import { LessStream, Parselet, Parselets } from '../stream';
 import { isDigit, Chars } from '../types';
 
 export class FontParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     const parts: Node[] = [];
     let node = stm.parse(Parselets.FONT_SUB);
@@ -65,5 +64,4 @@ export class ShorthandParselet implements Parselet {
     }
     return new Shorthand(left, right);
   }
-
 }

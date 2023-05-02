@@ -3,20 +3,17 @@ import { Block, BlockNode } from './block';
 import { Selectors } from './selector';
 
 export class Rule extends Node {
-
-  constructor(
-    readonly property: Node,
-    readonly value: Node,
-    readonly important: boolean | number
-  ) {
+  constructor(readonly property: Node, readonly value: Node, readonly important: boolean | number) {
     super(NodeType.RULE);
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.RULE
-        && this.important === (n as Rule).important
-        && this.property.equals((n as Rule).property)
-        && this.value.equals((n as Rule).value);
+    return (
+      n.type === NodeType.RULE &&
+      this.important === (n as Rule).important &&
+      this.property.equals((n as Rule).property) &&
+      this.value.equals((n as Rule).value)
+    );
   }
 
   repr(buf: Buffer): void {
@@ -43,15 +40,10 @@ export class Rule extends Node {
 const EMPTY_MIXIN_PATHS: string[][] = [];
 
 export class Ruleset extends BlockNode {
-
   evaluating: boolean = false;
   readonly hasMixinPath: boolean = false;
 
-  constructor(
-    readonly selectors: Selectors,
-    readonly block: Block,
-    original?: Ruleset
-  ) {
+  constructor(readonly selectors: Selectors, readonly block: Block, original?: Ruleset) {
     super(NodeType.RULESET, block, original);
     this.hasMixinPath = selectors.hasMixinPath();
   }
@@ -72,9 +64,9 @@ export class Ruleset extends BlockNode {
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.RULESET
-        && this.selectors.equals((n as Ruleset).selectors)
-        && this.block.equals((n as Ruleset).block);
+    return (
+      n.type === NodeType.RULESET && this.selectors.equals((n as Ruleset).selectors) && this.block.equals((n as Ruleset).block)
+    );
   }
 
   repr(buf: Buffer): void {

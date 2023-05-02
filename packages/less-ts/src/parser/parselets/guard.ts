@@ -4,7 +4,6 @@ import { LessStream, Parselet, Parselets } from '../stream';
 import { parseOperator, Condition, Guard, Operator, TRUE } from '../../model';
 
 export class ConditionParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     let cond = this.parseCondition(stm);
     stm.skipWs();
@@ -51,7 +50,6 @@ export class ConditionParselet implements Parselet {
 }
 
 export class GuardParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     stm.skipWs();
     if (!stm.matchWhen()) {

@@ -7,7 +7,7 @@ const ROOT = join(__dirname, '../data/suite');
 const COMPILER = new LessCompiler({
   compress: false,
   indentSize: 2,
-  fastcolor: false
+  fastcolor: false,
 });
 
 const buffer = () => COMPILER.context().newBuffer();
@@ -68,10 +68,10 @@ const CASES: string[] = [
   'unicode-range',
   'urls',
   'variables',
-  'whitespace'
+  'whitespace',
 ];
 
-CASES.forEach(c => {
+CASES.forEach((c) => {
   test(`${c}.less`, () => {
     compare(c);
   });

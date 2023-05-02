@@ -4,7 +4,6 @@ import { LessStream, Parselet, Parselets } from '../stream';
 import { Alpha, Anonymous, Assignment, Dimension, FunctionCall, Url } from '../../model';
 
 export class AlphaParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     if (!stm.matchOpacity()) {
       return undefined;
@@ -29,7 +28,6 @@ export class AlphaParselet implements Parselet {
 }
 
 export class AssignmentParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     const mark = stm.mark();
     if (!stm.matchWord()) {
@@ -51,7 +49,6 @@ export class AssignmentParselet implements Parselet {
 }
 
 export class FunctionCallParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     const mark = stm.mark();
     if (!isCallStart(stm.peek()) || !stm.matchCallName()) {

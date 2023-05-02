@@ -5,7 +5,6 @@ import { BaseFunction } from './base';
 const { round } = Math;
 
 class Extract extends BaseFunction {
-
   constructor() {
     super('extract', '**.');
   }
@@ -17,7 +16,7 @@ class Extract extends BaseFunction {
       // Bail out and emit literal representation of function call
       return undefined;
     }
-    const { values } = (arg1 as ExpressionList);
+    const { values } = arg1 as ExpressionList;
     const len = values.length;
     const index = (arg2 as Dimension).value;
     if (index !== round(index) || index < 0 || index >= len) {
@@ -26,11 +25,9 @@ class Extract extends BaseFunction {
     }
     return values[index];
   }
-
 }
 
 class Length extends BaseFunction {
-
   constructor() {
     super('length', '*.');
   }
@@ -43,10 +40,9 @@ class Length extends BaseFunction {
     }
     return new Dimension(size);
   }
-
 }
 
 export const LIST: { [x: string]: Function } = {
   extract: new Extract(),
-  length: new Length()
+  length: new Length(),
 };

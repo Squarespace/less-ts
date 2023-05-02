@@ -2,7 +2,6 @@ import { Buffer, Node, NodeType } from '../common';
 import { KeywordColor } from './color';
 
 export class Keyword extends Node {
-
   constructor(readonly value: string, type: NodeType = NodeType.KEYWORD) {
     super(type);
   }
@@ -29,17 +28,13 @@ export class Keyword extends Node {
 }
 
 export class False extends Keyword {
-
   constructor() {
     super('false', NodeType.FALSE);
   }
-
 }
 
 export class True extends Keyword {
-
   constructor() {
     super('true', NodeType.TRUE);
   }
-
 }

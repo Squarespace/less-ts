@@ -3,7 +3,6 @@ import { RuntimeContext } from './context';
 import { BlockDirective, BlockNode, Media, Mixin, Ruleset } from '../model';
 
 export class ErrorFormatter {
-
   readonly ctx: RuntimeContext;
 
   constructor(readonly frameWindow: number, readonly renderer: NodeRenderer) {
@@ -66,22 +65,20 @@ export class ErrorFormatter {
         buf.str(' {');
         break;
 
-      case NodeType.MEDIA:
-        {
-          buf.incr();
-          buf.indent();
-          const m = n as Media;
-          buf.str('@media');
-          if (m.features) {
-            buf.str(' ');
-            m.features.repr(buf);
-          }
-          buf.str(' {');
-          break;
+      case NodeType.MEDIA: {
+        buf.incr();
+        buf.indent();
+        const m = n as Media;
+        buf.str('@media');
+        if (m.features) {
+          buf.str(' ');
+          m.features.repr(buf);
         }
+        buf.str(' {');
+        break;
+      }
 
-      case NodeType.MIXIN:
-      {
+      case NodeType.MIXIN: {
         buf.incr();
         buf.indent();
         const m = n as Mixin;
@@ -98,8 +95,7 @@ export class ErrorFormatter {
         break;
       }
 
-      case NodeType.RULESET:
-      {
+      case NodeType.RULESET: {
         buf.incr();
         buf.indent();
         const { selectors } = (n as Ruleset).selectors;

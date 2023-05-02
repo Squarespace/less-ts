@@ -12,7 +12,7 @@ import {
   NodeRenderer,
   NodeType,
   Options,
-  Separators
+  Separators,
 } from '../common';
 
 import { BlockNode, Definition } from '../model';
@@ -24,7 +24,6 @@ import { repeat, whitespace } from '../utils';
  * strings, generate a canonical representation of LESS syntax, etc
  */
 export class RuntimeBuffer implements Buffer {
-
   // Buffer we're appending to
   protected buf: string = '';
 
@@ -40,21 +39,10 @@ export class RuntimeBuffer implements Buffer {
   // Maximum number of digits after the decimal point for numbers
   numericScale: number = 8;
 
-  constructor(
-    readonly compress: boolean,
-    readonly fastcolor: boolean,
-    readonly spacer: string,
-    readonly chars: Separators
-  ) {
-  }
+  constructor(readonly compress: boolean, readonly fastcolor: boolean, readonly spacer: string, readonly chars: Separators) {}
 
   copy(): Buffer {
-    return new RuntimeBuffer(
-      this.compress,
-      this.fastcolor,
-      this.spacer,
-      this.chars
-    );
+    return new RuntimeBuffer(this.compress, this.fastcolor, this.spacer, this.chars);
   }
 
   /**
@@ -171,16 +159,13 @@ export class RuntimeBuffer implements Buffer {
  * stack frames, supporting variable definition resolution, etc.
  */
 export class RuntimeExecEnv implements ExecEnv {
-
   // Stack frames during evaluation
   frames: IBlockNode[];
 
   // Errors during evaluation
   errors: LessError[] = [];
 
-  constructor(
-    readonly ctx: Context,
-    initialStack: IBlockNode[]) {
+  constructor(readonly ctx: Context, initialStack: IBlockNode[]) {
     this.frames = initialStack || [];
   }
 
@@ -248,7 +233,6 @@ export class RuntimeExecEnv implements ExecEnv {
   newBuffer(): Buffer {
     return this.ctx.newBuffer();
   }
-
 }
 
 const DEFAULT_MIXIN_RECURSION_LIMIT = 64;
@@ -260,7 +244,6 @@ const DEFAULT_MIXIN_RECURSION_LIMIT = 64;
  * etc.
  */
 export class RuntimeContext implements Context {
-
   // Buffer-related settings. Used for fast construction of new temp buffers.
 
   // Number of spaces of indent for the CSS output or LESS canonical representation
@@ -296,10 +279,7 @@ export class RuntimeContext implements Context {
   // Current mixin depth
   mixinDepth: number = 0;
 
-  constructor(
-    readonly opts: Options = { compress: false },
-    readonly renderer: NodeRenderer
-  ) {
+  constructor(readonly opts: Options = { compress: false }, readonly renderer: NodeRenderer) {
     this.indentSize = opts.indentSize || 2;
     this.compress = opts.compress || false;
     this.fastcolor = opts.fastcolor === undefined ? true : opts.fastcolor;
@@ -311,7 +291,7 @@ export class RuntimeContext implements Context {
       listsep: this.compress ? ',' : ', ',
       rulesep: this.compress ? ':' : ': ',
       ruleend: this.compress ? ';' : ';\n',
-      selectorsep: this.compress ? ',' : ',\n'
+      selectorsep: this.compress ? ',' : ',\n',
     };
   }
 
@@ -326,7 +306,7 @@ export class RuntimeContext implements Context {
       this.errors.push({
         errors,
         node,
-        stack
+        stack,
       });
     }
   }
@@ -342,9 +322,7 @@ export class RuntimeContext implements Context {
    * Build a new Buffer instance.
    */
   newBuffer(): Buffer {
-    return new RuntimeBuffer(
-      this.compress, this.fastcolor, this.spacer, this.chars
-    );
+    return new RuntimeBuffer(this.compress, this.fastcolor, this.spacer, this.chars);
   }
 
   /**

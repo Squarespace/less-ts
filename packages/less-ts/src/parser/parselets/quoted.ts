@@ -4,7 +4,6 @@ import { LessStream, Parselet, Parselets } from '../stream';
 import { Anonymous, Quoted } from '../../model';
 
 export class QuotedParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     stm.skipWs();
     let offset = 0;

@@ -5,7 +5,6 @@ import { parseOperator, Dimension, Operation, Operator } from '../../model';
 import { whitespace } from '../../utils';
 
 export class AdditionParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     const op0 = stm.parse(Parselets.MULTIPLICATION);
     if (op0 === undefined) {
@@ -46,7 +45,6 @@ export class AdditionParselet implements Parselet {
 }
 
 export class MultiplicationParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     const op0 = stm.parse(Parselets.OPERAND);
     if (op0 === undefined) {
@@ -80,7 +78,6 @@ export class MultiplicationParselet implements Parselet {
 }
 
 export class OperandParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     let negate = false;
     const ch0 = stm.peek();
@@ -90,7 +87,6 @@ export class OperandParselet implements Parselet {
       stm.seek1();
     }
     const node = stm.parse(Parselets.OPERAND_SUB);
-    return node === undefined ? node :
-      negate ? new Operation(Operator.MULTIPLY, node, new Dimension(-1, undefined)) : node;
+    return node === undefined ? node : negate ? new Operation(Operator.MULTIPLY, node, new Dimension(-1, undefined)) : node;
   }
 }

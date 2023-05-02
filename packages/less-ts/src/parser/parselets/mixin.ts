@@ -15,7 +15,7 @@ import {
   Parameter,
   Selector,
   TextElement,
-  Variable
+  Variable,
 } from '../../model';
 
 export class MixinCallArgsParselet implements Parselet {
@@ -219,7 +219,6 @@ export class MixinParamsParselet implements Parselet {
 }
 
 export class MixinParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     const ch = stm.peek();
     if (ch !== Chars.PERIOD && ch !== Chars.NUMBER_SIGN) {

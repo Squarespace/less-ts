@@ -10,25 +10,21 @@ import { arrayEquals } from '../utils';
 export const FALSE = new False();
 export const TRUE = new True();
 
-const compareString = (a: string, b: string): number =>
-  a < b ? -1 : a > b ? 1 : 0;
+const compareString = (a: string, b: string): number => (a < b ? -1 : a > b ? 1 : 0);
 
 export class Condition extends Node {
-
-  constructor(
-    readonly operator: Operator,
-    readonly left: Node,
-    readonly right: Node,
-    readonly negate: boolean | number) {
+  constructor(readonly operator: Operator, readonly left: Node, readonly right: Node, readonly negate: boolean | number) {
     super(NodeType.CONDITION);
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.CONDITION
-        && this.operator === (n as Condition).operator
-        && this.negate === (n as Condition).negate
-        && this.left.equals((n as Condition).left)
-        && this.right.equals((n as Condition).right);
+    return (
+      n.type === NodeType.CONDITION &&
+      this.operator === (n as Condition).operator &&
+      this.negate === (n as Condition).negate &&
+      this.left.equals((n as Condition).left) &&
+      this.right.equals((n as Condition).right)
+    );
   }
 
   repr(buf: Buffer): void {
@@ -65,8 +61,7 @@ export class Condition extends Node {
       case Operator.ADD:
       case Operator.DIVIDE:
       case Operator.MULTIPLY:
-      case Operator.SUBTRACT:
-      {
+      case Operator.SUBTRACT: {
         // Conditions only use boolean operators.
         const { ctx } = env;
         env.errors.push(expectedBoolOp(operator));
@@ -86,8 +81,7 @@ export class Condition extends Node {
     let res = -1;
     const { type } = op0;
     switch (type) {
-      case NodeType.ANONYMOUS:
-      {
+      case NodeType.ANONYMOUS: {
         const lval = (op0 as Anonymous).value;
         const rval = env.render(op1);
         res = compareString(lval, rval);
@@ -108,8 +102,7 @@ export class Condition extends Node {
         res = compareKeyword(op0 as Keyword, op1);
         break;
 
-      case NodeType.QUOTED:
-      {
+      case NodeType.QUOTED: {
         const lval = env.render(op0);
         const rval = env.render(op1);
         res = compareString(lval, rval);
@@ -123,33 +116,28 @@ export class Condition extends Node {
 
     switch (res) {
       case -1:
-        return operator === Operator.LESS_THAN
-            || operator === Operator.LESS_THAN_OR_EQUAL
-            || operator === Operator.NOT_EQUAL;
+        return operator === Operator.LESS_THAN || operator === Operator.LESS_THAN_OR_EQUAL || operator === Operator.NOT_EQUAL;
       case 0:
-        return operator === Operator.EQUAL
-            || operator === Operator.LESS_THAN_OR_EQUAL
-            || operator === Operator.GREATER_THAN_OR_EQUAL;
+        return (
+          operator === Operator.EQUAL || operator === Operator.LESS_THAN_OR_EQUAL || operator === Operator.GREATER_THAN_OR_EQUAL
+        );
       case 1:
-        return operator === Operator.GREATER_THAN
-            || operator === Operator.GREATER_THAN_OR_EQUAL
-            || operator === Operator.NOT_EQUAL;
+        return (
+          operator === Operator.GREATER_THAN || operator === Operator.GREATER_THAN_OR_EQUAL || operator === Operator.NOT_EQUAL
+        );
       default:
         return false;
     }
   }
-
 }
 
 export class Guard extends Node {
-
   constructor(readonly conditions: Condition[]) {
     super(NodeType.GUARD);
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.GUARD
-        && arrayEquals(this.conditions, (n as Guard).conditions);
+    return n.type === NodeType.GUARD && arrayEquals(this.conditions, (n as Guard).conditions);
   }
 
   repr(buf: Buffer): void {
@@ -177,7 +165,6 @@ export class Guard extends Node {
     }
     return res;
   }
-
 }
 
 const truthValue = (env: ExecEnv, node: Node): boolean => {
@@ -211,10 +198,7 @@ const compareColor = (left: BaseColor, right: Node): number => {
     return -1;
   }
   const lval = left.toRGB();
-  return lval.r === rval.r
-      && lval.g === rval.g
-      && lval.b === rval.b
-      && lval.a === rval.a ? 0 : -1;
+  return lval.r === rval.r && lval.g === rval.g && lval.b === rval.b && lval.a === rval.a ? 0 : -1;
 };
 
 const compareDimension = (left: Dimension, right: Node): number => {
@@ -222,7 +206,7 @@ const compareDimension = (left: Dimension, right: Node): number => {
     return -1;
   }
 
-  const rval = (right as Dimension);
+  const rval = right as Dimension;
 
   const basevalue = left.value;
   const baseunit = left.unit === Unit.PERCENTAGE ? undefined : left.unit;

@@ -3,19 +3,8 @@ import { Dimension, Feature, Features, Keyword, Property, Unit } from '../../src
 import { combineFeatures } from '../../src/runtime/combine';
 
 test('combine', () => {
-  const ancestors = new Features([
-    new Keyword('screen'),
-    new Feature(
-      new Property('min-width'),
-      new Dimension(900, Unit.PX)
-    )
-  ]);
-  const current = new Features([
-    new Feature(
-      new Property('min-resolution'),
-      new Dimension(96, Unit.DPI)
-    )
-  ]);
+  const ancestors = new Features([new Keyword('screen'), new Feature(new Property('min-width'), new Dimension(900, Unit.PX))]);
+  const current = new Features([new Feature(new Property('min-resolution'), new Dimension(96, Unit.DPI))]);
 
   const compiler = new LessCompiler({ compress: false });
   const ctx = compiler.context();

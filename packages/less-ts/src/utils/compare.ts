@@ -1,4 +1,3 @@
-
 export interface Eq {
   equals(n: Eq): boolean;
 }

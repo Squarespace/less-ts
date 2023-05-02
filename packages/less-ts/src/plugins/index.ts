@@ -16,5 +16,5 @@ export const FUNCTIONS: { [x: string]: Function } = {
   ...MATH,
   ...MISC,
   ...STRING,
-  ...TYPE
+  ...TYPE,
 };

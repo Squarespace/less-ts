@@ -10,7 +10,7 @@
 export const cartesianProduct = <T>(lists: T[][]): T[][] => {
   const result: T[][] = [];
 
-  lists = lists.filter(l => l.length > 0);
+  lists = lists.filter((l) => l.length > 0);
   const len = lists.length;
   if (len === 0) {
     return result;
@@ -27,8 +27,7 @@ export const cartesianProduct = <T>(lists: T[][]): T[][] => {
     lasts[i] = lists[i].length - 1;
   }
 
-done:
-  while (1) {
+  done: while (1) {
     // Populate one element..
     const elem: T[] = new Array(len);
     for (let i = 0; i < len; i++) {

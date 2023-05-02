@@ -3,17 +3,14 @@ import { Block, BlockNode } from './block';
 import { arrayEquals, safeEquals } from '../utils';
 
 export class Feature extends Node {
-
-  constructor(
-    readonly property: Node,
-    readonly value: Node) {
+  constructor(readonly property: Node, readonly value: Node) {
     super(NodeType.FEATURE);
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.FEATURE
-        && this.property.equals((n as Feature).property)
-        && this.value.equals((n as Feature).value);
+    return (
+      n.type === NodeType.FEATURE && this.property.equals((n as Feature).property) && this.value.equals((n as Feature).value)
+    );
   }
 
   repr(buf: Buffer): void {
@@ -35,12 +32,9 @@ export class Feature extends Node {
 }
 
 export class Features extends Node {
-
   private evaluate: boolean = false;
 
-  constructor(
-    readonly features: Node[],
-    skipEval: boolean = false) {
+  constructor(readonly features: Node[], skipEval: boolean = false) {
     super(NodeType.FEATURES);
     if (!skipEval) {
       for (const f of features) {
@@ -53,8 +47,7 @@ export class Features extends Node {
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.FEATURES
-        && arrayEquals(this.features, (n as Features).features);
+    return n.type === NodeType.FEATURES && arrayEquals(this.features, (n as Features).features);
   }
 
   repr(buf: Buffer): void {
@@ -82,21 +75,15 @@ export class Features extends Node {
     }
     return new Features(r, true);
   }
-
 }
 
 export class Media extends BlockNode {
-
-  constructor(
-    readonly features: Features | undefined,
-    readonly block: Block) {
+  constructor(readonly features: Features | undefined, readonly block: Block) {
     super(NodeType.MEDIA, block);
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.MEDIA
-        && safeEquals(this.features, (n as Media).features)
-        && this.block.equals((n as Media).block);
+    return n.type === NodeType.MEDIA && safeEquals(this.features, (n as Media).features) && this.block.equals((n as Media).block);
   }
 
   repr(buf: Buffer): void {
@@ -128,5 +115,4 @@ export class Media extends BlockNode {
     const features = this.features ? this.features.eval(env) : undefined;
     return new Media(features as Features, this.block.copy());
   }
-
 }

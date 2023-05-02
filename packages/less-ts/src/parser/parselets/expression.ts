@@ -4,7 +4,6 @@ import { LessStream, Parselet, Parselets } from '../stream';
 import { Anonymous, Expression, ExpressionList } from '../../model';
 
 export class ExpressionParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     let node = stm.parse(Parselets.EXPRESSION_SUB);
     if (node === undefined) {
@@ -28,7 +27,6 @@ export class ExpressionParselet implements Parselet {
 }
 
 export class ExpressionListParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     let node = stm.parse(Parselets.EXPRESSION);
     if (node === undefined) {
@@ -49,7 +47,6 @@ export class ExpressionListParselet implements Parselet {
 }
 
 export class SubParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     const mark = stm.mark();
     if (!stm.seekIf(Chars.LEFT_PARENTHESIS)) {

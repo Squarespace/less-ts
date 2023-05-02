@@ -12,7 +12,7 @@ import 'core-js/es/map';
 export const enum BlockFlags {
   REBUILD_VARS = 1,
   HAS_IMPORTS = 2,
-  HAS_MIXIN_CALLS = 4
+  HAS_MIXIN_CALLS = 4,
 }
 
 export const copyMixins = (map: Map<string, Node[]>): Map<string, Node[]> => {
@@ -33,7 +33,6 @@ export const copyMixins = (map: Map<string, Node[]>): Map<string, Node[]> => {
 };
 
 export class Block extends Node implements IBlock {
-
   readonly rules: Node[] = [];
   charset?: Directive;
 
@@ -57,8 +56,7 @@ export class Block extends Node implements IBlock {
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.BLOCK
-        && arrayEquals(this.rules, (n as Block).rules);
+    return n.type === NodeType.BLOCK && arrayEquals(this.rules, (n as Block).rules);
   }
 
   hasImports(): boolean {
@@ -73,7 +71,10 @@ export class Block extends Node implements IBlock {
     for (let i = 0; i < this.rules.length; i++) {
       const n = this.rules[i];
       if (n.type === NodeType.DEFINITION) {
-        buf.indent().str((n as Definition).name).str(' ');
+        buf
+          .indent()
+          .str((n as Definition).name)
+          .str(' ');
       }
     }
   }
@@ -149,7 +150,6 @@ export class Block extends Node implements IBlock {
 
       default:
         if (n instanceof BlockNode) {
-
           // Optimization for fast prefix matching of mixin paths.
           // Index the ruleset and mixin paths by the first segment
           // of their path. This lets is prune the search tree drastically
@@ -194,7 +194,6 @@ export class Block extends Node implements IBlock {
 }
 
 export abstract class BlockNode extends Node implements IBlockNode {
-
   readonly original: BlockNode;
 
   constructor(readonly type: NodeType, readonly block: Block, original?: BlockNode) {
@@ -209,21 +208,19 @@ export abstract class BlockNode extends Node implements IBlockNode {
   mixinPaths(): string[][] | undefined {
     return undefined;
   }
-
 }
 
 export class BlockDirective extends BlockNode {
-
-  constructor(
-    readonly name: string,
-    block: Block) {
+  constructor(readonly name: string, block: Block) {
     super(NodeType.BLOCK_DIRECTIVE, block);
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.BLOCK_DIRECTIVE
-        && this.name === (n as BlockDirective).name
-        && this.block.equals((n as BlockDirective).block);
+    return (
+      n.type === NodeType.BLOCK_DIRECTIVE &&
+      this.name === (n as BlockDirective).name &&
+      this.block.equals((n as BlockDirective).block)
+    );
   }
 
   repr(buf: Buffer): void {
@@ -249,27 +246,22 @@ export class BlockDirective extends BlockNode {
 }
 
 export class GenericBlock extends BlockNode {
-
   constructor(block: Block) {
     super(NodeType.GENERIC_BLOCK, block);
   }
 
   equals(n: Node): boolean {
-    return this.type === NodeType.GENERIC_BLOCK
-        && this.block.equals((n as GenericBlock).block);
+    return this.type === NodeType.GENERIC_BLOCK && this.block.equals((n as GenericBlock).block);
   }
-
 }
 
 export class Stylesheet extends BlockNode {
-
   constructor(readonly block: Block) {
     super(NodeType.STYLESHEET, block);
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.STYLESHEET
-        && this.block.equals((n as Stylesheet).block);
+    return n.type === NodeType.STYLESHEET && this.block.equals((n as Stylesheet).block);
   }
 
   repr(buf: Buffer): void {

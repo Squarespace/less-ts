@@ -42,151 +42,81 @@ import {
   UnicodeRangeParselet,
   UrlParselet,
   VariableCurlyParselet,
-  VariableParselet
+  VariableParselet,
 } from './parselets';
 
-export const ALPHA: Parselet[] = [
-  new AlphaParselet()
-];
+export const ALPHA: Parselet[] = [new AlphaParselet()];
 
-export const BLOCK: Parselet[] = [
-  new BlockParselet()
-];
+export const BLOCK: Parselet[] = [new BlockParselet()];
 
-export const COMMENT: Parselet[] = [
-  new CommentParselet()
-];
+export const COMMENT: Parselet[] = [new CommentParselet()];
 
-export const CONDITION: Parselet[] = [
-  new ConditionParselet()
-];
+export const CONDITION: Parselet[] = [new ConditionParselet()];
 
-export const ELEMENT: Parselet[] = [
-  new ElementParselet()
-];
+export const ELEMENT: Parselet[] = [new ElementParselet()];
 
-export const EXPRESSION: Parselet[] = [
-  new ExpressionParselet()
-];
+export const EXPRESSION: Parselet[] = [new ExpressionParselet()];
 
-export const EXPRESSION_LIST: Parselet[] = [
-  new ExpressionListParselet()
-];
+export const EXPRESSION_LIST: Parselet[] = [new ExpressionListParselet()];
 
-export const FEATURE: Parselet[] = [
-  new FeatureParselet()
-];
+export const FEATURE: Parselet[] = [new FeatureParselet()];
 
-export const FEATURES: Parselet[] = [
-  new FeaturesParselet()
-];
+export const FEATURES: Parselet[] = [new FeaturesParselet()];
 
-export const FONT: Parselet[] = [
-  new FontParselet()
-];
+export const FONT: Parselet[] = [new FontParselet()];
 
-export const FUNCTION_CALL: Parselet[] = [
-  new FunctionCallParselet()
-];
+export const FUNCTION_CALL: Parselet[] = [new FunctionCallParselet()];
 
-export const GUARD: Parselet[] = [
-  new GuardParselet()
-];
+export const GUARD: Parselet[] = [new GuardParselet()];
 
-export const KEYWORD: Parselet[] = [
-  new KeywordParselet()
-];
+export const KEYWORD: Parselet[] = [new KeywordParselet()];
 
-export const MIXIN: Parselet[] = [
-  new MixinParselet()
-];
+export const MIXIN: Parselet[] = [new MixinParselet()];
 
-export const MIXIN_CALL_ARGS: Parselet[] = [
-  new MixinCallArgsParselet()
-];
+export const MIXIN_CALL_ARGS: Parselet[] = [new MixinCallArgsParselet()];
 
-export const MIXIN_PARAMS: Parselet[] = [
-  new MixinParamsParselet()
-];
+export const MIXIN_PARAMS: Parselet[] = [new MixinParamsParselet()];
 
-export const MULTIPLICATION: Parselet[] = [
-  new MultiplicationParselet()
-];
+export const MULTIPLICATION: Parselet[] = [new MultiplicationParselet()];
 
-export const OPERAND: Parselet[] = [
-  new OperandParselet()
-];
+export const OPERAND: Parselet[] = [new OperandParselet()];
 
-export const PRIMARY: Parselet[] = [
-  new PrimaryParselet()
-];
+export const PRIMARY: Parselet[] = [new PrimaryParselet()];
 
-export const PROPERTY: Parselet[] = [
-  new PropertyParselet()
-];
+export const PROPERTY: Parselet[] = [new PropertyParselet()];
 
-export const QUOTED: Parselet[] = [
-  new QuotedParselet()
-];
+export const QUOTED: Parselet[] = [new QuotedParselet()];
 
-export const RULE: Parselet[] = [
-  new RuleParselet()
-];
+export const RULE: Parselet[] = [new RuleParselet()];
 
-export const RULESET: Parselet[] = [
-  new RulesetParselet()
-];
+export const RULESET: Parselet[] = [new RulesetParselet()];
 
-export const SELECTOR: Parselet[] = [
-  new SelectorParselet()
-];
+export const SELECTOR: Parselet[] = [new SelectorParselet()];
 
-export const SELECTORS: Parselet[] = [
-  new SelectorsParselet()
-];
+export const SELECTORS: Parselet[] = [new SelectorsParselet()];
 
-export const STYLESHEET: Parselet[] = [
-  new StylesheetParselet()
-];
+export const STYLESHEET: Parselet[] = [new StylesheetParselet()];
 
-export const VARIABLE: Parselet[] = [
-  new VariableParselet()
-];
+export const VARIABLE: Parselet[] = [new VariableParselet()];
 
-export const VARIABLE_CURLY: Parselet[] = [
-  new VariableCurlyParselet()
-];
+export const VARIABLE_CURLY: Parselet[] = [new VariableCurlyParselet()];
 
 // Composite parselets
 
-export const ALPHA_SUB: Parselet[] = [
-  new DimensionParselet(),
-  new VariableParselet()
-];
+export const ALPHA_SUB: Parselet[] = [new DimensionParselet(), new VariableParselet()];
 
-export const CONDITION_SUB: Parselet[] = [
-  new AdditionParselet(),
-  new KeywordParselet(),
-  new QuotedParselet()
-];
+export const CONDITION_SUB: Parselet[] = [new AdditionParselet(), new KeywordParselet(), new QuotedParselet()];
 
-export const DIRECTIVE_IMPORT: Parselet[] = [
-  new QuotedParselet(),
-  new UrlParselet()
-];
+export const DIRECTIVE_IMPORT: Parselet[] = [new QuotedParselet(), new UrlParselet()];
 
-export const ELEMENT_SUB: Parselet[] = [
-  new VariableCurlyParselet(),
-  new VariableParselet(),
-  new SelectorParselet()
-];
+export const ELEMENT_SUB: Parselet[] = [new VariableCurlyParselet(), new VariableParselet(), new SelectorParselet()];
 
 export const LITERAL: Parselet[] = [
   new RatioParselet(),
   new DimensionParselet(),
   new ColorParselet(),
   new QuotedParselet(),
-  new UnicodeRangeParselet()
+  new UnicodeRangeParselet(),
 ];
 
 export const ENTITY: Parselet[] = [
@@ -195,35 +125,18 @@ export const ENTITY: Parselet[] = [
   new FunctionCallParselet(),
   new KeywordParselet(),
   new JavascriptParselet(),
-  new CommentParselet()
-];
-
-export const EXPRESSION_SUB: Parselet[] = [
   new CommentParselet(),
-  new AdditionParselet(),
-  ...ENTITY
 ];
 
-export const FONT_SUB: Parselet[] = [
-  new ShorthandParselet(),
-  ...ENTITY
-];
+export const EXPRESSION_SUB: Parselet[] = [new CommentParselet(), new AdditionParselet(), ...ENTITY];
 
-export const FUNCTION_CALL_ARGS: Parselet[] = [
-  new AssignmentParselet(),
-  ...EXPRESSION
-];
+export const FONT_SUB: Parselet[] = [new ShorthandParselet(), ...ENTITY];
 
-export const FUNCTION_CALL_SUB: Parselet[] = [
-  new QuotedParselet(),
-  new VariableParselet()
-];
+export const FUNCTION_CALL_ARGS: Parselet[] = [new AssignmentParselet(), ...EXPRESSION];
 
-export const MIXIN_PARAMETER: Parselet[] = [
-  new VariableParselet(),
-  ...LITERAL,
-  new KeywordParselet()
-];
+export const FUNCTION_CALL_SUB: Parselet[] = [new QuotedParselet(), new VariableParselet()];
+
+export const MIXIN_PARAMETER: Parselet[] = [new VariableParselet(), ...LITERAL, new KeywordParselet()];
 
 export const OPERAND_SUB: Parselet[] = [
   new SubParselet(),
@@ -231,7 +144,7 @@ export const OPERAND_SUB: Parselet[] = [
   new FunctionCallParselet(),
   new ColorKeywordParselet(),
   new ColorParselet(),
-  new VariableParselet()
+  new VariableParselet(),
 ];
 
 export const PRIMARY_SUB: Parselet[] = [
@@ -240,13 +153,10 @@ export const PRIMARY_SUB: Parselet[] = [
   new RulesetParselet(),
   new CommentRuleParselet(),
   new MixinCallParselet(),
-  new DirectiveParselet()
+  new DirectiveParselet(),
 ];
 
-export const RULE_KEY: Parselet[] = [
-  new PropertyParselet(),
-  new VariableParselet()
-];
+export const RULE_KEY: Parselet[] = [new PropertyParselet(), new VariableParselet()];
 
 // Wire up parselets to static fields.
 

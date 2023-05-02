@@ -2,15 +2,10 @@ import { Buffer, ExecEnv, Node, NodeType } from '../common';
 import { arrayEquals } from '../utils';
 
 export class Quoted extends Node {
-
   protected evaluate: boolean = false;
 
-  constructor(
-    readonly delim: string,
-    public escaped: boolean | number,
-    readonly parts: Node[],
-    skipEval: boolean = false) {
-      super(NodeType.QUOTED);
+  constructor(readonly delim: string, public escaped: boolean | number, readonly parts: Node[], skipEval: boolean = false) {
+    super(NodeType.QUOTED);
 
     if (!skipEval) {
       for (const n of parts) {
@@ -29,9 +24,7 @@ export class Quoted extends Node {
   equals(n: Node): boolean {
     if (n.type === NodeType.QUOTED) {
       const o = n as Quoted;
-      return this.delim === o.delim
-          && this.escaped === o.escaped
-          && arrayEquals(this.parts, o.parts);
+      return this.delim === o.delim && this.escaped === o.escaped && arrayEquals(this.parts, o.parts);
     }
     return false;
   }
@@ -63,5 +56,4 @@ export class Quoted extends Node {
     }
     return new Quoted(this.delim, this.escaped, r, true);
   }
-
 }

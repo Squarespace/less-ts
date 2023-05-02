@@ -7,7 +7,6 @@ const BLACK = new RGBColor(0, 0, 0, 1.0);
 const WHITE = new RGBColor(255, 255, 255, 1.0);
 
 class Contrast extends BaseFunction {
-
   constructor() {
     super('constrast', '*:ccp');
   }
@@ -22,18 +21,12 @@ class Contrast extends BaseFunction {
     const dark = len >= 2 ? rgb(args[1]) : BLACK;
     const light = len >= 3 ? rgb(args[2]) : WHITE;
     const threshold = len >= 4 ? num(args[3]) : 0.43;
-    const value =
-       (0.2126 * (color.r / 255)
-      + 0.7152 * (color.g / 255)
-      + 0.0722 * (color.b / 255))
-      * color.a;
+    const value = (0.2126 * (color.r / 255) + 0.7152 * (color.g / 255) + 0.0722 * (color.b / 255)) * color.a;
     return value < threshold ? light : dark;
   }
-
 }
 
 class Darken extends BaseFunction {
-
   constructor() {
     super('darken', 'cp');
   }
@@ -46,7 +39,6 @@ class Darken extends BaseFunction {
 }
 
 class Desaturate extends BaseFunction {
-
   constructor() {
     super('desaturate', 'cp');
   }
@@ -59,7 +51,6 @@ class Desaturate extends BaseFunction {
 }
 
 class Fade extends BaseFunction {
-
   constructor() {
     super('fade', 'cp');
   }
@@ -72,7 +63,6 @@ class Fade extends BaseFunction {
 }
 
 class FadeIn extends BaseFunction {
-
   constructor() {
     super('fadein', 'cp');
   }
@@ -85,7 +75,6 @@ class FadeIn extends BaseFunction {
 }
 
 class FadeOut extends BaseFunction {
-
   constructor() {
     super('fadeout', 'cp');
   }
@@ -98,7 +87,6 @@ class FadeOut extends BaseFunction {
 }
 
 class Greyscale extends BaseFunction {
-
   constructor() {
     super('greyscale', 'c');
   }
@@ -110,7 +98,6 @@ class Greyscale extends BaseFunction {
 }
 
 class Lighten extends BaseFunction {
-
   constructor() {
     super('lighten', 'cp');
   }
@@ -123,7 +110,6 @@ class Lighten extends BaseFunction {
 }
 
 class Mix extends BaseFunction {
-
   constructor() {
     super('mix', 'cc:d');
   }
@@ -140,7 +126,6 @@ class Mix extends BaseFunction {
 }
 
 class Saturate extends BaseFunction {
-
   constructor() {
     super('saturate', 'cp');
   }
@@ -153,7 +138,6 @@ class Saturate extends BaseFunction {
 }
 
 class Shade extends BaseFunction {
-
   constructor() {
     super('shade', 'cd');
   }
@@ -166,7 +150,6 @@ class Shade extends BaseFunction {
 }
 
 class Spin extends BaseFunction {
-
   constructor() {
     super('spin', 'cp');
   }
@@ -176,7 +159,7 @@ class Spin extends BaseFunction {
     const amt = args[1] as Dimension;
     let { value } = amt;
     if (amt.unit === Unit.PERCENTAGE) {
-      value = (value * 0.01) * 360.0;
+      value = value * 0.01 * 360.0;
     }
     let h = (c.h + value) % 360;
     h = h < 0 ? 360 + h : h;
@@ -185,7 +168,6 @@ class Spin extends BaseFunction {
 }
 
 class Tint extends BaseFunction {
-
   constructor() {
     super('tint', 'cd');
   }
@@ -204,7 +186,7 @@ const mix = (c1: RGBColor, c2: RGBColor, weight: number): RGBColor => {
   const p = weight;
   const w = p * 2 - 1;
   const a = c1.toHSL().a - c2.toHSL().a;
-  const w1 = (((w * a === -1) ? w : (w + a) / (1 + w * a)) + 1) / 2.0;
+  const w1 = ((w * a === -1 ? w : (w + a) / (1 + w * a)) + 1) / 2.0;
   const w2 = 1 - w1;
   const r = c1.r * w1 + c2.r * w2;
   const g = c1.g * w1 + c2.g * w2;
@@ -226,5 +208,5 @@ export const OPERATIONS: { [x: string]: Function } = {
   saturate: new Saturate(),
   shade: new Shade(),
   spin: new Spin(),
-  tint: new Tint()
+  tint: new Tint(),
 };

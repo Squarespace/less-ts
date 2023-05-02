@@ -48,7 +48,7 @@ export const enum NodeType {
   TRUE,
   UNICODE_RANGE,
   URL,
-  VARIABLE
+  VARIABLE,
 }
 
 export const NodeName: { [x: number]: string } = {
@@ -98,19 +98,20 @@ export const NodeName: { [x: number]: string } = {
   [NodeType.TRUE]: 'TRUE',
   [NodeType.UNICODE_RANGE]: 'UNICODE_RANGE',
   [NodeType.URL]: 'URL',
-  [NodeType.VARIABLE]: 'VARIABLE'
+  [NodeType.VARIABLE]: 'VARIABLE',
 };
 
-export const NodeTypes = Object.keys(NodeName).map(Number).reduce((p, c) => {
-  const v = NodeName[c];
-  p[v] = c;
-  return p;
-}, {} as { [x: string]: number });
+export const NodeTypes = Object.keys(NodeName)
+  .map(Number)
+  .reduce((p, c) => {
+    const v = NodeName[c];
+    p[v] = c;
+    return p;
+  }, {} as { [x: string]: number });
 
 export type LessErrorType = 'runtime';
 
 export interface LessError {
-
   type: LessErrorType;
 
   message: string;
@@ -135,8 +136,7 @@ export interface LessErrorEvent {
  * Base for all nodes.
  */
 export abstract class Node {
-
-  constructor(readonly type: NodeType) { }
+  constructor(readonly type: NodeType) {}
 
   /**
    * Append this node's representation to the buffer.
@@ -159,23 +159,19 @@ export abstract class Node {
   eval(env: ExecEnv): Node {
     return this;
   }
-
 }
 
 /**
  * BlockNode interface, forward reference.
  */
 export interface IBlockNode {
-
   /**
    * Block containing the rules attached to this block node.
    */
   readonly block: IBlock;
-
 }
 
 export interface IBlock {
-
   readonly rules: Node[];
 
   mixins?: Map<string, Node[]>;
@@ -183,8 +179,8 @@ export interface IBlock {
   dump(buf: Buffer): void;
 
   /**
-    * Lookup the definition 'name'
-    */
+   * Lookup the definition 'name'
+   */
   resolveDefinition(name: string): IDefinition | undefined;
 }
 
@@ -198,7 +194,6 @@ export interface IDefinition {
 export type NodeRenderer = (buf: Buffer, n: Node) => void;
 
 export interface Context {
-
   readonly indentSize: number;
   readonly compress: boolean;
   readonly fastcolor: boolean;
@@ -246,7 +241,6 @@ export interface Context {
  * Execution environment exposed to nodes for evaluation
  */
 export interface ExecEnv {
-
   /**
    * Access to the context for this execution environment.
    */
@@ -326,7 +320,6 @@ export const EOF: string = '\0';
  * Buffer used for node rendering.
  */
 export interface Buffer extends Options {
-
   /**
    * Character at the end of the buffer.
    */
@@ -407,7 +400,6 @@ export interface Buffer extends Options {
  * A plugin function callable by a FunctionCall node.
  */
 export interface Function {
-
   /**
    * Validate the arguments to the function and return any errors that occur.
    */

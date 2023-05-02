@@ -9,21 +9,20 @@ import {
   MixinCall,
   MixinCallArgs,
   MixinParams,
-  Parameter
+  Parameter,
 } from '../model';
 import { safeEquals } from '../utils';
 
 const EMPTY_BLOCK = new GenericBlock(new Block());
 
 export class MixinMatcher {
-
   readonly ctx: Context;
   readonly args: MixinCallArgs;
 
   constructor(readonly env: ExecEnv, readonly call: MixinCall) {
     this.ctx = env.ctx;
     const { args } = call;
-    this.args = args ? args.eval(env) as MixinCallArgs : args;
+    this.args = args ? (args.eval(env) as MixinCallArgs) : args;
   }
 
   /**
@@ -176,7 +175,7 @@ export class MixinMatcher {
     const val1 = arg.value;
     const val2 = param.value;
     if (!safeEquals(val1, val2)) {
-      const str1 =  this.ctx.render(val1);
+      const str1 = this.ctx.render(val1);
       const str2 = val2 === undefined ? '' : this.ctx.render(val2);
       if (str1 !== str2) {
         return false;
@@ -184,5 +183,4 @@ export class MixinMatcher {
     }
     return true;
   }
-
 }

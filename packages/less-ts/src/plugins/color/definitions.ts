@@ -4,7 +4,6 @@ import { BaseFunction } from '../base';
 import { hsl, rgb } from './util';
 
 class RGB extends BaseFunction {
-
   constructor() {
     super('rgb', 'ppp');
   }
@@ -18,7 +17,6 @@ class RGB extends BaseFunction {
 }
 
 class RGBA extends BaseFunction {
-
   constructor() {
     super('rgba', 'pppp');
   }
@@ -33,7 +31,6 @@ class RGBA extends BaseFunction {
 }
 
 class ARGB extends BaseFunction {
-
   constructor() {
     super('argb', 'c');
   }
@@ -45,7 +42,6 @@ class ARGB extends BaseFunction {
 }
 
 class HSL extends BaseFunction {
-
   constructor() {
     super('hsl', 'ppp');
   }
@@ -59,7 +55,6 @@ class HSL extends BaseFunction {
 }
 
 class HSLA extends BaseFunction {
-
   constructor() {
     super('hsla', 'pppp');
   }
@@ -69,12 +64,11 @@ class HSLA extends BaseFunction {
     const s = percent(args[1]);
     const l = percent(args[2]);
     const a = percent(args[3]);
-    return new HSLColor(h % 360 / 360, s, l, a);
+    return new HSLColor((h % 360) / 360, s, l, a);
   }
 }
 
 class HSV extends BaseFunction {
-
   constructor() {
     super('hsv', 'ppp');
   }
@@ -83,12 +77,11 @@ class HSV extends BaseFunction {
     const h = percent(args[0]);
     const s = percent(args[1]);
     const v = percent(args[2]);
-    return RGBColor.fromHSVA(h % 360 / 360, s, v, 1.0);
+    return RGBColor.fromHSVA((h % 360) / 360, s, v, 1.0);
   }
 }
 
 class HSVA extends BaseFunction {
-
   constructor() {
     super('hsva', 'pppp');
   }
@@ -98,17 +91,17 @@ class HSVA extends BaseFunction {
     const s = percent(args[1]);
     const v = percent(args[2]);
     const a = percent(args[3]);
-    return RGBColor.fromHSVA(h % 360 / 360, s, v, a);
+    return RGBColor.fromHSVA((h % 360) / 360, s, v, a);
   }
 }
 
 const scaled = (n: Node, scale: number): number => {
-  const { value } = (n as Dimension);
-  return (n as Dimension).unit === Unit.PERCENTAGE ? (value * 0.01) * scale : value;
+  const { value } = n as Dimension;
+  return (n as Dimension).unit === Unit.PERCENTAGE ? value * 0.01 * scale : value;
 };
 
 const percent = (n: Node): number => {
-  const { value } = (n as Dimension);
+  const { value } = n as Dimension;
   return (n as Dimension).unit === Unit.PERCENTAGE ? value * 0.01 : value;
 };
 
@@ -119,5 +112,5 @@ export const DEFINITIONS: { [x: string]: Function } = {
   hsl: new HSL(),
   hsla: new HSLA(),
   hsv: new HSV(),
-  hsva: new HSVA()
+  hsva: new HSVA(),
 };

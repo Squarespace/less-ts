@@ -1,24 +1,15 @@
 import * as fs from 'fs';
 import { join } from 'path';
 
-import {
-  Builder,
-  Context,
-  Evaluator,
-  LessCompiler,
-  NodeJ,
-  Options,
-  Renderer,
-  RuntimeContext,
-  Stylesheet
-} from '../../src';
+import { Builder, Context, Evaluator, LessCompiler, NodeJ, Options, Renderer, RuntimeContext, Stylesheet } from '../../src';
 
 const ROOT = join(__dirname, '../data/suite/css');
 const JSON_EXT = '.json';
 
-const tests = fs.readdirSync(ROOT)
-  .filter(n => n.endsWith(JSON_EXT))
-  .map(n => n.slice(0, -JSON_EXT.length));
+const tests = fs
+  .readdirSync(ROOT)
+  .filter((n) => n.endsWith(JSON_EXT))
+  .map((n) => n.slice(0, -JSON_EXT.length));
 
 interface Root {
   strings: string[];
@@ -44,11 +35,11 @@ const evaluate = (root: Root, opts: Options): string => {
   return Renderer.render(ctx, result);
 };
 
-tests.forEach(n => {
+tests.forEach((n) => {
   const opts: Options = {
     indentSize: 2,
     fastcolor: false,
-    compress: false
+    compress: false,
   };
   test(`suite ${n}.css`, () => {
     const [json, repr] = load(n);

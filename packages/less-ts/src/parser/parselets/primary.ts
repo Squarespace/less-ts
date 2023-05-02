@@ -4,7 +4,6 @@ import { LessStream, Parselet, Parselets } from '../stream';
 import { Block, Ruleset, Selectors, Stylesheet } from '../../model';
 
 export class PrimaryParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     const block = new Block();
     let node: Node | undefined;
@@ -28,7 +27,6 @@ export class PrimaryParselet implements Parselet {
 }
 
 export class BlockParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     stm.skipWs();
     if (stm.peek() !== Chars.LEFT_CURLY_BRACKET) {
@@ -48,7 +46,6 @@ export class BlockParselet implements Parselet {
 }
 
 export class RulesetParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     const mark = stm.mark();
     const selectors = stm.parse(Parselets.SELECTORS);
@@ -65,7 +62,6 @@ export class RulesetParselet implements Parselet {
 }
 
 export class StylesheetParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     const block = stm.parse(Parselets.PRIMARY);
     const sheet = new Stylesheet(block as Block);

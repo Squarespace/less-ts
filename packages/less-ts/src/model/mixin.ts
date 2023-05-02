@@ -5,7 +5,6 @@ import { Selector, Selectors } from './selector';
 import { arrayEquals, safeEquals } from '../utils';
 
 export class Argument extends Node {
-
   readonly name?: string;
 
   constructor(name: string | undefined, readonly value: Node) {
@@ -14,9 +13,7 @@ export class Argument extends Node {
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.ARGUMENT
-        && this.name === (n as Argument).name
-        && this.value.equals((n as Argument).value);
+    return n.type === NodeType.ARGUMENT && this.name === (n as Argument).name && this.value.equals((n as Argument).value);
   }
 
   repr(buf: Buffer): void {
@@ -37,22 +34,20 @@ export class Argument extends Node {
 }
 
 export class Parameter extends Node {
-
   readonly name: string | undefined;
 
-  constructor(
-    name: string | undefined,
-    readonly value: Node | undefined,
-    readonly variadic: boolean | number) {
+  constructor(name: string | undefined, readonly value: Node | undefined, readonly variadic: boolean | number) {
     super(NodeType.PARAMETER);
     this.name = name === null ? undefined : name;
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.PARAMETER
-        && this.name === (n as Parameter).name
-        && this.variadic === (n as Parameter).variadic
-        && safeEquals(this.value, (n as Parameter).value);
+    return (
+      n.type === NodeType.PARAMETER &&
+      this.name === (n as Parameter).name &&
+      this.variadic === (n as Parameter).variadic &&
+      safeEquals(this.value, (n as Parameter).value)
+    );
   }
 
   repr(buf: Buffer): void {
@@ -85,11 +80,9 @@ export class Parameter extends Node {
     }
     return this;
   }
-
 }
 
 export class MixinParams extends Node {
-
   readonly evaluate: boolean;
   readonly variadic: boolean;
   readonly required: number;
@@ -114,10 +107,12 @@ export class MixinParams extends Node {
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.MIXIN_PARAMS
-        && this.variadic === (n as MixinParams).variadic
-        && this.required === (n as MixinParams).required
-        && arrayEquals(this.params, (n as MixinParams).params);
+    return (
+      n.type === NodeType.MIXIN_PARAMS &&
+      this.variadic === (n as MixinParams).variadic &&
+      this.required === (n as MixinParams).required &&
+      arrayEquals(this.params, (n as MixinParams).params)
+    );
   }
 
   repr(buf: Buffer): void {
@@ -147,11 +142,9 @@ export class MixinParams extends Node {
     }
     return new MixinParams(tmp);
   }
-
 }
 
 export class Mixin extends BlockNode {
-
   private _mixinPath: string[][];
 
   constructor(
@@ -159,9 +152,10 @@ export class Mixin extends BlockNode {
     readonly params: MixinParams,
     readonly guard: Guard,
     readonly block: Block,
-    original?: Mixin) {
-      super(NodeType.MIXIN, block, original);
-      this._mixinPath = [ [name] ];
+    original?: Mixin
+  ) {
+    super(NodeType.MIXIN, block, original);
+    this._mixinPath = [[name]];
   }
 
   mixinPaths(): string[][] {
@@ -174,11 +168,13 @@ export class Mixin extends BlockNode {
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.MIXIN
-        && this.name === (n as Mixin).name
-        && this.params.equals((n as Mixin).params)
-        && this.guard.equals((n as Mixin).guard)
-        && this.block.equals((n as Mixin).block);
+    return (
+      n.type === NodeType.MIXIN &&
+      this.name === (n as Mixin).name &&
+      this.params.equals((n as Mixin).params) &&
+      this.guard.equals((n as Mixin).guard) &&
+      this.block.equals((n as Mixin).block)
+    );
   }
 
   repr(buf: Buffer): void {
@@ -208,12 +204,9 @@ export class Mixin extends BlockNode {
 }
 
 export class MixinCallArgs extends Node {
-
   protected evaluate: boolean = false;
 
-  constructor(
-    readonly delimiter: string,
-    readonly args: Argument[]) {
+  constructor(readonly delimiter: string, readonly args: Argument[]) {
     super(NodeType.MIXIN_ARGS);
     for (const arg of args) {
       this.evaluate = this.evaluate || arg.needsEval();
@@ -224,9 +217,11 @@ export class MixinCallArgs extends Node {
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.MIXIN_ARGS
-        && this.delimiter === (n as MixinCallArgs).delimiter
-        && arrayEquals(this.args, (n as MixinCallArgs).args);
+    return (
+      n.type === NodeType.MIXIN_ARGS &&
+      this.delimiter === (n as MixinCallArgs).delimiter &&
+      arrayEquals(this.args, (n as MixinCallArgs).args)
+    );
   }
 
   needsEval(): boolean {
@@ -271,24 +266,22 @@ export class MixinCallArgs extends Node {
 const EMPTY_ARGS = new MixinCallArgs(',', []);
 
 export class MixinCall extends Node {
-
   readonly mixinPath: string[] | undefined;
   readonly args: MixinCallArgs;
 
-  constructor(
-    readonly selector: Selector,
-    args: MixinCallArgs | undefined,
-    readonly important: boolean | number) {
-      super(NodeType.MIXIN_CALL);
-      this.mixinPath = selector.mixinPath;
-      this.args = args || EMPTY_ARGS;
+  constructor(readonly selector: Selector, args: MixinCallArgs | undefined, readonly important: boolean | number) {
+    super(NodeType.MIXIN_CALL);
+    this.mixinPath = selector.mixinPath;
+    this.args = args || EMPTY_ARGS;
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.MIXIN_CALL
-        && this.important === (n as MixinCall).important
-        && this.selector.equals((n as MixinCall).selector)
-        && safeEquals(this.args, (n as MixinCall).args);
+    return (
+      n.type === NodeType.MIXIN_CALL &&
+      this.important === (n as MixinCall).important &&
+      this.selector.equals((n as MixinCall).selector) &&
+      safeEquals(this.args, (n as MixinCall).args)
+    );
   }
 
   repr(buf: Buffer): void {

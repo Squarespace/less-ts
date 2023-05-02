@@ -3,19 +3,14 @@ import { varCircularRef, varUndefined } from '../errors';
 import { Anonymous } from './general';
 
 export class Definition extends Node implements IDefinition {
-
   private evaluating: boolean = false;
 
-  constructor(
-    readonly name: string,
-    readonly value: Node) {
+  constructor(readonly name: string, readonly value: Node) {
     super(NodeType.DEFINITION);
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.DEFINITION
-        && this.name === (n as Definition).name
-        && this.value.equals((n as Definition).value);
+    return n.type === NodeType.DEFINITION && this.name === (n as Definition).name && this.value.equals((n as Definition).value);
   }
 
   repr(buf: Buffer): void {
@@ -44,18 +39,12 @@ export class Definition extends Node implements IDefinition {
 const EMPTY = new Anonymous('');
 
 export class Variable extends Node {
-
-  constructor(
-    readonly name: string,
-    readonly indirect: boolean | number,
-    readonly curly: boolean | number = false) {
+  constructor(readonly name: string, readonly indirect: boolean | number, readonly curly: boolean | number = false) {
     super(NodeType.VARIABLE);
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.VARIABLE
-      && this.curly === (n as Variable).curly
-      && this.name === (n as Variable).name;
+    return n.type === NodeType.VARIABLE && this.curly === (n as Variable).curly && this.name === (n as Variable).name;
   }
 
   repr(buf: Buffer): void {

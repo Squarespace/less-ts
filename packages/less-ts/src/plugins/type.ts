@@ -3,7 +3,6 @@ import { Dimension, FALSE, Keyword, Quoted, TRUE, Unit } from '../model';
 import { BaseFunction } from './base';
 
 class IsColor extends BaseFunction {
-
   constructor() {
     super('iscolor', '*');
   }
@@ -14,7 +13,6 @@ class IsColor extends BaseFunction {
 }
 
 class DimensionUnit extends BaseFunction {
-
   constructor(name: string, readonly unit: Unit) {
     super(name, '*');
   }
@@ -23,19 +21,15 @@ class DimensionUnit extends BaseFunction {
     const arg = args[0];
     return arg.type === NodeType.DIMENSION && (arg as Dimension).unit === this.unit ? TRUE : FALSE;
   }
-
 }
 
 class IsEm extends DimensionUnit {
-
   constructor() {
     super('isem', Unit.EM);
   }
-
 }
 
 class IsKeyword extends BaseFunction {
-
   constructor() {
     super('iskeyword', '*');
   }
@@ -53,7 +47,6 @@ class IsKeyword extends BaseFunction {
 }
 
 class IsNumber extends BaseFunction {
-
   constructor() {
     super('isnumber', '*');
   }
@@ -64,23 +57,18 @@ class IsNumber extends BaseFunction {
 }
 
 class IsPercentage extends DimensionUnit {
-
   constructor() {
     super('ispercentage', Unit.PERCENTAGE);
   }
-
 }
 
 class IsPixel extends DimensionUnit {
-
   constructor() {
     super('ispixel', Unit.PX);
   }
-
 }
 
 class IsString extends BaseFunction {
-
   constructor() {
     super('isstring', '*');
   }
@@ -88,11 +76,9 @@ class IsString extends BaseFunction {
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
     return args[0].type === NodeType.QUOTED ? TRUE : FALSE;
   }
-
 }
 
 class IsUnit extends BaseFunction {
-
   constructor() {
     super('isunit', '**');
   }
@@ -115,11 +101,9 @@ class IsUnit extends BaseFunction {
     }
     return unit === dim.unit ? TRUE : FALSE;
   }
-
 }
 
 class IsUrl extends BaseFunction {
-
   constructor() {
     super('isurl', '*');
   }
@@ -127,7 +111,6 @@ class IsUrl extends BaseFunction {
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
     return args[0].type === NodeType.URL ? TRUE : FALSE;
   }
-
 }
 
 export const TYPE: { [x: string]: Function } = {
@@ -139,5 +122,5 @@ export const TYPE: { [x: string]: Function } = {
   ispixel: new IsPixel(),
   isstring: new IsString(),
   isunit: new IsUnit(),
-  isurl: new IsUrl()
+  isurl: new IsUrl(),
 };

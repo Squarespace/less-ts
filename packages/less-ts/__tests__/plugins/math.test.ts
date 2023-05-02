@@ -113,7 +113,7 @@ test('math percentage', () => {
   let n = MATH.percentage.invoke(env, [dim(17)]);
   expect(n).toEqual(dim(1700, Unit.PERCENTAGE));
 
-  n = MATH.percentage.invoke(env, [dim(-0.10)]);
+  n = MATH.percentage.invoke(env, [dim(-0.1)]);
   expect(n).toEqual(dim(-10, Unit.PERCENTAGE));
 });
 

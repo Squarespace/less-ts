@@ -7,11 +7,10 @@ const PI = new Dimension(Math.PI);
 const enum TrigFunction {
   COS,
   SIN,
-  TAN
+  TAN,
 }
 
 class Abs extends BaseFunction {
-
   constructor() {
     super('abs', 'd');
   }
@@ -23,55 +22,50 @@ class Abs extends BaseFunction {
 }
 
 class ACos extends BaseFunction {
-
   constructor() {
     super('acos', 'd');
   }
 
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
-    const { value } = (args[0] as Dimension);
+    const { value } = args[0] as Dimension;
     return new Dimension(Math.acos(value), Unit.RAD);
   }
 }
 
 class ASin extends BaseFunction {
-
   constructor() {
     super('asin', 'd');
   }
 
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
-    const { value } = (args[0] as Dimension);
+    const { value } = args[0] as Dimension;
     return new Dimension(Math.asin(value), Unit.RAD);
   }
 }
 
 class ATan extends BaseFunction {
-
   constructor() {
     super('atan', 'd');
   }
 
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
-    const { value } = (args[0] as Dimension);
+    const { value } = args[0] as Dimension;
     return new Dimension(Math.atan(value), Unit.RAD);
   }
 }
 
 class Ceil extends BaseFunction {
-
   constructor() {
     super('ceil', 'd');
   }
 
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
-    const { value, unit } = (args[0] as Dimension);
+    const { value, unit } = args[0] as Dimension;
     return new Dimension(Math.ceil(value), unit);
   }
 }
 
 class Cos extends BaseFunction {
-
   constructor() {
     super('cos', 'd');
   }
@@ -82,19 +76,17 @@ class Cos extends BaseFunction {
 }
 
 class Floor extends BaseFunction {
-
   constructor() {
     super('floor', 'd');
   }
 
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
-    const { value, unit } = (args[0] as Dimension);
+    const { value, unit } = args[0] as Dimension;
     return new Dimension(Math.floor(value), unit);
   }
 }
 
 class Max extends BaseFunction {
-
   constructor() {
     super('max', '*.');
   }
@@ -105,7 +97,6 @@ class Max extends BaseFunction {
 }
 
 class Min extends BaseFunction {
-
   constructor() {
     super('min', '*.');
   }
@@ -116,13 +107,12 @@ class Min extends BaseFunction {
 }
 
 class Mod extends BaseFunction {
-
   constructor() {
     super('mod', 'dd');
   }
 
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
-    const dividend = (args[0] as Dimension);
+    const dividend = args[0] as Dimension;
     const divisor = (args[1] as Dimension).value;
     let res: number = NaN;
     if (divisor !== 0) {
@@ -133,7 +123,6 @@ class Mod extends BaseFunction {
 }
 
 class Percentage extends BaseFunction {
-
   constructor() {
     super('percentage', 'd');
   }
@@ -145,7 +134,6 @@ class Percentage extends BaseFunction {
 }
 
 class Pi extends BaseFunction {
-
   constructor() {
     super('pi', '');
   }
@@ -156,7 +144,6 @@ class Pi extends BaseFunction {
 }
 
 class Pow extends BaseFunction {
-
   constructor() {
     super('pow', 'dd');
   }
@@ -170,7 +157,6 @@ class Pow extends BaseFunction {
 }
 
 class Round extends BaseFunction {
-
   constructor() {
     super('round', 'd:n');
   }
@@ -188,7 +174,6 @@ class Round extends BaseFunction {
 }
 
 class Sin extends BaseFunction {
-
   constructor() {
     super('sin', 'd');
   }
@@ -199,7 +184,6 @@ class Sin extends BaseFunction {
 }
 
 class Sqrt extends BaseFunction {
-
   constructor() {
     super('sqrt', 'd');
   }
@@ -211,7 +195,6 @@ class Sqrt extends BaseFunction {
 }
 
 class Tan extends BaseFunction {
-
   constructor() {
     super('tan', 'd');
   }
@@ -280,5 +263,5 @@ export const MATH: { [x: string]: Function } = {
   round: new Round(),
   sin: new Sin(),
   sqrt: new Sqrt(),
-  tan: new Tan()
+  tan: new Tan(),
 };

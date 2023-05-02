@@ -6,7 +6,7 @@ const round = Math.round;
 
 export const enum Colorspace {
   RGB = 0,
-  HSL = 1
+  HSL = 1,
 }
 
 const HSV_PERMUTATIONS: number[][] = [
@@ -15,11 +15,10 @@ const HSV_PERMUTATIONS: number[][] = [
   [1, 0, 3],
   [1, 2, 0],
   [3, 1, 0],
-  [0, 1, 2]
+  [0, 1, 2],
 ];
 
 export abstract class BaseColor extends Node {
-
   constructor() {
     super(NodeType.COLOR);
   }
@@ -37,7 +36,6 @@ export abstract class BaseColor extends Node {
 }
 
 export class RGBColor extends BaseColor {
-
   readonly r: number;
   readonly g: number;
   readonly b: number;
@@ -56,10 +54,7 @@ export class RGBColor extends BaseColor {
   equals(n: Node): boolean {
     if (n instanceof RGBColor) {
       const o = n as RGBColor;
-      return this.r === o.r
-        && this.g === o.g
-        && this.b === o.b
-        && this.a === o.a;
+      return this.r === o.r && this.g === o.g && this.b === o.b && this.a === o.a;
     }
     return false;
   }
@@ -73,9 +68,9 @@ export class RGBColor extends BaseColor {
     let g = this.g / 255;
     let b = this.b / 255;
 
-    r = (r <= 0.03928) ? r / 12.92 : Math.pow(((r + 0.055) / 1.055), 2.4);
-    g = (g <= 0.03928) ? g / 12.92 : Math.pow(((g + 0.055) / 1.055), 2.4);
-    b = (b <= 0.03928) ? b / 12.92 : Math.pow(((b + 0.055) / 1.055), 2.4);
+    r = r <= 0.03928 ? r / 12.92 : Math.pow((r + 0.055) / 1.055, 2.4);
+    g = g <= 0.03928 ? g / 12.92 : Math.pow((g + 0.055) / 1.055, 2.4);
+    b = b <= 0.03928 ? b / 12.92 : Math.pow((b + 0.055) / 1.055, 2.4);
 
     return 0.2126 * r + 0.7152 * g + 0.0722 * b;
   }
@@ -95,11 +90,11 @@ export class RGBColor extends BaseColor {
 
     // Get hex components
     const r0 = hexchar(r >> 4);
-    const r1 = hexchar(r & 0x0F);
+    const r1 = hexchar(r & 0x0f);
     const g0 = hexchar(g >> 4);
-    const g1 = hexchar(g & 0x0F);
+    const g1 = hexchar(g & 0x0f);
     const b0 = hexchar(b >> 4);
-    const b1 = hexchar(b & 0x0F);
+    const b1 = hexchar(b & 0x0f);
 
     // See if we can represent this as a 3-character hex color
     const hex3 = !buf.fastcolor && r0 === r1 && g0 === g1 && b0 === b1;
@@ -139,10 +134,11 @@ export class RGBColor extends BaseColor {
   toARGB(): Anonymous {
     const { r, g, b } = this;
     const a = Math.round(this.a * 255) | 0;
-    const s = `#${hexchar(a >> 4)}${hexchar(a & 0x0F)}`
-      + `${hexchar(r >> 4)}${hexchar(r & 0x0F)}`
-      + `${hexchar(g >> 4)}${hexchar(g & 0x0F)}`
-      + `${hexchar(b >> 4)}${hexchar(b & 0x0F)}`;
+    const s =
+      `#${hexchar(a >> 4)}${hexchar(a & 0x0f)}` +
+      `${hexchar(r >> 4)}${hexchar(r & 0x0f)}` +
+      `${hexchar(g >> 4)}${hexchar(g & 0x0f)}` +
+      `${hexchar(b >> 4)}${hexchar(b & 0x0f)}`;
     return new Anonymous(s);
   }
 
@@ -159,11 +155,11 @@ export class RGBColor extends BaseColor {
 
     if (max !== min) {
       s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
-      if ((max - r) === 0) {
+      if (max - r === 0) {
         h = (g - b) / d + (g < b ? 6 : 0);
-      } else if ((max - g) === 0) {
+      } else if (max - g === 0) {
         h = (b - r) / d + 2;
-      } else if ((max - b) === 0) {
+      } else if (max - b === 0) {
         h = (r - g) / d + 4;
       }
       h /= 6.0;
@@ -174,13 +170,8 @@ export class RGBColor extends BaseColor {
   static fromHSVA(h: number, s: number, v: number, a: number): RGBColor {
     h *= 360;
     const i = Math.floor((h / 60) % 6);
-    const f = (h / 60) - i;
-    const vals: number[] = [
-      v,
-      v * (1 - s),
-      v * (1 - f * s),
-      v * (1 - (1 - f) * s)
-    ];
+    const f = h / 60 - i;
+    const vals: number[] = [v, v * (1 - s), v * (1 - f * s), v * (1 - (1 - f) * s)];
     const r = vals[HSV_PERMUTATIONS[i][0]] * 255;
     const g = vals[HSV_PERMUTATIONS[i][1]] * 255;
     const b = vals[HSV_PERMUTATIONS[i][2]] * 255;
@@ -189,7 +180,6 @@ export class RGBColor extends BaseColor {
 }
 
 export class HSLColor extends BaseColor {
-
   readonly h: number;
   readonly s: number;
   readonly l: number;
@@ -207,10 +197,7 @@ export class HSLColor extends BaseColor {
   equals(n: Node): boolean {
     if (n instanceof HSLColor) {
       const o = n as HSLColor;
-      return this.h === o.h
-        && this.s === o.s
-        && this.l === o.l
-        && this.a === o.a;
+      return this.h === o.h && this.s === o.s && this.l === o.l && this.a === o.a;
     }
     return false;
   }
@@ -232,7 +219,7 @@ export class HSLColor extends BaseColor {
     } else {
       const h = this.h / 360.0;
       const { l, s } = this;
-      const q = l < 0.5 ? (l * (1 + s)) : (l + s - l * s);
+      const q = l < 0.5 ? l * (1 + s) : l + s - l * s;
       const p = 2 * l - q;
       r = hue(p, q, h + 1 / 3.0);
       g = hue(p, q, h);
@@ -260,13 +247,12 @@ const hue = (p: number, q: number, h: number): number => {
     return q;
   }
   if (h < 2 / 3.0) {
-    return p + (q - p) * ((2 / 3.0) - h) * 6.0;
+    return p + (q - p) * (2 / 3.0 - h) * 6.0;
   }
   return p;
 };
 
 export class KeywordColor extends RGBColor {
-
   constructor(readonly keyword: string, r: number, g: number, b: number) {
     super(r, g, b, 1.0);
   }
@@ -286,5 +272,4 @@ export const colorFromName = (name: string): RGBColor | undefined => {
 
 const chan = (n: number): number => clamp(n, 0, 255);
 
-const clamp = (n: number, lo: number, hi: number): number =>
-  Math.min(hi, Math.max(n, lo));
+const clamp = (n: number, lo: number, hi: number): number => Math.min(hi, Math.max(n, lo));

@@ -13,7 +13,7 @@ export interface Parselet {
 export type Mark = [number, number, number, number];
 
 export const enum StreamFlags {
-  OPENSPACE = 1
+  OPENSPACE = 1,
 }
 
 const { min, max } = Math;
@@ -85,14 +85,12 @@ const enum Patterns {
   SHORTHAND = '[@\\w.%-]+\\/[@\\w.-]+',
   UNICODE_RANGE = 'U\\+[A-Fa-f0-9?]+(\\-[A-Fa-f0-9?]+)?',
   WHEN = 'when',
-  WORD = '\\w+'
+  WORD = '\\w+',
 }
 
-const compile = (s: string, caseInsensitive: boolean = false): RegExp =>
-  new RegExp(s, caseInsensitive ? 'iy' : 'y');
+const compile = (s: string, caseInsensitive: boolean = false): RegExp => new RegExp(s, caseInsensitive ? 'iy' : 'y');
 
 export class LessStream {
-
   index: number = 0;
   flags: number = 0;
   furthest: number = 0;
@@ -366,7 +364,7 @@ export class LessStream {
   seekPast(pattern: string): boolean {
     const i = this.source.indexOf(pattern, this.index);
     if (i !== -1) {
-      this.seekn((i + pattern.length) - this.index);
+      this.seekn(i + pattern.length - this.index);
       return true;
     }
     return false;
@@ -419,7 +417,6 @@ export class LessStream {
     }
     return false;
   }
-
 }
 
 const WINDOW_SIZE = 74;

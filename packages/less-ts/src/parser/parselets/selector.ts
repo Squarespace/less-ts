@@ -12,11 +12,10 @@ import {
   Selector,
   Selectors,
   TextElement,
-  ValueElement
+  ValueElement,
 } from '../../model';
 
 export class ElementParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     const comb = this.parseCombinator(stm);
     stm.skipWs();
@@ -94,12 +93,8 @@ export class ElementParselet implements Parselet {
     if (isCombinator(ch)) {
       stm.seek1();
       return ch as Combinator;
-    } else if (block
-      || skipped > 0
-      || whitespace(prev)
-      || prev === undefined
-      || prev === Chars.COMMA) {
-        return Combinator.DESC;
+    } else if (block || skipped > 0 || whitespace(prev) || prev === undefined || prev === Chars.COMMA) {
+      return Combinator.DESC;
     }
     return undefined;
   }
@@ -119,7 +114,6 @@ export class ElementParselet implements Parselet {
 }
 
 export class SelectorParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     stm.skipWs();
     if (stm.peek() === Chars.LEFT_PARENTHESIS) {
@@ -148,7 +142,6 @@ export class SelectorParselet implements Parselet {
 }
 
 export class SelectorsParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     let selector = stm.parse(Parselets.SELECTOR);
     if (selector === undefined) {

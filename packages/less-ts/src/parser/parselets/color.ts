@@ -13,7 +13,6 @@ export class ColorParselet implements Parselet {
 }
 
 export class ColorKeywordParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     const mark = stm.mark();
     const node = stm.parse(Parselets.KEYWORD);

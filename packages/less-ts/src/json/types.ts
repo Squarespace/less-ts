@@ -46,7 +46,7 @@ export const enum JsonType {
   UNICODE_RANGE = 40,
   URL = 41,
   VALUE_ELEMENT = 42,
-  VARIABLE = 43
+  VARIABLE = 43,
 }
 
 export type NodeJ =
@@ -93,8 +93,7 @@ export type NodeJ =
   | UnicodeRangeJ
   | UrlJ
   | ValueElementJ
-  | VariableJ
-  ;
+  | VariableJ;
 
 /**
  * Each type in the JSON syntax is an array whose first element is

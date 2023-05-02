@@ -1,22 +1,12 @@
 import { ExecEnv, Function, Node, NodeType } from '../common';
 import { unknownUnit } from '../errors';
-import {
-  stringToUnit,
-  unitConversionFactor,
-  Anonymous,
-  Dimension,
-  Keyword,
-  Quoted,
-  RGBColor,
-  Unit
-} from '../model';
+import { stringToUnit, unitConversionFactor, Anonymous, Dimension, Keyword, Quoted, RGBColor, Unit } from '../model';
 import { BaseFunction } from './base';
 
 const ANON_EMPTY = new Anonymous('');
 const ANON_PERCENT = new Anonymous('%');
 
 class Color extends BaseFunction {
-
   constructor() {
     super('color', 's');
   }
@@ -31,7 +21,6 @@ class Color extends BaseFunction {
 }
 
 class Convert extends BaseFunction {
-
   constructor() {
     super('convert', 'd*');
   }
@@ -45,7 +34,6 @@ class Convert extends BaseFunction {
 }
 
 class GetUnit extends BaseFunction {
-
   constructor() {
     super('get-unit', 'd');
   }
@@ -62,7 +50,6 @@ class GetUnit extends BaseFunction {
 }
 
 class UnitFunc extends BaseFunction {
-
   constructor() {
     super('unit', 'd:*');
   }
@@ -97,5 +84,5 @@ export const MISC: { [x: string]: Function } = {
   color: new Color(),
   convert: new Convert(),
   'get-unit': new GetUnit(),
-  unit: new UnitFunc()
+  unit: new UnitFunc(),
 };

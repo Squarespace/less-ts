@@ -12,7 +12,7 @@ import {
   Options,
   Renderer,
   RuntimeContext,
-  Stylesheet
+  Stylesheet,
 } from '../../src';
 
 const ROOT = join(__dirname, '../data/errors');
@@ -27,7 +27,7 @@ const OPTIONS: Options = {
   indentSize: 2,
   fastcolor: false,
   compress: false,
-  mixinRecursionLimit: 10
+  mixinRecursionLimit: 10,
 };
 
 const load = (name: string): [Root, string] => {
@@ -63,5 +63,4 @@ test('mixin-recursion', () => {
 test('function arguments', () => {
   const [json, expected] = load('function-arguments');
   const [actual, errors] = evaluate(json, OPTIONS);
-
 });

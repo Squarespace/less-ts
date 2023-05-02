@@ -19,7 +19,6 @@ export type MixinResolverMatch = RulesetMatch | MixinMatch;
 export type MixinClosureArrow = (mixin: Mixin) => ExecEnv | undefined;
 
 export class MixinResolver {
-
   readonly matches: MixinResolverMatch[] = [];
   readonly args: Argument[];
   readonly callPath: string[];
@@ -37,7 +36,6 @@ export class MixinResolver {
     const prefix = this.callPath[0];
     const start = frames.length - 1;
     for (let i = start; i >= 0; i--) {
-
       // Prune the mixin search space at the top level. If no paths
       // have our desired prefix we skip the block entirely.
 

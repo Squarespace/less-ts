@@ -24,7 +24,7 @@ export const enum Chars {
   // 0x26
   AMPERSAND = '&',
   // 0x27
-  APOSTROPHE = '\'',
+  APOSTROPHE = "'",
   // 0x28
   LEFT_PARENTHESIS = '(',
   // 0x29
@@ -72,7 +72,7 @@ export const enum Chars {
   // 0x7E
   TILDE = '~',
   // 0xA0
-  NO_BREAK_SPACE = '\u00A0'
+  NO_BREAK_SPACE = '\u00A0',
 }
 
 const DIGIT = 0x01;
@@ -90,15 +90,15 @@ const VARIABLE_START = 0x800;
 
 const classify = (ch: string): number => {
   switch (ch) {
-    case'\u0000':
-    case'\u0001':
-    case'\u0002':
-    case'\u0003':
-    case'\u0004':
-    case'\u0005':
-    case'\u0006':
-    case'\u0007':
-    case'\u0008':
+    case '\u0000':
+    case '\u0001':
+    case '\u0002':
+    case '\u0003':
+    case '\u0004':
+    case '\u0005':
+    case '\u0006':
+    case '\u0007':
+    case '\u0008':
       return NONPRINTABLE;
 
     case '\u000E':
@@ -241,7 +241,7 @@ const classify = (ch: string): number => {
     default:
       break;
   }
-  return (ch >= Chars.NO_BREAK_SPACE) ? NONASCII : 0;
+  return ch >= Chars.NO_BREAK_SPACE ? NONASCII : 0;
 };
 
 const LIMIT = 0x80;
@@ -253,35 +253,26 @@ for (let i = 0; i < LIMIT; i++) {
 
 const RULE_START = PROPERTY_START | VARIABLE_START;
 
-export const isCallStart = (ch: string): boolean =>
-  ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & CALL_START) !== 0;
+export const isCallStart = (ch: string): boolean => ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & CALL_START) !== 0;
 
-export const isCombinator = (ch: string): boolean =>
-  ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & COMBINATOR) !== 0;
+export const isCombinator = (ch: string): boolean => ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & COMBINATOR) !== 0;
 
-export const isDigit = (ch: string): boolean =>
-  ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & DIGIT) !== 0;
+export const isDigit = (ch: string): boolean => ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & DIGIT) !== 0;
 
 export const isDimensionStart = (ch: string): boolean =>
   ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & DIMENSION_START) !== 0;
 
-export const isKeywordStart = (ch: string): boolean =>
-  ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & KEYWORD_START) !== 0;
+export const isKeywordStart = (ch: string): boolean => ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & KEYWORD_START) !== 0;
 
-export const isNonprintable = (ch: string): boolean =>
-  ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & NONPRINTABLE) !== 0;
+export const isNonprintable = (ch: string): boolean => ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & NONPRINTABLE) !== 0;
 
 export const isPropertyStart = (ch: string): boolean =>
   ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & PROPERTY_START) !== 0;
 
-export const isRuleStart = (ch: string): boolean =>
-  ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & RULE_START) !== 0;
+export const isRuleStart = (ch: string): boolean => ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & RULE_START) !== 0;
 
-export const isSelectorEnd = (ch: string): boolean =>
-  ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & SELECTOR_END) !== 0;
+export const isSelectorEnd = (ch: string): boolean => ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & SELECTOR_END) !== 0;
 
-export const isSkippable = (ch: string): boolean =>
-  ch === ';' || whitespace(ch);
+export const isSkippable = (ch: string): boolean => ch === ';' || whitespace(ch);
 
-export const isUppercase = (ch: string): boolean =>
-  ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & UPPERCASE) !== 0;
+export const isUppercase = (ch: string): boolean => ch !== undefined && (CHAR_CLASSES[ch.charCodeAt(0)] & UPPERCASE) !== 0;

@@ -3,7 +3,6 @@ import { argCount, argCountIgnore, invalidArg } from '../errors';
 import { Dimension, Unit } from '../model';
 
 export class ArgSpec {
-
   readonly validators: ArgValidator[] = [];
   readonly minArgs: number;
   readonly variadic: boolean;
@@ -63,7 +62,6 @@ export class ArgSpec {
       // not enough arguments to call the function
       errors.push(argCount(this.name, this.minArgs, len));
       return [false, errors];
-
     } else if (this.variadic || len > this.validators.length) {
       // Extra args were provided but we will ignore them
       errors.push(argCountIgnore(this.name, this.minArgs, len));
@@ -91,22 +89,22 @@ export interface ArgValidator {
 
 export const ARG_ANY: ArgValidator = {
   type: 'any',
-  validate: (arg: Node): boolean => true
+  validate: (arg: Node): boolean => true,
 };
 
 export const ARG_COLOR: ArgValidator = {
   type: 'color',
-  validate: (arg: Node): boolean => arg.type === NodeType.COLOR
+  validate: (arg: Node): boolean => arg.type === NodeType.COLOR,
 };
 
 export const ARG_DIMENSION: ArgValidator = {
   type: 'dimension',
-  validate: (arg: Node): boolean => arg.type === NodeType.DIMENSION
+  validate: (arg: Node): boolean => arg.type === NodeType.DIMENSION,
 };
 
 export const ARG_KEYWORD: ArgValidator = {
   type: 'keyword',
-  validate: (arg: Node): boolean => arg.type === NodeType.KEYWORD
+  validate: (arg: Node): boolean => arg.type === NodeType.KEYWORD,
 };
 
 export const ARG_NUMBER: ArgValidator = {
@@ -118,7 +116,7 @@ export const ARG_NUMBER: ArgValidator = {
       }
     }
     return false;
-  }
+  },
 };
 
 export const ARG_PERCENTAGE: ArgValidator = {
@@ -131,10 +129,10 @@ export const ARG_PERCENTAGE: ArgValidator = {
       }
     }
     return false;
-  }
+  },
 };
 
 export const ARG_QUOTED: ArgValidator = {
   type: 'quoted',
-  validate: (arg: Node): boolean => arg.type === NodeType.QUOTED
+  validate: (arg: Node): boolean => arg.type === NodeType.QUOTED,
 };

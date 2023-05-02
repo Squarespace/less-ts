@@ -20,47 +20,42 @@ import { MixinClosureArrow, MixinMatch, MixinResolver, RulesetMatch } from './re
 const EMPTY_BLOCK = new Block([]);
 
 export class Evaluator {
-
   // Register closure on a Mixin definition
   private closures: Map<Mixin, ExecEnv> = new Map();
 
-  private closureArrow: MixinClosureArrow =
-    ((m: Mixin): ExecEnv | undefined => this.closures.get(m));
+  private closureArrow: MixinClosureArrow = (m: Mixin): ExecEnv | undefined => this.closures.get(m);
 
-  constructor(readonly ctx: Context) { }
+  constructor(readonly ctx: Context) {}
 
   evaluate(env: ExecEnv, block: Block, n: Node): Node {
     switch (n.type) {
       case NodeType.BLOCK_DIRECTIVE:
         return this.evaluateBlockDirective(env, n as BlockDirective);
 
-      case NodeType.DEFINITION:
-        {
-          const d = n as Definition;
-          return new Definition(d.name, d.dereference(env));
-        }
+      case NodeType.DEFINITION: {
+        const d = n as Definition;
+        return new Definition(d.name, d.dereference(env));
+      }
 
-      case NodeType.DIRECTIVE:
-        {
-          const d = n.eval(env) as Directive;
-          if (d.name === '@charset') {
-            if (block.charset === undefined) {
-              block.charset = d;
-            }
+      case NodeType.DIRECTIVE: {
+        const d = n.eval(env) as Directive;
+        if (d.name === '@charset') {
+          if (block.charset === undefined) {
+            block.charset = d;
           }
-          return d;
         }
+        return d;
+      }
 
       case NodeType.MEDIA:
         return this.evaluateMedia(env, n as Media);
 
-      case NodeType.MIXIN:
-        {
-          // Attach a closure to this mixin at the point we evaluate its definition.
-          const m = (n as Mixin).original as Mixin;
-          this.setClosure(env, m);
-          return m;
-        }
+      case NodeType.MIXIN: {
+        // Attach a closure to this mixin at the point we evaluate its definition.
+        const m = (n as Mixin).original as Mixin;
+        this.setClosure(env, m);
+        return m;
+      }
 
       case NodeType.MIXIN_CALL:
         return this.executeMixinCall(env, n as MixinCall);
@@ -124,54 +119,49 @@ export class Evaluator {
           n = this.evaluateBlockDirective(env, n as BlockDirective);
           break;
 
-        case NodeType.DEFINITION:
-          {
-            const d = n as Definition;
-            n = new Definition(d.name, d.dereference(env));
-            break;
-          }
+        case NodeType.DEFINITION: {
+          const d = n as Definition;
+          n = new Definition(d.name, d.dereference(env));
+          break;
+        }
 
-        case NodeType.DIRECTIVE:
-          {
-            const d = n.eval(env) as Directive;
-            if (d.name === '@charset') {
-              if (block.charset === undefined) {
-                block.charset = d;
-              }
+        case NodeType.DIRECTIVE: {
+          const d = n.eval(env) as Directive;
+          if (d.name === '@charset') {
+            if (block.charset === undefined) {
+              block.charset = d;
             }
-            n = d;
-            break;
           }
+          n = d;
+          break;
+        }
 
         case NodeType.MEDIA:
           n = this.evaluateMedia(env, n as Media);
           break;
 
-        case NodeType.MIXIN:
-          {
-            // Attach a closure to this mixin at the point we evaluate its definition.
-            const m = (n as Mixin).original as Mixin;
-            this.setClosure(env, m);
-            break;
-          }
+        case NodeType.MIXIN: {
+          // Attach a closure to this mixin at the point we evaluate its definition.
+          const m = (n as Mixin).original as Mixin;
+          this.setClosure(env, m);
+          break;
+        }
 
-        case NodeType.MIXIN_CALL:
-          {
-            // TODO: should have all been evaluated.
-            break;
-          }
+        case NodeType.MIXIN_CALL: {
+          // TODO: should have all been evaluated.
+          break;
+        }
 
-        case NodeType.RULE:
-          {
-            const r = n as Rule;
-            if (forceImportant && !r.important) {
-              n = new Rule(r.property, r.value.eval(env), true);
-            } else {
-              n = r.eval(env);
-            }
-            env.ctx.captureErrors(n, env);
-            break;
+        case NodeType.RULE: {
+          const r = n as Rule;
+          if (forceImportant && !r.important) {
+            n = new Rule(r.property, r.value.eval(env), true);
+          } else {
+            n = r.eval(env);
           }
+          env.ctx.captureErrors(n, env);
+          break;
+        }
 
         case NodeType.RULESET:
           n = this.evaluateRuleset(env, n as Ruleset, forceImportant);

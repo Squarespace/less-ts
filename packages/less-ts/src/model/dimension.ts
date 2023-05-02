@@ -69,14 +69,33 @@ export const enum Unit {
 
 export const UNITS: Unit[] = [
   Unit.PERCENTAGE,
-  Unit.CM, Unit.MM, Unit.IN, Unit.PX, Unit.PT, Unit.PC,
-  Unit.CH, Unit.EM, Unit.EX, Unit.REM,
-  Unit.VH, Unit.VW, Unit.VMIN, Unit.VMAX, Unit.VM,
+  Unit.CM,
+  Unit.MM,
+  Unit.IN,
+  Unit.PX,
+  Unit.PT,
+  Unit.PC,
+  Unit.CH,
+  Unit.EM,
+  Unit.EX,
+  Unit.REM,
+  Unit.VH,
+  Unit.VW,
+  Unit.VMIN,
+  Unit.VMAX,
+  Unit.VM,
   Unit.FR,
-  Unit.S, Unit.MS,
-  Unit.DPI, Unit.DPCM, Unit.DPPX,
-  Unit.HZ, Unit.KHZ,
-  Unit.DEG, Unit.GRAD, Unit.RAD, Unit.TURN
+  Unit.S,
+  Unit.MS,
+  Unit.DPI,
+  Unit.DPCM,
+  Unit.DPPX,
+  Unit.HZ,
+  Unit.KHZ,
+  Unit.DEG,
+  Unit.GRAD,
+  Unit.RAD,
+  Unit.TURN,
 ];
 
 const UNIT_SET: Set<Unit> = new Set();
@@ -84,11 +103,9 @@ for (const u of UNITS) {
   UNIT_SET.add(u);
 }
 
-export const stringToUnit = (s: string): Unit | undefined =>
-  UNIT_SET.has(s as Unit) ? s as Unit : undefined;
+export const stringToUnit = (s: string): Unit | undefined => (UNIT_SET.has(s as Unit) ? (s as Unit) : undefined);
 
 export class Dimension extends Node {
-
   readonly unit?: Unit;
 
   constructor(readonly value: number, unit?: Unit) {
@@ -98,8 +115,7 @@ export class Dimension extends Node {
 
   equals(n: Node): boolean {
     if (n.type === NodeType.DIMENSION) {
-      return this.value === (n as Dimension).value
-        && this.unit === (n as Dimension).unit;
+      return this.value === (n as Dimension).value && this.unit === (n as Dimension).unit;
     }
     return false;
   }
@@ -132,7 +148,6 @@ export class Dimension extends Node {
       buf.str(this.unit);
     }
   }
-
 }
 
 type FactorMap = { [x: string]: { [y: string]: number } };
@@ -141,9 +156,9 @@ const buildFactors = (): FactorMap => {
   const map: FactorMap = {};
 
   const add = (from: Unit, to: Unit, factor: number): void => {
-    map[from] = (map[from] || {});
+    map[from] = map[from] || {};
     map[from][to] = factor;
-    map[to] = (map[to] || {});
+    map[to] = map[to] || {};
     map[to][from] = 1.0 / factor;
   };
 
@@ -193,5 +208,5 @@ export const unitConversionFactor = (from: Unit | undefined, to: Unit | undefine
   }
   // Return 0.0 to indicate there is no conversion.
   const f = FACTORS[from];
-  return f ? (f[to] || 0.0) : 0.0;
+  return f ? f[to] || 0.0 : 0.0;
 };

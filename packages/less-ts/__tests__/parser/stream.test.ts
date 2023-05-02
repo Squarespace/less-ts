@@ -2,8 +2,7 @@ import { LessCompiler, LessStream } from '../../src';
 
 const COMPILER = new LessCompiler({});
 
-const stream = (raw: string): LessStream =>
-  new LessStream(COMPILER.context(), raw);
+const stream = (raw: string): LessStream => new LessStream(COMPILER.context(), raw);
 
 test('anon rule value', () => {
   const stm = stream('foo bar;');

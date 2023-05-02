@@ -3,7 +3,6 @@ import { Combinator, Element, TextElement, ValueElement } from './element';
 import { arrayEquals, whitespace } from '../utils';
 
 export class Selector extends Node {
-
   readonly hasWildcard: boolean;
   readonly evaluate: boolean;
   readonly mixinPath: string[] | undefined;
@@ -22,8 +21,7 @@ export class Selector extends Node {
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.SELECTOR
-        && arrayEquals(this.elements, (n as Selector).elements);
+    return n.type === NodeType.SELECTOR && arrayEquals(this.elements, (n as Selector).elements);
   }
 
   repr(buf: Buffer): void {
@@ -47,7 +45,6 @@ export class Selector extends Node {
 }
 
 export class Selectors extends Node {
-
   private _evaluate: boolean = false;
   private _hasMixinPath: boolean = false;
 
@@ -71,12 +68,11 @@ export class Selectors extends Node {
   add(selector: Selector): void {
     this.selectors.push(selector);
     this._evaluate = this._evaluate || selector.needsEval();
-    this._hasMixinPath = this._hasMixinPath || (selector.mixinPath !== undefined);
+    this._hasMixinPath = this._hasMixinPath || selector.mixinPath !== undefined;
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.SELECTORS
-        && arrayEquals(this.selectors, (n as Selectors).selectors);
+    return n.type === NodeType.SELECTORS && arrayEquals(this.selectors, (n as Selectors).selectors);
   }
 
   repr(buf: Buffer): void {

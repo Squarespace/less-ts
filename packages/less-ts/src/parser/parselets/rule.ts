@@ -4,7 +4,6 @@ import { LessStream, Parselet, Parselets } from '../stream';
 import { Anonymous, Definition, ExpressionList, Property, Rule, Variable } from '../../model';
 
 export class PropertyParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     if (!isPropertyStart(stm.peek()) || !stm.matchProperty()) {
       return undefined;
@@ -14,7 +13,6 @@ export class PropertyParselet implements Parselet {
 }
 
 export class RuleParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     if (!isRuleStart(stm.peek())) {
       return undefined;

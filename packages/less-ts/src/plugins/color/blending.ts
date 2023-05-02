@@ -6,7 +6,6 @@ import { rgb } from './util';
 const { abs } = Math;
 
 class Average extends BaseFunction {
-
   constructor() {
     super('average', 'cc');
   }
@@ -19,11 +18,9 @@ class Average extends BaseFunction {
     const b = (c1.b + c2.b) / 2.0;
     return new RGBColor(r, g, b, 1.0);
   }
-
 }
 
 class Difference extends BaseFunction {
-
   constructor() {
     super('difference', 'cc');
   }
@@ -39,7 +36,6 @@ class Difference extends BaseFunction {
 }
 
 class Exclusion extends BaseFunction {
-
   constructor() {
     super('exclusion', 'cc');
   }
@@ -52,11 +48,9 @@ class Exclusion extends BaseFunction {
     const b = exclusion(c1.b, c2.b);
     return new RGBColor(r, g, b, 1.0);
   }
-
 }
 
 class Hardlight extends BaseFunction {
-
   constructor() {
     super('hardlight', 'cc');
   }
@@ -72,7 +66,6 @@ class Hardlight extends BaseFunction {
 }
 
 class Multiply extends BaseFunction {
-
   constructor() {
     super('multiply', 'cc');
   }
@@ -84,12 +77,10 @@ class Multiply extends BaseFunction {
     const g = (c1.g * c2.g) / 255;
     const b = (c1.b * c2.b) / 255;
     return new RGBColor(r, g, b, 1.0);
-
   }
 }
 
 class Negation extends BaseFunction {
-
   constructor() {
     super('negation', 'cc');
   }
@@ -101,12 +92,10 @@ class Negation extends BaseFunction {
     const g = negation(c1.g, c2.g);
     const b = negation(c1.b, c2.b);
     return new RGBColor(r, g, b, 1.0);
-
   }
 }
 
 class Overlay extends BaseFunction {
-
   constructor() {
     super('overlay', 'cc');
   }
@@ -122,7 +111,6 @@ class Overlay extends BaseFunction {
 }
 
 class Screen extends BaseFunction {
-
   constructor() {
     super('screen', 'cc');
   }
@@ -138,7 +126,6 @@ class Screen extends BaseFunction {
 }
 
 class Softlight extends BaseFunction {
-
   constructor() {
     super('softlight', 'cc');
   }
@@ -153,26 +140,21 @@ class Softlight extends BaseFunction {
   }
 }
 
-const exclusion = (c1: number, c2: number): number =>
-  (c1 + c2 * (255 - c1 - c1) / 255.0);
+const exclusion = (c1: number, c2: number): number => c1 + (c2 * (255 - c1 - c1)) / 255.0;
 
 const hardlight = (c1: number, c2: number): number =>
-  c2 < 128 ? (2 * c2 * c1 / 255.0)
-    : (255 - 2 * (255 - c2) * (255 - c1) / 255.0);
+  c2 < 128 ? (2 * c2 * c1) / 255.0 : 255 - (2 * (255 - c2) * (255 - c1)) / 255.0;
 
-const negation = (c1: number, c2: number): number =>
-  255 - abs(255 - c2 - c1);
+const negation = (c1: number, c2: number): number => 255 - abs(255 - c2 - c1);
 
 const overlay = (c1: number, c2: number): number =>
-  c1 < 128 ? 2 * c1 * c2 / 255.0
-    : 255 - 2 * (255 - c1) * (255 - c2) / 255.0;
+  c1 < 128 ? (2 * c1 * c2) / 255.0 : 255 - (2 * (255 - c1) * (255 - c2)) / 255.0;
 
-const screen = (c1: number, c2: number): number =>
-  255 - (255 - c1) * (255 - c2) / 255.0;
+const screen = (c1: number, c2: number): number => 255 - ((255 - c1) * (255 - c2)) / 255.0;
 
 const softlight = (c1: number, c2: number): number => {
-  const t = c2 * c1 / 255;
-  return t + c1 * (255 - (255 - c1) * (255 - c2) / 255 - t) / 255;
+  const t = (c2 * c1) / 255;
+  return t + (c1 * (255 - ((255 - c1) * (255 - c2)) / 255 - t)) / 255;
 };
 
 export const BLENDING: { [x: string]: Function } = {
@@ -184,5 +166,5 @@ export const BLENDING: { [x: string]: Function } = {
   negation: new Negation(),
   overlay: new Overlay(),
   screen: new Screen(),
-  softlight: new Softlight()
+  softlight: new Softlight(),
 };

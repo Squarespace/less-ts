@@ -4,7 +4,6 @@ import { LessStream, Parselet, Parselets } from '../stream';
 import { Block, BlockDirective, Directive, Features, Import, Media } from '../../model';
 
 export class DirectiveParselet implements Parselet {
-
   parse(stm: LessStream): Node | undefined {
     const mark = stm.mark();
     stm.skipWs();

@@ -2,7 +2,6 @@ import { Buffer, ExecEnv, Node, NodeType } from '../common';
 import { arrayEquals } from '../utils';
 
 export class Expression extends Node {
-
   private evaluate: boolean = false;
 
   constructor(readonly values: Node[], skipEval: boolean = false) {
@@ -22,8 +21,7 @@ export class Expression extends Node {
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.EXPRESSION
-        && arrayEquals(this.values, (n as Expression).values);
+    return n.type === NodeType.EXPRESSION && arrayEquals(this.values, (n as Expression).values);
   }
 
   repr(buf: Buffer): void {
@@ -61,7 +59,6 @@ export class Expression extends Node {
 }
 
 export class ExpressionList extends Node {
-
   private evaluate: boolean = false;
 
   constructor(readonly values: Node[], skipEval: boolean = false) {
@@ -77,8 +74,7 @@ export class ExpressionList extends Node {
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.EXPRESSION_LIST
-        && arrayEquals(this.values, (n as Expression).values);
+    return n.type === NodeType.EXPRESSION_LIST && arrayEquals(this.values, (n as Expression).values);
   }
 
   repr(buf: Buffer): void {
@@ -108,5 +104,4 @@ export class ExpressionList extends Node {
     }
     return new ExpressionList(r, true);
   }
-
 }

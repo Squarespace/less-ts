@@ -6,18 +6,16 @@ import { LessCompiler, Options } from '@squarespace/less-ts';
 
 const CWD = process.cwd();
 
-const resolve = (path: string): string =>
-  path.startsWith('/') ? path : join(CWD, path);
+const resolve = (path: string): string => (path.startsWith('/') ? path : join(CWD, path));
 
-const load = (path: string): string =>
-  fs.readFileSync(path, { encoding: 'utf-8' });
+const load = (path: string): string => fs.readFileSync(path, { encoding: 'utf-8' });
 
 const run = (y: yargs.Arguments): void => {
   const { parse, indent, compress, mixinRecursionLimit } = y;
   const opts: Options = {
     indentSize: indent,
     compress,
-    mixinRecursionLimit
+    mixinRecursionLimit,
   };
   const path = resolve(y.source);
   const source = load(path);
@@ -43,29 +41,38 @@ const run = (y: yargs.Arguments): void => {
 export const main = () => {
   const pkg = getPackageInfo();
   yargs
-    .command('$0 <source>', '', (y: yargs.Argv) =>
-      y.positional('source', {
-        describe: 'path to source stylesheet',
-        type: 'string'
-      }), run)
+    .command(
+      '$0 <source>',
+      '',
+      (y: yargs.Argv) =>
+        y.positional('source', {
+          describe: 'path to source stylesheet',
+          type: 'string',
+        }),
+      run
+    )
     .option('p', {
       alias: 'parse',
       type: 'boolean',
-      description: 'parse only' })
+      description: 'parse only',
+    })
     .option('i', {
       alias: 'indent',
       type: 'number',
       default: 2,
-      description: 'Number of spaces of indent' })
+      description: 'Number of spaces of indent',
+    })
     .option('r', {
       alias: 'mixin-recursion-limit',
       type: 'number',
       default: 64,
-      description: 'Sets the mixin recursion depth limit.' })
+      description: 'Sets the mixin recursion depth limit.',
+    })
     .option('x', {
       alias: 'compress',
       type: 'boolean',
-      description: 'Enables compressing whitespace (minification)' })
+      description: 'Enables compressing whitespace (minification)',
+    })
     .version(`lessc:${pkg.version}`)
     .help('help')
     .option('h', { alias: 'help' })

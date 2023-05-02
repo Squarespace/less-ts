@@ -5,23 +5,17 @@ import { RuntimeContext, RuntimeExecEnv } from '../../src/runtime';
 const dim = (n: number, unit?: Unit) => new Dimension(n, unit);
 const kwd = (s: string, t?: NodeType) => new Keyword(s, t);
 
-const cond = (op: Operator, a: Node, b: Node, negate: boolean = false) =>
-  new Condition(op, a, b, negate);
+const cond = (op: Operator, a: Node, b: Node, negate: boolean = false) => new Condition(op, a, b, negate);
 
-const eq = (a: Node, b: Node, negate: boolean = false) =>
-  cond(Operator.EQUAL, a, b, negate);
+const eq = (a: Node, b: Node, negate: boolean = false) => cond(Operator.EQUAL, a, b, negate);
 
-const lt = (a: Node, b: Node, negate: boolean = false) =>
-  cond(Operator.LESS_THAN, a, b, negate);
+const lt = (a: Node, b: Node, negate: boolean = false) => cond(Operator.LESS_THAN, a, b, negate);
 
-const lte = (a: Node, b: Node, negate: boolean = false) =>
-  cond(Operator.LESS_THAN_OR_EQUAL, a, b, negate);
+const lte = (a: Node, b: Node, negate: boolean = false) => cond(Operator.LESS_THAN_OR_EQUAL, a, b, negate);
 
-const gt = (a: Node, b: Node, negate: boolean = false) =>
-  cond(Operator.GREATER_THAN, a, b, negate);
+const gt = (a: Node, b: Node, negate: boolean = false) => cond(Operator.GREATER_THAN, a, b, negate);
 
-const gte = (a: Node, b: Node, negate: boolean = false) =>
-  cond(Operator.GREATER_THAN_OR_EQUAL, a, b, negate);
+const gte = (a: Node, b: Node, negate: boolean = false) => cond(Operator.GREATER_THAN_OR_EQUAL, a, b, negate);
 
 test('condition errors', () => {
   const compiler = new LessCompiler({});

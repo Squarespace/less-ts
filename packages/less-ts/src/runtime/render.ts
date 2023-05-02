@@ -29,7 +29,7 @@ import {
   Stylesheet,
   TextElement,
   Url,
-  ValueElement
+  ValueElement,
 } from '../model';
 import { combineFeatures, combineSelectors } from './combine';
 import { CssModel } from './css';
@@ -39,21 +39,17 @@ const EMPTY_FEATURES = new Features([], true);
 const EMPTY_SELECTORS = new Selectors([]);
 
 export class RenderFrame {
-
   private _selectors?: Selectors;
   private _features?: Features;
 
-  constructor(
-    readonly parent: RenderFrame | undefined,
-    readonly blockNode: BlockNode,
-    readonly depth: number) {}
+  constructor(readonly parent: RenderFrame | undefined, readonly blockNode: BlockNode, readonly depth: number) {}
 
   selectors(): Selectors {
-    return this._selectors ? this._selectors : (this.parent ? this.parent.selectors() : EMPTY_SELECTORS);
+    return this._selectors ? this._selectors : this.parent ? this.parent.selectors() : EMPTY_SELECTORS;
   }
 
   features(): Features {
-    return this._features ? this._features : (this.parent ? this.parent.features() : EMPTY_FEATURES);
+    return this._features ? this._features : this.parent ? this.parent.features() : EMPTY_FEATURES;
   }
 
   mergeSelectors(current?: Selectors): void {
@@ -80,7 +76,6 @@ export class RenderFrame {
 }
 
 export class RenderEnv {
-
   depth: number = 0;
 
   constructor(readonly ctx: Context, public frame?: RenderFrame) {}
@@ -120,7 +115,6 @@ export class RenderEnv {
  * Handles final rendering of the evaluated stylesheet.
  */
 export class Renderer {
-
   readonly env: RenderEnv;
   readonly model: CssModel;
 
@@ -164,8 +158,7 @@ export class Renderer {
         continue;
       }
       switch (n.type) {
-        case NodeType.BLOCK_DIRECTIVE:
-        {
+        case NodeType.BLOCK_DIRECTIVE: {
           const o = n as BlockDirective;
           env.push(o);
           model.push(NodeType.BLOCK_DIRECTIVE);
@@ -176,8 +169,7 @@ export class Renderer {
           break;
         }
 
-        case NodeType.COMMENT:
-        {
+        case NodeType.COMMENT: {
           const o = n as Comment;
           if (o.block && (!ctx.compress || o.hasBang())) {
             model.comment(ctx.render(o));
@@ -185,8 +177,7 @@ export class Renderer {
           break;
         }
 
-        case NodeType.DIRECTIVE:
-        {
+        case NodeType.DIRECTIVE: {
           const o = n as Directive;
           if (o.name !== '@charset') {
             model.value(ctx.render(o));
@@ -200,8 +191,7 @@ export class Renderer {
           }
           break;
 
-        case NodeType.MEDIA:
-        {
+        case NodeType.MEDIA: {
           const o = n as Media;
           env.push(o);
           model.push(NodeType.MEDIA);
@@ -212,8 +202,7 @@ export class Renderer {
           break;
         }
 
-        case NodeType.RULE:
-        {
+        case NodeType.RULE: {
           model.value(ctx.render(n));
           break;
         }
@@ -265,7 +254,6 @@ export class Renderer {
     }
     this.model.value(buf.toString());
   }
-
 }
 
 export const renderNode = (buf: Buffer, n: Node | undefined): void => {
@@ -291,8 +279,7 @@ export const renderNode = (buf: Buffer, n: Node | undefined): void => {
       n.repr(buf);
       break;
 
-    case NodeType.ASSIGNMENT:
-    {
+    case NodeType.ASSIGNMENT: {
       const o = n as Assignment;
       buf.str(o.name).str('=');
       renderNode(buf, o.value);
@@ -303,8 +290,7 @@ export const renderNode = (buf: Buffer, n: Node | undefined): void => {
       (n as BaseColor).toRGB().repr(buf);
       break;
 
-    case NodeType.COMMENT:
-    {
+    case NodeType.COMMENT: {
       const o = n as Comment;
       if (o.block) {
         buf.str('/*').str(o.body).str('*/');
@@ -317,8 +303,7 @@ export const renderNode = (buf: Buffer, n: Node | undefined): void => {
       break;
     }
 
-    case NodeType.DIRECTIVE:
-    {
+    case NodeType.DIRECTIVE: {
       const o = n as Directive;
       buf.str(o.name);
       if (o.value) {
@@ -336,8 +321,7 @@ export const renderNode = (buf: Buffer, n: Node | undefined): void => {
       renderList(buf, (n as ExpressionList).values, buf.chars.listsep);
       break;
 
-    case NodeType.FEATURE:
-    {
+    case NodeType.FEATURE: {
       const o = n as Feature;
       renderNode(buf, o.property);
       buf.str(buf.chars.rulesep);
@@ -349,8 +333,7 @@ export const renderNode = (buf: Buffer, n: Node | undefined): void => {
       renderList(buf, (n as Features).features, buf.chars.listsep);
       break;
 
-    case NodeType.FUNCTION_CALL:
-    {
+    case NodeType.FUNCTION_CALL: {
       const o = n as FunctionCall;
       buf.str(o.name).str('(');
       renderList(buf, o.args, buf.chars.listsep);
@@ -368,8 +351,7 @@ export const renderNode = (buf: Buffer, n: Node | undefined): void => {
       renderQuoted(buf, n as Quoted);
       break;
 
-    case NodeType.RULE:
-    {
+    case NodeType.RULE: {
       const o = n as Rule;
       renderNode(buf, o.property);
       buf.str(buf.chars.rulesep);
@@ -380,8 +362,7 @@ export const renderNode = (buf: Buffer, n: Node | undefined): void => {
       break;
     }
 
-    case NodeType.SELECTORS:
-    {
+    case NodeType.SELECTORS: {
       const selectors = (n as Selectors).selectors;
       for (const s of selectors) {
         renderSelector(buf, s);
@@ -393,8 +374,7 @@ export const renderNode = (buf: Buffer, n: Node | undefined): void => {
       renderSelector(buf, n as Selector);
       break;
 
-    case NodeType.SHORTHAND:
-    {
+    case NodeType.SHORTHAND: {
       const o = n as Shorthand;
       renderNode(buf, o.left);
       buf.str('/');
@@ -499,10 +479,8 @@ const renderElement = (buf: Buffer, elem: Element, isFirst: boolean, afterWildca
       renderNode(buf, part);
     }
     buf.str(']');
-
   } else if (elem instanceof TextElement) {
     (elem as TextElement).repr(buf);
-
   } else if (elem instanceof ValueElement) {
     renderNode(buf, (elem as ValueElement).value);
   }

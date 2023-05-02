@@ -1,10 +1,4 @@
-import {
-  Comment,
-  COMMENT,
-  LessCompiler,
-  Node,
-  Parselet,
-} from '../../src';
+import { Comment, COMMENT, LessCompiler, Node, Parselet } from '../../src';
 
 const COMPILER = new LessCompiler({});
 

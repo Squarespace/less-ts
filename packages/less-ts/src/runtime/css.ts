@@ -7,28 +7,19 @@ import 'core-js/es/set';
 import { Buffer, Context, NodeType } from '../common';
 import { setOf } from '../utils';
 
-const ACCEPT_BLOCK_DIRECTIVE = setOf(
-  NodeType.BLOCK_DIRECTIVE,
-  NodeType.RULESET
-);
+const ACCEPT_BLOCK_DIRECTIVE = setOf(NodeType.BLOCK_DIRECTIVE, NodeType.RULESET);
 
 const ACCEPT_MEDIA = ACCEPT_BLOCK_DIRECTIVE;
 
 const ACCEPT_RULESET: Set<NodeType> = new Set();
 
-const ACCEPT_STYLESHEET = setOf(
-  NodeType.BLOCK_DIRECTIVE,
-  NodeType.MEDIA,
-  NodeType.RULESET,
-  NodeType.STYLESHEET
-);
+const ACCEPT_STYLESHEET = setOf(NodeType.BLOCK_DIRECTIVE, NodeType.MEDIA, NodeType.RULESET, NodeType.STYLESHEET);
 
 /**
  * Supports rendering by modeling valid containment of blocks in a CSS
  * stylesheet.
  */
 export class CssModel {
-
   private stack: CssBlock[] = [];
   private current: CssBlock;
 
@@ -190,7 +181,6 @@ export class CssModel {
  * model.
  */
 export class CssBlock {
-
   parent: CssBlock | undefined;
   populated: boolean = false;
 
@@ -247,5 +237,4 @@ export class CssBlock {
     }
     return false;
   }
-
 }

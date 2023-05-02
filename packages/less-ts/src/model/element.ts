@@ -7,13 +7,11 @@ export const enum Combinator {
   DESC = ' ',
   NAMESPACE = '|',
   SIB_ADJ = '+',
-  SIB_GEN = '~'
+  SIB_GEN = '~',
 }
 
 export abstract class Element extends Node {
-
-  constructor(
-    readonly comb: Combinator | undefined) {
+  constructor(readonly comb: Combinator | undefined) {
     super(NodeType.ELEMENT);
   }
 
@@ -21,15 +19,16 @@ export abstract class Element extends Node {
 }
 
 export class AttributeElement extends Element {
-
   constructor(comb: Combinator | undefined, readonly parts: Node[]) {
     super(comb);
   }
 
   equals(n: Node): boolean {
-    return n instanceof AttributeElement
-        && this.comb === (n as AttributeElement).comb
-        && arrayEquals(this.parts, (n as AttributeElement).parts);
+    return (
+      n instanceof AttributeElement &&
+      this.comb === (n as AttributeElement).comb &&
+      arrayEquals(this.parts, (n as AttributeElement).parts)
+    );
   }
 
   repr(buf: Buffer): void {
@@ -46,7 +45,6 @@ export class AttributeElement extends Element {
 }
 
 export class TextElement extends Element {
-
   readonly wildcard: boolean;
 
   constructor(comb: Combinator | undefined, readonly name: string) {
@@ -55,9 +53,7 @@ export class TextElement extends Element {
   }
 
   equals(n: Node): boolean {
-    return n instanceof TextElement
-        && this.comb === (n as TextElement).comb
-        && this.name === (n as TextElement).name;
+    return n instanceof TextElement && this.comb === (n as TextElement).comb && this.name === (n as TextElement).name;
   }
 
   repr(buf: Buffer): void {
@@ -70,17 +66,12 @@ export class TextElement extends Element {
 }
 
 export class ValueElement extends Element {
-
-  constructor(
-    comb: Combinator | undefined,
-    readonly value: Node) {
+  constructor(comb: Combinator | undefined, readonly value: Node) {
     super(comb);
   }
 
   equals(n: Node): boolean {
-    return n instanceof ValueElement
-        && this.comb === (n as ValueElement).comb
-        && this.value.equals((n as ValueElement).value);
+    return n instanceof ValueElement && this.comb === (n as ValueElement).comb && this.value.equals((n as ValueElement).value);
   }
 
   isWildcard(): boolean {
@@ -105,5 +96,4 @@ export class ValueElement extends Element {
   eval(env: ExecEnv): Node {
     return this.needsEval() ? new ValueElement(this.comb, this.value.eval(env)) : this;
   }
-
 }

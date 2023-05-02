@@ -1,7 +1,6 @@
 export type Callback = () => void;
 
 export class Semaphore {
-
   active: number = 0;
   waiting: Callback[] = [];
 

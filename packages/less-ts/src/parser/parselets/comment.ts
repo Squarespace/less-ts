@@ -7,7 +7,6 @@ export class CommentParselet implements Parselet {
   parse(stm: LessStream): Node | undefined {
     return parseComment(stm, false);
   }
-
 }
 
 export class CommentRuleParselet implements Parselet {

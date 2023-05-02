@@ -4,7 +4,6 @@ import { Anonymous, BaseColor, Quoted } from '../model';
 import { BaseFunction } from './base';
 
 class EFunc extends BaseFunction {
-
   constructor() {
     super('e', 's');
   }
@@ -14,11 +13,9 @@ class EFunc extends BaseFunction {
     const res = new Quoted(str.delim, true, str.parts);
     return new Anonymous(env.ctx.render(res));
   }
-
 }
 
 class Escape extends BaseFunction {
-
   constructor() {
     super('escape', 's');
   }
@@ -27,11 +24,9 @@ class Escape extends BaseFunction {
     const str = asString(env, args[0], true);
     return new Anonymous(escape(str));
   }
-
 }
 
 class Format extends BaseFunction {
-
   constructor() {
     super('%', 's.');
   }
@@ -100,16 +95,16 @@ class Format extends BaseFunction {
 }
 
 const asString = (env: ExecEnv, node: Node, escape: boolean): string => {
-  if (escape && (node.type === NodeType.QUOTED)) {
+  if (escape && node.type === NodeType.QUOTED) {
     const str = (node as Quoted).copy();
     str.escaped = true;
     node = str;
   }
   return env.ctx.render(node);
- };
+};
 
 export const STRING: { [x: string]: Function } = {
   e: new EFunc(),
   escape: new Escape(),
-  '%': new Format()
+  '%': new Format(),
 };

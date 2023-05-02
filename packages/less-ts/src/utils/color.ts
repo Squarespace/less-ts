@@ -3,7 +3,6 @@ import { hexvalue } from './string';
 export type ColorFields = [number, number, number];
 
 class ColorNames {
-
   rgbToName: { [x: number]: string } = {};
   nameToRgb: { [x: string]: ColorFields } = {};
 
@@ -167,7 +166,6 @@ class ColorNames {
     this.nameToRgb[name] = [r, g, b];
     this.rgbToName[rgbToInt(r, g, b)] = name;
   }
-
 }
 
 const rgbToInt = (r: number, g: number, b: number): number => (r << 16) + (g << 8) + b;
@@ -177,8 +175,7 @@ export const rgbToName = (r: number, g: number, b: number): string | undefined =
   return COLOR_NAMES.rgbToName[n];
 };
 
-export const nameToRGB = (name: string): ColorFields | undefined =>
-  COLOR_NAMES.nameToRgb[name];
+export const nameToRGB = (name: string): ColorFields | undefined => COLOR_NAMES.nameToRgb[name];
 
 export const hexToRGB = (raw: string): ColorFields => {
   let start = 0;

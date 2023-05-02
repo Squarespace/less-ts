@@ -10,7 +10,6 @@ export interface CompileResult {
 }
 
 export class LessCompiler {
-
   constructor(readonly opts: Options) {}
 
   context(): Context {
@@ -26,7 +25,7 @@ export class LessCompiler {
     const css = Renderer.render(ctx, evald).trimRight();
     return {
       css,
-      errors: ctx.errors
+      errors: ctx.errors,
     };
   }
 

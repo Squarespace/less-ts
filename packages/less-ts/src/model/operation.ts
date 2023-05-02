@@ -16,7 +16,7 @@ export const enum Operator {
   MULTIPLY = '*',
   NOT_EQUAL = '<>',
   OR = 'or',
-  SUBTRACT = '-'
+  SUBTRACT = '-',
 }
 
 export const parseOperator = (op: string | undefined): Operator | undefined => {
@@ -24,24 +24,34 @@ export const parseOperator = (op: string | undefined): Operator | undefined => {
     return undefined;
   }
   switch (op) {
-    case '+': return Operator.ADD;
-    case '/': return Operator.DIVIDE;
-    case '>': return Operator.GREATER_THAN;
-    case '<': return Operator.LESS_THAN;
-    case '*': return Operator.MULTIPLY;
-    case '-': return Operator.SUBTRACT;
+    case '+':
+      return Operator.ADD;
+    case '/':
+      return Operator.DIVIDE;
+    case '>':
+      return Operator.GREATER_THAN;
+    case '<':
+      return Operator.LESS_THAN;
+    case '*':
+      return Operator.MULTIPLY;
+    case '-':
+      return Operator.SUBTRACT;
 
     case '=':
-    case '==': return Operator.EQUAL;
+    case '==':
+      return Operator.EQUAL;
 
     case '>=':
-    case '=>': return Operator.GREATER_THAN_OR_EQUAL;
+    case '=>':
+      return Operator.GREATER_THAN_OR_EQUAL;
 
     case '<=':
-    case '=<': return Operator.LESS_THAN_OR_EQUAL;
+    case '=<':
+      return Operator.LESS_THAN_OR_EQUAL;
 
     case '!=':
-    case '<>': return Operator.NOT_EQUAL;
+    case '<>':
+      return Operator.NOT_EQUAL;
 
     default:
       return undefined;
@@ -49,20 +59,17 @@ export const parseOperator = (op: string | undefined): Operator | undefined => {
 };
 
 export class Operation extends Node {
-
-  constructor(
-    readonly operator: Operator,
-    readonly left: Node,
-    readonly right: Node
-  ) {
+  constructor(readonly operator: Operator, readonly left: Node, readonly right: Node) {
     super(NodeType.OPERATION);
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.OPERATION
-        && this.operator === (n as Operation).operator
-        && this.left.equals((n as Operation).left)
-        && this.right.equals((n as Operation).right);
+    return (
+      n.type === NodeType.OPERATION &&
+      this.operator === (n as Operation).operator &&
+      this.left.equals((n as Operation).left) &&
+      this.right.equals((n as Operation).right)
+    );
   }
 
   repr(buf: Buffer): void {
@@ -140,19 +147,14 @@ const operateColor = (env: ExecEnv, op: Operator, c0: RGBColor, c1: RGBColor): R
       return new RGBColor(c0.r + r, c0.g + g, c0.b + b, a);
 
     case Operator.DIVIDE:
-      return new RGBColor(
-        r ? (c0.r / r) : 255,
-        g ? (c0.g / g) : 255,
-        b ? (c0.b / b) : 255,
-        a);
+      return new RGBColor(r ? c0.r / r : 255, g ? c0.g / g : 255, b ? c0.b / b : 255, a);
     case Operator.MULTIPLY:
       return new RGBColor(r * c0.r, g * c0.g, b * c0.b, a);
 
     case Operator.SUBTRACT:
       return new RGBColor(c0.r - r, c0.g - g, c0.b - b, a);
 
-    default:
-    {
+    default: {
       const { ctx } = env;
       env.errors.push(invalidOperation(op, ctx.render(c0), ctx.render(c1)));
       return c0;
