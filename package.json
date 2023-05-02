@@ -9,6 +9,7 @@
     "clean": "lerna run clean",
     "clean:full": "lerna run clean:full && rimraf node_modules yarn.lock",
     "lint": "lerna run build && lerna run lint",
+		"reformat": "lerna run reformat",
     "release_x": "lerna run clean && lerna run build && lerna publish --force-publish=* --npm-client=npm",
     "test": "rimraf ./coverage && jest --coverage --verbose -i --no-cache",
     "test:codecov": "rimraf ./coverage && jest --coverage --coverageReporters=lcovonly --verbose -i --no-cache",
