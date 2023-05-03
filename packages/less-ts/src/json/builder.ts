@@ -394,7 +394,7 @@ export class Builder {
   }
 
   expandNullable(node: NodeJ): Node | undefined {
-    return node[0] === -1 ? undefined : this.expand(node);
+    return (node[0] as number) === -1 ? undefined : this.expand(node);
   }
 
   expandList(nodes: NodeJ[]): Node[] {

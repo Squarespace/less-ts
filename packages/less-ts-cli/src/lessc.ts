@@ -10,14 +10,23 @@ const resolve = (path: string): string => (path.startsWith('/') ? path : join(CW
 
 const load = (path: string): string => fs.readFileSync(path, { encoding: 'utf-8' });
 
+interface Args {
+  source: string;
+  parse?: boolean;
+  indent?: number;
+  compress?: boolean;
+  mixinRecursionLimit?: number;
+}
+
 const run = (y: yargs.Arguments): void => {
-  const { parse, indent, compress, mixinRecursionLimit } = y;
+  const args = y as any as Args;
+  const { parse, indent, compress, mixinRecursionLimit } = args;
   const opts: Options = {
     indentSize: indent,
     compress,
     mixinRecursionLimit,
   };
-  const path = resolve(y.source);
+  const path = resolve(args.source);
   const source = load(path);
   const compiler = new LessCompiler(opts);
 
@@ -34,7 +43,7 @@ const run = (y: yargs.Arguments): void => {
     }
   } catch (e) {
     console.error(`An error occurred ${parse ? 'parsing' : 'compiling'} ${path}:\n`);
-    console.error(e.message);
+    console.error((e as any).message);
   }
 };
 
