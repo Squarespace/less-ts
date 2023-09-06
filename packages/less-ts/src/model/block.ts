@@ -3,12 +3,6 @@ import { Directive } from './general';
 import { Definition } from './variable';
 import { arrayEquals } from '../utils';
 
-/**
- * NOTE: We depend on Map.keys iteration.
- * This can be removed once IE 11 support is no longer needed.
- */
-import 'core-js/es/map';
-
 export const enum BlockFlags {
   REBUILD_VARS = 1,
   HAS_IMPORTS = 2,
