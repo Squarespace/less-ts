@@ -169,7 +169,7 @@ const classify = (ch: string): number => {
     case 'D':
     case 'E':
     case 'F':
-      return UPPERCASE | CALL_START | KEYWORD_START;
+      return UPPERCASE | CALL_START | KEYWORD_START | PROPERTY_START;
 
     case 'G':
     case 'H':
@@ -191,7 +191,7 @@ const classify = (ch: string): number => {
     case 'X':
     case 'Y':
     case 'Z':
-      return UPPERCASE | CALL_START | KEYWORD_START;
+      return UPPERCASE | CALL_START | KEYWORD_START | PROPERTY_START;
 
     case '_':
       return CALL_START | KEYWORD_START | PROPERTY_START;

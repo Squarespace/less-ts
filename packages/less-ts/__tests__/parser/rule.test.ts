@@ -22,6 +22,9 @@ test('rule', () => {
   let r = parse('foo: red;');
   expect(r).toEqual(new Rule(new Property('foo'), new RGBColor(255, 0, 0, 1.0), false));
 
+  r = parse('-Foo-Bar: baz;');
+  expect(r).toEqual(new Rule(new Property('-Foo-Bar'), new Keyword('baz'), false));
+
   r = parse('@size: 10px;');
   expect(r).toEqual(new Definition('@size', new Dimension(10, 'px' as Unit)));
 
@@ -39,7 +42,7 @@ test('rule', () => {
         ]),
         new Keyword('sans-serif'),
       ]),
-      false
-    )
+      false,
+    ),
   );
 });

@@ -80,7 +80,7 @@ const enum Patterns {
   MIXIN_NAME = '[#.](?:[\\w-]|\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+',
   NOT = 'not',
   OPACITY = 'opacity=',
-  PROPERTY = '\\*?-?[_a-z0-9-]+',
+  PROPERTY = '\\*?-?[_a-zA-Z0-9-]+',
   RATIO = '\\d+\\/\\d+',
   SHORTHAND = '[@\\w.%-]+\\/[@\\w.-]+',
   UNICODE_RANGE = 'U\\+[A-Fa-f0-9?]+(\\-[A-Fa-f0-9?]+)?',
@@ -132,7 +132,10 @@ export class LessStream {
   private readonly when: RegExp = compile(Patterns.WHEN);
   private readonly word: RegExp = compile(Patterns.WORD);
 
-  constructor(readonly ctx: Context, readonly source: string) {
+  constructor(
+    readonly ctx: Context,
+    readonly source: string,
+  ) {
     this.length = source.length;
   }
 
