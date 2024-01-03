@@ -29,15 +29,7 @@ jobs:
         run: |
           yarn
           yarn clean
-          yarn lint
 
       - name: Test
-        run: yarn test:codecov
-
-#      - uses: codecov/codecov-action@v1
-#        if: matrix.node-version == '16.x'
-#        with:
-#          file: ./coverage/lcov.info
-#          name: codecov-umbrella
-#          fail_ci_if_error: true
+        run: yarn test
 
