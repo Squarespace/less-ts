@@ -37,9 +37,12 @@ const run = (y: yargs.Arguments): void => {
     } else {
       const result = compiler.compile(source);
       console.log(result.css);
-      for (const err of result.errors) {
-        const msg = err.errors.map((e) => e.message).join(', ');
-        console.error(`Error ${msg}`);
+
+      if (result.errors) {
+        const msgs = compiler.formatErrors(result.errors);
+        for (const m of msgs) {
+          console.error(m);
+        }
       }
     }
   } catch (e) {
