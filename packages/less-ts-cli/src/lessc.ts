@@ -38,7 +38,8 @@ const run = (y: yargs.Arguments): void => {
       const result = compiler.compile(source);
       console.log(result.css);
       for (const err of result.errors) {
-        console.log(`Error ${err}`);
+        const msg = err.errors.map((e) => e.message).join(', ');
+        console.error(`Error ${msg}`);
       }
     }
   } catch (e) {
@@ -58,7 +59,7 @@ export const main = () => {
           describe: 'path to source stylesheet',
           type: 'string',
         }),
-      run
+      run,
     )
     .option('p', {
       alias: 'parse',
