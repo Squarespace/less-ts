@@ -15,6 +15,7 @@
     "clean:full": "rimraf ./node_modules",
     "generate": "ts-node scripts/generate.ts",
     "lint": "tslint -p ./tsconfig.json",
+    "parity": "jest __tests__/corpus-parity.test.ts -i --no-cache",
     "reformat": "prettier --write __tests__ scripts src",
     "release": "",
     "stress": "echo 'fixme'",
