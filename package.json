@@ -9,7 +9,7 @@
     "clean": "lerna run clean",
     "clean:full": "lerna run clean:full && rimraf node_modules yarn.lock",
     "lint": "lerna run build && lerna run lint",
-		"reformat": "lerna run reformat",
+    "reformat": "lerna run reformat",
     "release_x": "lerna run clean && lerna run build && lerna publish --force-publish=* --npm-client=npm",
     "test": "rimraf ./coverage && jest --coverage --verbose -i --no-cache",
     "test:codecov": "rimraf ./coverage && jest --coverage --coverageReporters=lcovonly --verbose -i --no-cache",
@@ -43,8 +43,11 @@
       "^.+\\.(ts|tsx)$": "ts-jest"
     }
   },
+  "resolutions": {
+    "typescript": "5.2.2"
+  },
   "dependencies": {
-		"@types/node": "20.6.0",
+    "@types/node": "20.6.0",
     "@types/jest": "^29.5.4",
     "jest": "^29.6.4",
     "lerna": "^7.2.0",

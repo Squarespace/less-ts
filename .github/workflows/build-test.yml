@@ -25,10 +25,11 @@ jobs:
       - name: Install Yarn
         run: npm install -g yarn
 
+      - name: Install dependencies
+        run: yarn install --frozen-lockfile
+
       - name: Build
-        run: |
-          yarn
-          yarn clean
+        run: yarn clean
 
       - name: Test
         run: yarn test
