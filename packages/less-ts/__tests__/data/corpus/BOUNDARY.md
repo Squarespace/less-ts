@@ -1,8 +1,9 @@
 # Corpus v2 - Java main behavior boundary map (PINNED)
 
-Pinned 2026-08-31 against Java `less-compiler` main @ 45a099c (1.7.2
-released surface + version bump), default `LessOptions()`. Regenerate with
-`tools/JavaReferenceProbe.java` (see README.md).
+Pinned 2026-09-04 against Java `less-compiler` main @ 18f8f84, default
+`LessOptions()`. Regenerate with `tools/JavaReferenceProbe.java` (see
+README.md); the wired level pins under `levels/java-ladder/` come from
+`tools/JavaLadderProbe.java`.
 
 Byte-exact reference outputs: `java-main/<name>.css` (OK) and
 `java-main/<name>.err` (verbatim `LessException.getMessage()`, no trailing
@@ -43,7 +44,7 @@ Errors abort the whole compile (LessException). Messages are verbatim in
 the `.err` files; shapes: `ExecuteError <TYPE>: <message>` and
 `SyntaxError INCOMPLETE_PARSE Unable to complete parse.`
 
-## 2. Fixture matrix (50 fixtures, 32 OK / 18 ERR)
+## 2. Fixture matrix (56 fixtures, 35 OK / 21 ERR)
 
 ### 010-019: property values (fn calls in VALUE position)
 
@@ -104,7 +105,7 @@ Plain numeric guards (`@x = 5`, scratch g3) still work byte-identical.
 | 052 `(min-width: calc(...))` | `calc(90%)` + warning | `calc(90%)`, no comment |
 | 053 `@w: round(4.6px)`; `(min-width: @w)` | literal | `5px` |
 
-### 210-213: colors
+### 210-215: colors
 
 | Fixture | Java main | TS today |
 |---|---|---|
@@ -112,13 +113,15 @@ Plain numeric guards (`@x = 5`, scratch g3) still work byte-identical.
 | 211 `#aabbcc` `#abc` `#11223344` | `#abc` `#abc` `#123 44` | `#aabbcc` `#aabbcc` `#112233 44` |
 | 212 `@c: red`; use | `red` passthrough | `#ff0000` |
 | 213 `rgba(255,0,0,0.5)` `hsla(0,100%,50%,0.25)` | `rgba(255, 0, 0, .5)` `hsla(0, 100%, 50%, .25)` | same rgba; hsla -> rgba |
+| 214 named hex | keyword for a few names (`red` `beige` `grey` `cyan` `dimgrey`), compressed hex for the rest (`#f0f` `#789` `#123`), `RED` case kept, `magenta` -> `#f0f` | hex for every name (`RED` kept), 6 digits |
+| 215 alpha format | 8-digit alpha round: `.333333333333` -> `.33333333`; `.000000001` and `.999999999` -> empty alpha field `rgba(0, 0, 0, )` | no round; `e-9` / `e-8` exponents |
 
 ### 220: full fn set in values (all literal on Java)
 
 `lighten darken mod round unit convert sqrt length extract fade mix
 saturate` - all literal; TS evaluates all to computed values.
 
-### 230-234: color math
+### 230-237: color math
 
 | Fixture | Java main | TS today |
 |---|---|---|
@@ -127,6 +130,9 @@ saturate` - all literal; TS evaluates all to computed values.
 | 232 `#808080 * 2`, `+`, `#010203 * 3` | `#fff`, `#fff`, `#030609` (clamp 255, int math) | same |
 | 233 `rgba(0,0,0,0.5) * 2` | ERR INVALID_OPERATION2 (ctor = FUNCTION_CALL in op) | eval `#000000` |
 | 234 `rgba + rgba` | ERR INVALID_OPERATION2 | eval |
+| 235 math digest | `/0` -> `grey` (no error); `*1.5`, `+0.5`, `-0.5` truncate to `grey`; `#010203 / 2` -> `#000101` | `/0` -> `#ffffff`; rounds (`#010102` `#818181` `#7f7f7f`) |
+| 236 `3 - #fff` | ERR BAD_COLOR_MATH (`A color cannot be subtracted from 3`) | OK `x: 3` (silent) |
+| 237 `#fff + 1px` | ERR INCOMPATIBLE_UNITS (`... from PX (pixels) to COLOR`) | warns `... from px to color, stripping unit`, renders |
 
 ### 310-321: errors (messages verbatim in `.err` files)
 
@@ -137,6 +143,7 @@ saturate` - all literal; TS evaluates all to computed values.
 | 312 `x: @nope` | `ExecuteError VAR_UNDEFINED: Failed to locate a definition for the variable @nope in current scope` | same text + prefix/context |
 | 313 `@nope + 1px` | same as 312 | same as 312 |
 | 315 `.m(1px, 2px)` vs 1-arg def | `ExecuteError MIXIN_UNDEFINED: Failed to locate a mixin using selector .m` | same text + prefix/context |
+| 316 `alpha(opacity=10%)` | `SyntaxError ALPHA_UNITS_INVALID Numeric values for alpha cannot have units. Found DIMENSION 10.0 % (percentage)` | `Numeric values for alpha cannot have units.` (no type, no found value) |
 | 321 `.a { .; }` | `SyntaxError INCOMPLETE_PARSE Unable to complete parse.` | same + `SyntaxError:` colon + Line/Statement block |
 
 OK on both: 314 guard duplicates apply twice; 320 empty value `x: ;`

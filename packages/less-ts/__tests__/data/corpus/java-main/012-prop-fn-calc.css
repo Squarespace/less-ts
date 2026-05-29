@@ -1,0 +1,4 @@
+.a {
+  /* WARNING[1] raised evaluating next rule: ExecuteError INCOMPATIBLE_UNITS: No conversion is possible from % (percentage) to PX (pixels).. stripping unit. */
+  width: calc(90%);
+}

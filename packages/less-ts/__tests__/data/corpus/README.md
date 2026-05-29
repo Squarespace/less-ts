@@ -8,11 +8,16 @@ Layout:
     less/*.less       fixtures (numbered: 01x values, 02x defs, 03x mixin
                       args, 04x guards, 05x media, 21x colors, 22x
                       fn set, 23x color math, 31x-32x errors)
-    java-main/        PINNED reference: <name>.css = raw compile() bytes,
-                      <name>.err = verbatim LessException.getMessage()
+    java-main/        PINNED reference (unwired 2-arg context): <name>.css
+                      = raw compile() bytes, <name>.err = verbatim
+                      LessException.getMessage()
+    levels/java-ladder/<level>/   PINNED reference (wired context, function
+                      table active) at compat levels 0, 1, 2; same css/err
+                      naming
     ts-current/       TS output for contrast (regenerable, never truth)
     BOUNDARY.md       pinned boundary table (the deliverable)
-    tools/            JavaReferenceProbe.java, ts-probe.js
+    tools/            JavaReferenceProbe.java, JavaLadderProbe.java,
+                      ts-probe.js
 
 Parity gate: `npm run parity` in packages/less-ts runs
 `__tests__/corpus-parity.test.ts`, byte-comparing TS compile() output
@@ -27,8 +32,18 @@ Requires a Java `main` build (the only reference) and the gradle jars:
 ```sh
 cd <java-dir> && git checkout main && ./gradlew classes testClasses
 CP="<java-dir>/build/classes/java/main:<java-dir>/build/classes/java/test:$(find ~/.gradle -name '*.jar' | tr '\n' ':')"
-javac -proc:none -cp "$CP" -d /tmp tools/JavaReferenceProbe.java
+javac -proc:none -cp "$CP" -d /tmp tools/JavaReferenceProbe.java \
+    tools/JavaLadderProbe.java
 java -cp "/tmp:$CP" JavaReferenceProbe less java-main
+```
+
+The ladder family (wired context, function table active) comes from
+`JavaLadderProbe`, one run per level:
+
+```sh
+for level in 0 1 2; do
+  java -cp "/tmp:$CP" JavaLadderProbe less levels/java-ladder/$level $level
+done
 ```
 
 Warning comments (INCOMPATIBLE_UNITS) land inside the compile() output;
