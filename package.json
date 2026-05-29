@@ -3,11 +3,12 @@
   "name": "less-ts-monorepo",
   "author": "Patrick Hensley <pathensley@gmail.com>",
   "license": "Apache-2.0",
+  "packageManager": "pnpm@11.22.0",
   "scripts": {
     "build": "lerna run build",
     "build:watch": "lerna run build:watch --parallel",
     "clean": "lerna run clean",
-    "clean:full": "lerna run clean:full && rimraf node_modules yarn.lock",
+    "clean:full": "lerna run clean:full && rimraf node_modules pnpm-lock.yaml",
     "lint": "lerna run build && lerna run lint",
     "reformat": "lerna run reformat",
     "release_x": "lerna run clean && lerna run build && lerna publish --force-publish=* --npm-client=npm",
@@ -42,9 +43,6 @@
     "transform": {
       "^.+\\.(ts|tsx)$": "ts-jest"
     }
-  },
-  "resolutions": {
-    "typescript": "5.2.2"
   },
   "dependencies": {
     "@types/node": "20.6.0",

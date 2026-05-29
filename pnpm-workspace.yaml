@@ -1,0 +1,11 @@
+packages:
+  - "packages/*"
+
+linkWorkspacePackages: true
+
+overrides:
+  typescript: 5.2.2
+
+allowBuilds:
+  "@parcel/watcher": true
+  nx: true
