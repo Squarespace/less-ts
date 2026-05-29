@@ -252,9 +252,8 @@ export class RuntimeContext implements Context {
   // Enable whitespace compression of the CSS output
   readonly compress: boolean;
 
-  // If false, the engine will attempt to emit the most compact form for a color,
-  // replacing the hex #xxxxxx representation with a keyword (or vice versa) if
-  // that would be shorter. If true only hex values are emitted, which is faster.
+  // Retained for compatibility with the v1.1.5 option set; color output
+  // no longer varies with it.
   readonly fastcolor: boolean;
 
   // Pre-computed string used for indentation
@@ -282,7 +281,7 @@ export class RuntimeContext implements Context {
   constructor(readonly opts: Options = { compress: false }, readonly renderer: NodeRenderer) {
     this.indentSize = opts.indentSize || 2;
     this.compress = opts.compress || false;
-    this.fastcolor = opts.fastcolor === undefined ? true : opts.fastcolor;
+    this.fastcolor = opts.fastcolor === undefined ? false : opts.fastcolor;
     this.spacer = repeat(' ', this.indentSize);
     this.strictMath = opts.strictMath || false;
     this.nocache = opts.nocache || false;

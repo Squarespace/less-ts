@@ -55,14 +55,150 @@ export const MIN_NUMBER = -1e20;
 
 export const clampNumber = (n: number): number => Math.max(MIN_NUMBER, Math.min(n, MAX_NUMBER));
 
-export const formatDouble = (n: number): string => {
-  const q = Math.floor(n);
-  if (q === n) {
-    return clampNumber(n).toString();
+// Plain decimal string of a double, no exponent notation (matches Java
+// BigDecimal toPlainString).
+export const toPlainString = (n: number): string => {
+  const { sign, digits, point } = decimalParts(n);
+  if (point >= digits.length) {
+    return sign + digits + '0'.repeat(point - digits.length);
+  }
+  return sign + digits.slice(0, point) + '.' + digits.slice(point);
+};
+
+// Port of Java ModelUtils.formatDouble: integral values render as plain
+// integers; otherwise the value is rounded half-even to the given scale,
+// trailing zeros are stripped, and the leading zero of values in (-1, 1)
+// is dropped. The drop applies to the rounded string, so values that
+// round to "0" or "1" (e.g. 1e-9, 0.999999999) render as an empty
+// string, as Java does.
+export const formatDouble = (n: number, scale: number = 8): string => {
+  if (!Number.isFinite(n)) {
+    // Non-finite values render as 0 (the released 1.7.2 behavior).
+    return '0';
+  }
+  if (n === Math.trunc(n)) {
+    // Java appends (long)value: the cast is exact in [-2^63, 2^63), and
+    // the value == lval check runs in double precision, so 2^63 matches
+    // the saturated Long.MAX_VALUE and renders as that; above 2^63 the
+    // BigDecimal path applies.
+    if (n >= -9223372036854775808 && n < 9223372036854775808) {
+      return exactIntString(n);
+    }
+    if (n === 9223372036854775808) {
+      return '9223372036854775807';
+    }
+    return toPlainString(n);
+  }
+  const s = scaledPlainString(n, scale);
+  if (n > 0 && n < 1.0) {
+    return s.substring(1);
+  }
+  if (n > -1.0 && n < 0 && s.charAt(0) === '-') {
+    return '-' + s.substring(2);
+  }
+  return s;
+};
+
+// BigDecimal.valueOf(n).setScale(scale, HALF_EVEN).stripTrailingZeros()
+// .toPlainString(): exact decimal rounding of the shortest round-trip
+// representation, no exponent notation.
+const scaledPlainString = (n: number, scale: number): string => {
+  const { sign, digits, point } = decimalParts(n);
+  const intLen = point > 0 ? point : 0;
+  let intPart = digits.slice(0, intLen);
+  if (intPart.length < intLen) {
+    intPart = intPart + '0'.repeat(intLen - intPart.length);
+  }
+  let frac = (point < 0 ? '0'.repeat(-point) : '') + digits.slice(intLen);
+
+  if (frac.length > scale) {
+    const kept = frac.slice(0, scale);
+    const rest = frac.slice(scale);
+    const lead = rest.charCodeAt(0) - 0x30;
+    let roundUp = lead > 5;
+    if (lead === 5) {
+      let more = false;
+      for (let i = 1; i < rest.length; i++) {
+        if (rest.charCodeAt(i) !== 0x30) {
+          more = true;
+          break;
+        }
+      }
+      const last = intPart + kept;
+      const lastDigit = last === '' ? 0 : last.charCodeAt(last.length - 1) - 0x30;
+      roundUp = more || lastDigit % 2 === 1;
+    }
+    if (roundUp) {
+      const arr = (intPart + kept).split('');
+      let i = arr.length - 1;
+      while (i >= 0 && arr[i] === '9') {
+        arr[i] = '0';
+        i--;
+      }
+      if (i >= 0) {
+        arr[i] = String.fromCharCode(arr[i].charCodeAt(0) + 1);
+      } else {
+        arr.unshift('1');
+      }
+      const full = arr.join('');
+      intPart = full.slice(0, full.length - kept.length);
+      frac = full.slice(full.length - kept.length);
+    } else {
+      frac = kept;
+    }
   }
 
-  // Emit floating point values without a leading '0' digit.
-  const s = n < 0 ? '-' : '';
-  const a = clampNumber(Math.abs(n));
-  return s + (a < 1 ? a.toString().substring(1) : a);
+  frac = frac.replace(/0+$/, '');
+  if (intPart === '') {
+    intPart = '0';
+  }
+  // BigDecimal toPlainString drops the sign for zero values.
+  if (intPart === '0' && frac === '') {
+    return '0';
+  }
+  return sign + intPart + (frac === '' ? '' : '.' + frac);
+};
+
+// Split a double into decimal digits and the point position, using the
+// shortest round-trip representation (Java BigDecimal.valueOf does the
+// same via Double.toString).
+const decimalParts = (n: number): { sign: string; digits: string; point: number } => {
+  let s = String(n);
+  let sign = '';
+  if (s.charAt(0) === '-') {
+    sign = '-';
+    s = s.slice(1);
+  }
+  const e = s.indexOf('e');
+  const mant = e === -1 ? s : s.slice(0, e);
+  const exp = e === -1 ? 0 : parseInt(s.slice(e + 1), 10);
+  const dot = mant.indexOf('.');
+  const digits = dot === -1 ? mant : mant.slice(0, dot) + mant.slice(dot + 1);
+  const point = (dot === -1 ? mant.length : dot) + exp;
+  return { sign, digits, point };
+};
+
+// Exact decimal value of an integral double. Below 2^53 String(n) is
+// exact; between 2^53 and 2^63 the shortest representation can lose low
+// bits, so halve into the exact range and double the decimal string back.
+const exactIntString = (n: number): string => {
+  const sign = n < 0 ? '-' : '';
+  let a = Math.abs(n);
+  let k = 0;
+  while (a >= 9007199254740992) {
+    a /= 2;
+    k++;
+  }
+  let s = String(a);
+  for (let i = 0; i < k; i++) {
+    let carry = 0;
+    let out = '';
+    for (let j = s.length - 1; j >= 0; j--) {
+      const d = (s.charCodeAt(j) - 0x30) * 2 + carry;
+      out = String(d % 10) + out;
+      carry = d > 9 ? 1 : 0;
+    }
+    s = carry > 0 ? String(carry) + out : out;
+  }
+  return sign + s;
 };

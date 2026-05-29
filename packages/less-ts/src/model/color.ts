@@ -83,7 +83,7 @@ export class RGBColor extends BaseColor {
       buf.num(r).str(listsep);
       buf.num(g).str(listsep);
       buf.num(b).str(listsep);
-      buf.str(formatDouble(a));
+      buf.str(formatDouble(a, buf.numericScale));
       buf.str(')');
       return;
     }
@@ -97,11 +97,11 @@ export class RGBColor extends BaseColor {
     const b1 = hexchar(b & 0x0f);
 
     // See if we can represent this as a 3-character hex color
-    const hex3 = !buf.fastcolor && r0 === r1 && g0 === g1 && b0 === b1;
+    const hex3 = r0 === r1 && g0 === g1 && b0 === b1;
 
-    // If we aren't forcing a hex value here, try to outut a name if
-    // if is shorter than the hex representation.
-    if (!this.forceHex && !buf.fastcolor) {
+    // If we aren't forcing a hex value, try to emit a name if it is
+    // shorter than the hex representation.
+    if (!this.forceHex) {
       const name = rgbToName(r, g, b);
       if (name) {
         const len = name.length;
