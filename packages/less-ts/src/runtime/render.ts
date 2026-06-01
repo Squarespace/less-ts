@@ -9,6 +9,7 @@ import {
   BlockNode,
   Combinator,
   Comment,
+  Definition,
   Directive,
   Element,
   Expression,
@@ -118,9 +119,22 @@ export class Renderer {
   readonly env: RenderEnv;
   readonly model: CssModel;
 
+  // Warning comment counter, incremented per emitted comment.
+  private warningId = 0;
+
   protected constructor(readonly ctx: Context) {
     this.env = new RenderEnv(ctx);
     this.model = new CssModel(ctx);
+  }
+
+  /**
+   * Emit a warning comment before a rule or definition, e.g.
+   * `/* WARNING[1] raised evaluating next rule: <messages> *\/`
+   */
+  protected emitWarnings(what: string, warnings: string[] | undefined): void {
+    if (warnings !== undefined && warnings.length > 0) {
+      this.model.warning(`/* WARNING[${++this.warningId}] raised evaluating ${what}: ${warnings.join(', ')} */\n`);
+    }
   }
 
   static render(ctx: Context, sheet: Stylesheet): string {
@@ -202,7 +216,15 @@ export class Renderer {
           break;
         }
 
+        case NodeType.DEFINITION: {
+          // Definitions render nothing except their warning comments.
+          const def = n as Definition;
+          this.emitWarnings(`definition '${def.name}'`, def.warnings);
+          break;
+        }
+
         case NodeType.RULE: {
+          this.emitWarnings('next rule', (n as Rule).warnings);
           model.value(ctx.render(n));
           break;
         }

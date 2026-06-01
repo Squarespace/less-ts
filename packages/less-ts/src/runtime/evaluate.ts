@@ -122,6 +122,7 @@ export class Evaluator {
         case NodeType.DEFINITION: {
           const d = n as Definition;
           n = new Definition(d.name, d.dereference(env));
+          this.attachWarnings(n, env);
           break;
         }
 
@@ -160,6 +161,7 @@ export class Evaluator {
             n = r.eval(env);
           }
           env.ctx.captureErrors(n, env);
+          this.attachWarnings(n, env);
           break;
         }
 
@@ -181,6 +183,15 @@ export class Evaluator {
     if (closure === undefined) {
       closure = env.copy();
       this.closures.set(mixin, closure);
+    }
+  }
+
+  // Pull pending warnings off the environment and attach them to the
+  // evaluated rule or definition; they render as a comment before it.
+  protected attachWarnings(n: Node, env: ExecEnv): void {
+    const w = env.takeWarnings();
+    if (w.length > 0 && (n.type === NodeType.RULE || n.type === NodeType.DEFINITION)) {
+      (n as Rule).warnings = w;
     }
   }
 

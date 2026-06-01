@@ -1,76 +1,76 @@
 .function-color-rgb {
-  a1: #010203;
+  a1: rgb(1, 2, 3);
   a2: rgba(1, 2, 3, .5);
-  a3: 2;
-  a4: 6;
-  a5: 4;
-  a6: .5;
-  a7: #123;
-  a8: #40050607;
+  a3: red(#020406);
+  a4: blue(#020406);
+  a5: green(#020406);
+  a6: alpha(rgba(1, 2, 3, .5));
+  a7: color(#123);
+  a8: argb(rgba(5, 6, 7, .25));
 }
 .function-color-hsl {
-  b1: #bf0100;
-  b2: #6abf40;
-  b3: #606020;
-  b4: #356020;
-  b5: rgba(191, 66, 64, .5);
-  b6: 50;
-  b7: 20%;
-  b8: 10%;
-  b9: 5.27704669%;
-  b10: 23%;
+  b1: hsl(.16666667, 1, .375);
+  b2: hsl(100, .5, .5);
+  b3: hsl(60, .5, .25);
+  b4: hsla(100, .5, .25, .5);
+  b5: hsla(1, .5, .5, .5);
+  b6: hue(hsl(50, .4, .3));
+  b7: saturation(hsl(20, .2, .2));
+  b8: lightness(hsl(10, .1, .1));
+  b9: luma(hsl(.5, .4, .3));
+  b10: luminance(hsl(.5, .4, .3));
 }
 .function-color-hsv {
-  c1: #402020;
-  c2: #402020;
-  c3: rgba(64, 32, 32, .5);
-  c4: rgba(64, 32, 32, .5);
+  c1: hsv(100%, 50%, 25%);
+  c2: hsv(1, .5, .25);
+  c3: hsva(100%, 50%, 25%, .5);
+  c4: hsva(360, .5, .25, .5);
 }
 .function-color-contrast {
   d1: contrast(123);
-  d2: #000;
-  d3: #111;
-  d4: #111;
-  d5: #111;
-  d6: #222;
-  d7: #222;
+  d2: contrast(#abc);
+  d3: contrast(#abc, #111);
+  d4: contrast(#abc, #111, #222);
+  d5: contrast(#abc, #111, #222, .5);
+  d6: contrast(#abc, #111, #222, 50%);
+  d7: contrast(#abc, #111, #222, 80%);
 }
 .function-color-adjustment {
-  d1: 48.44632879%;
-  d2: #6f6f6f;
-  d3: #a2a2a2;
-  d4: grey;
-  d5: rgba(50, 50, 50, .25);
-  d6: rgba(50, 50, 50, .75);
-  d7: rgba(50, 50, 50, .25);
-  d8: rgba(64, 170, 191, .5);
-  d9: rgba(64, 115, 191, .5);
-  d10: #222;
-  d11: #555;
-  d12: #5e4c4c;
-  d13: 72%;
+  d1: luma(#abc);
+  d2: darken(#888, 10%);
+  d3: lighten(#888, 10%);
+  d4: desaturate(hsl(.75, .5, .5), 100%);
+  d5: fade(rgb(50, 50, 50), 25%);
+  d6: fadein(rgba(50, 50, 50, .5), 25%);
+  d7: fadeout(rgba(50, 50, 50, .5), 25%);
+  d8: spin(hsla(180, .5, .5, .5), 10);
+  d9: spin(hsla(180, .5, .5, .5), 10%);
+  d10: greyscale(#123);
+  d11: greyscale(#456);
+  d12: saturate(#555, 10%);
+  d13: luminance(#abc);
 }
 .function-color-combination {
-  e1: #333;
-  e2: #666;
+  e1: average(#222, #444);
+  e2: difference(#888, #222);
   e3: #666;
-  e4: #78868f;
-  e5: #10315c;
-  e6: #456;
-  e7: #456;
-  e8: #5e6f80;
-  e9: #2b3c4d;
-  e10: #08121f;
-  e11: #090909;
-  e12: #999;
-  e13: #8ac;
-  e14: #050505;
-  e15: #10243d;
-  e16: #bbb09f;
-  e17: #313131;
-  e18: #8098ad;
-  e19: #444;
-  e20: #10243b;
-  e21: #132435;
-  e22: #131313;
+  e4: exclusion(#123, #789);
+  e5: hardlight(#123, #789);
+  e6: mix(#123, #789);
+  e7: mix(#123, #789, 50%);
+  e8: mix(#123, #789, 25%);
+  e9: mix(#123, #789, 75%);
+  e10: multiply(#123, #789);
+  e11: multiply(#222, #444);
+  e12: negation(#222, #777);
+  e13: negation(#123, #789);
+  e14: overlay(#111, #222);
+  e15: overlay(#123, #789);
+  e16: overlay(#987, #aaa);
+  e17: screen(#111, #222);
+  e18: screen(#123, #789);
+  e19: shade(#888, 50%);
+  e20: softlight(#123, #789);
+  e21: tint(#123, 1);
+  e22: tint(#111, 1);
 }

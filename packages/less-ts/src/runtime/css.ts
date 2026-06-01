@@ -85,6 +85,16 @@ export class CssModel {
   }
 
   /**
+   * Append a diagnostic warning comment without marking the block
+   * populated: a scope whose only content is warning comments is pruned,
+   * while warnings inside content-bearing scopes render as before.
+   */
+  warning(s: string): void {
+    const id = -this.intern(s);
+    this.current.addWarning(id);
+  }
+
+  /**
    * Append a rule string to the model.
    */
   value(s: string): void {
@@ -217,6 +227,14 @@ export class CssBlock {
     this.nodes.delete(id);
     this.nodes.add(id);
     this.populated = true;
+  }
+
+  /**
+   * Add a warning comment without marking this block populated, so a
+   * scope that would render only warnings is pruned.
+   */
+  addWarning(id: number): void {
+    this.nodes.add(id);
   }
 
   /**

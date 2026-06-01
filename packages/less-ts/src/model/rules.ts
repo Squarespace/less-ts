@@ -3,6 +3,10 @@ import { Block, BlockNode } from './block';
 import { Selectors } from './selector';
 
 export class Rule extends Node {
+  // Warnings raised while evaluating this rule's value; rendered as a
+  // comment before the rule.
+  warnings: string[] | undefined;
+
   constructor(readonly property: Node, readonly value: Node, readonly important: boolean | number) {
     super(NodeType.RULE);
   }

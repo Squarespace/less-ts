@@ -165,6 +165,16 @@ export class RuntimeExecEnv implements ExecEnv {
   // Errors during evaluation
   errors: LessError[] = [];
 
+  // Warnings during evaluation; picked up by the next evaluated
+  // rule or definition and rendered as a comment before it.
+  warnings: string[] = [];
+
+  takeWarnings(): string[] {
+    const w = this.warnings;
+    this.warnings = [];
+    return w;
+  }
+
   constructor(readonly ctx: Context, initialStack: IBlockNode[]) {
     this.frames = initialStack || [];
   }

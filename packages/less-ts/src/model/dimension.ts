@@ -121,29 +121,12 @@ export class Dimension extends Node {
   }
 
   repr(buf: Buffer): void {
-    const neg = this.value < 0;
-    let value = Math.abs(this.value);
-    // Round number to given precision
-    if (buf.numericScale) {
-      value = Number((value + 2e-16).toFixed(buf.numericScale));
-    }
-
-    // Convert number to string
-    let strval: string;
-    if (value !== 0 && value < 0.000001 && value > -0.000001) {
-      strval = value.toFixed(20).replace(/0+$/, '');
-    } else {
-      strval = String(value);
-    }
-
-    // Strip leading zero
-    if (value > 0 && value < 1) {
-      strval = strval.substring(1);
-    }
-    if (neg) {
-      buf.str('-');
-    }
-    buf.str(strval);
+    // Java renders dimensions via ModelUtils.formatDouble: integral
+    // values as plain integers, fractional values rounded half-even
+    // at 8 decimals with trailing zeros stripped, and the leading zero
+    // of values in (-1, 1) dropped. Values that round to 0 or 1
+    // (1e-9, 0.999999999) render as an empty string, as Java does.
+    buf.str(formatDouble(this.value, buf.numericScale));
     if (this.unit) {
       buf.str(this.unit);
     }
@@ -161,6 +144,12 @@ const buildFactors = (): FactorMap => {
     map[to] = map[to] || {};
     map[to][from] = 1.0 / factor;
   };
+
+  // Identity conversion: every unit converts to itself at 1.0.
+  for (const u of UNITS) {
+    map[u] = map[u] || {};
+    map[u][u] = 1.0;
+  }
 
   add(Unit.IN, Unit.CM, 2.54);
   add(Unit.IN, Unit.MM, 2.54 * 1000.0);
@@ -209,4 +198,47 @@ export const unitConversionFactor = (from: Unit | undefined, to: Unit | undefine
   // Return 0.0 to indicate there is no conversion.
   const f = FACTORS[from];
   return f ? f[to] || 0.0 : 0.0;
+};
+
+// Human unit names for error and warning messages, matching Java's
+// Unit.humanRepr (empty for 'vm', so no name is emitted for it).
+const UNIT_NAMES: { [x: string]: string } = {
+  '%': 'percentage',
+  cm: 'centimeters',
+  mm: 'millimeters',
+  in: 'inches',
+  px: 'pixels',
+  pt: 'points',
+  pc: 'picas',
+  ch: "advance measure of '0' glyph",
+  em: 'element font size',
+  ex: "x-height of element's font",
+  rem: 'font size of root element',
+  vh: "viewport's height",
+  vw: "viewport's width",
+  vmin: "viewport's smaller dimension",
+  vmax: "viewport's larger dimension",
+  vm: '',
+  fr: 'fractions',
+  s: 'seconds',
+  ms: 'milliseconds',
+  dpi: 'dots per inch',
+  dpcm: 'dots per centimeter',
+  dppx: "dots per 'px' unit",
+  hz: 'hertz',
+  khz: 'kilohertz',
+  deg: 'degrees',
+  grad: 'gradians',
+  rad: 'radians',
+  turn: 'turns',
+};
+
+// Unit display for messages: repr upper-cased with the human name,
+// e.g. PX (pixels), % (percentage).
+export const unitDisplay = (u: Unit | undefined): string => {
+  if (u === undefined) {
+    return '';
+  }
+  const name = UNIT_NAMES[u];
+  return name ? `${u.toUpperCase()} (${name})` : u.toUpperCase();
 };

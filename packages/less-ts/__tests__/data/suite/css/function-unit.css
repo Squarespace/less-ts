@@ -1,6 +1,6 @@
 .function-unit {
-  a1: 10px;
-  a2: 10px;
-  a3: 10px;
-  a4: 10%;
+  a1: unit(10, px);
+  a2: unit(10, 'px');
+  a3: unit(10, px);
+  a4: unit(10, '%');
 }

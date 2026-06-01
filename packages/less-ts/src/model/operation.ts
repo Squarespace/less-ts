@@ -1,7 +1,7 @@
-import { Buffer, ExecEnv, Node, NodeType } from '../common';
-import { divideByZero, expectedMathOp, incompatibleUnits, invalidOperation } from '../errors';
+import { Buffer, ExecEnv, Node, NodeName, NodeType } from '../common';
+import { badColorMath, divideByZero, expectedMathOp, incompatibleUnits, invalidOperation, invalidOperation1 } from '../errors';
 import { colorFromName, BaseColor, RGBColor } from './color';
-import { unitConversionFactor, Dimension } from './dimension';
+import { unitConversionFactor, unitDisplay, Dimension, Unit } from './dimension';
 import { Keyword } from './keyword';
 
 export const enum Operator {
@@ -94,7 +94,10 @@ export class Operation extends Node {
       if (operator === Operator.MULTIPLY || operator === Operator.ADD) {
         [op0, op1] = [op1, op0];
       } else {
-        // TODO:
+        // Java main (strict): a color cannot be subtracted or divided
+        // from a dimension.
+        const verb = operator === Operator.SUBTRACT ? 'be subtracted from' : 'divide';
+        env.errors.push(badColorMath(verb, env.ctx.render(op0)));
         return op0;
       }
     }
@@ -111,29 +114,39 @@ const cast = (n: Node): Node => {
 };
 
 const operate = (env: ExecEnv, op: Operator, left: Node, right: Node): Node => {
-  const { ctx } = env;
   switch (left.type) {
     case NodeType.COLOR:
       if (right.type === NodeType.DIMENSION) {
         const dim = right as Dimension;
         if (dim.unit) {
-          env.errors.push(incompatibleUnits(dim.unit, 'color'));
+          // Java main (strict): a dimension with a unit cannot operate
+          // on a color.
+          env.errors.push(incompatibleUnits(unitDisplay(dim.unit), 'COLOR'));
+          return left;
         }
-        // The scalar becomes an int channel, which truncates the
-        // fraction: #fff * 0.5 -> #000.
+        // Java converts the scalar to an int channel (truncates the
+        // fraction): #fff * 0.5 -> #000.
         const v = Math.trunc(dim.value);
         right = new RGBColor(v, v, v, 1.0);
       }
       if (right.type === NodeType.COLOR) {
         return operateColor(env, op, (left as BaseColor).toRGB(), (right as BaseColor).toRGB());
       }
-      env.errors.push(invalidOperation(op, ctx.render(left), ctx.render(right)));
+      env.errors.push(invalidOperation1(op.toString(), 'COLOR'));
       break;
 
     case NodeType.DIMENSION:
       if (right.type === NodeType.DIMENSION) {
         return operateDimension(env, op, left as Dimension, right as Dimension);
       }
+      // Java Dimension.operate: the right operand must be a dimension.
+      env.errors.push(invalidOperation1(op.toString(), 'DIMENSION'));
+      break;
+
+    default:
+      // Java Node.operate default: fail the operation with both operand
+      // types, e.g. lighten(...) + 1 or 1 + unit(5px).
+      env.errors.push(invalidOperation(op.toString(), NodeName[left.type], NodeName[right.type]));
       break;
   }
   return left;
@@ -165,8 +178,7 @@ const operateColor = (env: ExecEnv, op: Operator, c0: RGBColor, c1: RGBColor): R
       return new RGBColor(c0.r - r, c0.g - g, c0.b - b, a);
 
     default: {
-      const { ctx } = env;
-      env.errors.push(invalidOperation(op, ctx.render(c0), ctx.render(c1)));
+      env.errors.push(invalidOperation1(op.toString(), 'COLOR'));
       return c0;
     }
   }
@@ -184,6 +196,13 @@ const operateDimension = (env: ExecEnv, op: Operator, n0: Dimension, n1: Dimensi
 
   let factor = unitConversionFactor(u1, u0);
   if (factor === 0) {
+    // Java main: incompatible units raise an INCOMPATIBLE_UNITS warning
+    // (silently when the right operand is a percentage), then fall back
+    // to unitless arithmetic.
+    if (u1 !== undefined && u1 !== Unit.PERCENTAGE) {
+      const info = incompatibleUnits(unitDisplay(u0), unitDisplay(u1));
+      env.warnings.push(`${info.message}.. stripping unit.`);
+    }
     factor = 1.0;
   }
   const scaled = n1.value * factor;
@@ -194,8 +213,10 @@ const operateDimension = (env: ExecEnv, op: Operator, n0: Dimension, n1: Dimensi
       if (scaled !== 0.0) {
         result = n0.value / scaled;
       } else {
-        const { ctx } = env;
-        env.errors.push(divideByZero(ctx.render(n0)));
+        // Java renders the operand as its type plus value: DIMENSION 1.0
+        const v = n0.value;
+        const num = v % 1 === 0 ? `${v}.0` : String(v);
+        env.errors.push(divideByZero(`DIMENSION ${num}`));
       }
       break;
 

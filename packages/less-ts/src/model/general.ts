@@ -1,4 +1,4 @@
-import { Buffer, ExecEnv, Function, Node, NodeType } from '../common';
+import { Buffer, ExecEnv, Node, NodeType } from '../common';
 import { arrayEquals } from '../utils';
 
 export class Alpha extends Node {
@@ -156,37 +156,15 @@ export class FunctionCall extends Node {
   }
 
   needsEval(): boolean {
-    return !this.noImpl || this.evaluate;
+    // A call with literal args needs no evaluation: the eval pass only
+    // resolves variables in the args.
+    return this.evaluate;
   }
 
   eval(env: ExecEnv): Node {
-    let func: Function | undefined;
-    if (!this.noImpl) {
-      // Check if this function is built-in.
-      func = env.ctx.findFunction(this.name);
-    }
-
-    if (func !== undefined) {
-      // We have an implementation, so call it.
-      const args = this.evalArgs(env);
-      const [ok, errors] = func.validate(env, args);
-      if (!ok) {
-        // Arguments failed to validate, so append an error and return
-        for (const err of errors) {
-          env.errors.push(err);
-        }
-        return this;
-      }
-      const result = func.invoke(env, args);
-      if (result !== undefined) {
-        return result;
-      }
-    }
-
-    // We either failed to find a function implementation, or the function
-    // returned undefined indicating it cannot be called for some reason.
-    // Fall back to emitting the function's representation with its args
-    // evaluated.
+    // Function implementations are not dispatched: a call renders
+    // literally with its args evaluated (vars substituted, inner
+    // operations computed).
     return this.evaluate ? new FunctionCall(this.name, this.evalArgs(env), true) : this;
   }
 

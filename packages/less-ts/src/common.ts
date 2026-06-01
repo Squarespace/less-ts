@@ -253,6 +253,17 @@ export interface ExecEnv {
 
   errors: LessError[];
 
+  /**
+   * Warnings raised during evaluation (e.g. INCOMPATIBLE_UNITS).
+   * Picked up by the next evaluated rule or definition.
+   */
+  warnings: string[];
+
+  /**
+   * Pull pending warnings off the environment, clearing them.
+   */
+  takeWarnings(): string[];
+
   dump(): string;
 
   /**

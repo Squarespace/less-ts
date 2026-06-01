@@ -5,6 +5,10 @@ import { Anonymous } from './general';
 export class Definition extends Node implements IDefinition {
   private evaluating: boolean = false;
 
+  // Warnings raised while evaluating this definition's value; rendered
+  // as a comment before the definition.
+  warnings: string[] | undefined;
+
   constructor(readonly name: string, readonly value: Node) {
     super(NodeType.DEFINITION);
   }

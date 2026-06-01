@@ -20,11 +20,23 @@ export const expectedMathOp = (op: string): LessError => runtimeError(`Expected 
 export const formatFunctionArgs = (expected: number, actual: number): LessError =>
   runtimeError(`Not enough args for format string. Format function expects ` + `${expected} but only found ${actual}`);
 
-export const incompatibleUnits = (unit: string, type: string): LessError =>
-  runtimeError(`No conversion is possible from ${unit} to ${type}, stripping unit`);
+export const incompatibleUnits = (from: string, to: string): LessError =>
+  runtimeError(`ExecuteError INCOMPATIBLE_UNITS: No conversion is possible from ${from} to ${to}`);
 
+// Strict-mode rejection of color math. The verb is the Java phrasing:
+// "be subtracted from" for -, "divide" for /.
+export const badColorMath = (verb: string, dim: string): LessError =>
+  runtimeError(`ExecuteError BAD_COLOR_MATH: A color cannot ${verb} ${dim}`);
+
+// Operation fails with both operand types (the Node.operate default),
+// e.g. a function call used as an operand.
 export const invalidOperation = (op: string, left: string, right: string): LessError =>
-  runtimeError(`Operation ${op} cannot be applied to ${left} and ${right}`);
+  runtimeError(`ExecuteError INVALID_OPERATION2: Operation ${op} cannot be applied to ${left} and ${right}`);
+
+// Operation fails with the single left operand type (Dimension.operate
+// and BaseColor.operate).
+export const invalidOperation1 = (op: string, type: string): LessError =>
+  runtimeError(`ExecuteError INVALID_OPERATION1: Operation ${op} cannot be applied to ${type}`);
 
 export const invalidArg = (name: string, index: number, type1: string, type2: string): LessError =>
   runtimeError(`Function ${name} arg ${index} must be ${type1}, found ${type2}`);
@@ -39,7 +51,8 @@ export const mixinUndefined = (path: string): LessError => runtimeError(`Failed 
 export const namedArgNotFound = (call: string, name: string): LessError =>
   runtimeError(`Binding params for mixin call ${call}, named arg ${name} not found`);
 
-export const uncomparableType = (type: string): LessError => runtimeError(`Unable to compare instances of ${type}`);
+export const uncomparableType = (type: string): LessError =>
+  runtimeError(`ExecuteError UNCOMPARABLE_TYPE: Unable to compare instances of ${type}`);
 
 export const unknownUnit = (repr: string): LessError => runtimeError(`Unknown unit "${repr}"`);
 
