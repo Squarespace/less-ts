@@ -19,7 +19,9 @@ const compare = (name: string): void => {
   const expected = fs.readFileSync(dst).toString('utf-8').trimRight();
   const actual = COMPILER.compile(source);
 
-  expect(actual.css).toEqual(expected);
+  // Compare rendered content modulo trailing whitespace (compile() emits
+  // Java main's trailing newline now).
+  expect(actual.css.trimRight()).toEqual(expected);
 
   // Generate canonical representation and re-parse it, then compare
 

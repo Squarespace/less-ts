@@ -22,7 +22,7 @@ export class LessCompiler {
     const evaluator = new Evaluator(ctx);
     const env = ctx.newEnv();
     const evald = evaluator.evaluateStylesheet(env, tree);
-    const css = Renderer.render(ctx, evald).trimRight();
+    const css = Renderer.render(ctx, evald);
     return {
       css,
       errors: ctx.errors,
