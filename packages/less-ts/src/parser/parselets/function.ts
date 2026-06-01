@@ -12,7 +12,11 @@ export class AlphaParselet implements Parselet {
     if (value !== undefined && value.type === NodeType.DIMENSION) {
       const dim = value as Dimension;
       if (dim.unit !== undefined) {
-        throw new Error('Numeric values for alpha cannot have units.');
+        // Java's ALPHA_UNITS_INVALID message includes the dimension as its
+        // model repr, e.g. 'Found DIMENSION 10.0 % (percentage)'.
+        throw new Error(
+          `SyntaxError ALPHA_UNITS_INVALID Numeric values for alpha cannot have units. Found ${dim.modelRepr()}`
+        );
       }
     }
     stm.skipWs();

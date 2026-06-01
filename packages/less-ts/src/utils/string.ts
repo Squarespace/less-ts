@@ -65,6 +65,46 @@ export const toPlainString = (n: number): string => {
   return sign + digits.slice(0, point) + '.' + digits.slice(point);
 };
 
+// Port of Java Double.toString: shortest round-trip digits, plain
+// notation for exponents -3 through 6 (1.0, 0.001, 9999999.0),
+// scientific outside that range (1.0E-4, 1.0E7), ".0" appended to
+// integral values, and a signed exponent only when negative.
+// Known deviation: at magnitudes of 1e16 and above the JDK sometimes
+// emits one digit beyond the shortest round-trip (observed to 1e19);
+// this emits the shortest. Below 1e16 everything matches.
+export const javaDouble = (n: number): string => {
+  if (Number.isNaN(n)) {
+    return 'NaN';
+  }
+  if (n === Infinity) {
+    return 'Infinity';
+  }
+  if (n === -Infinity) {
+    return '-Infinity';
+  }
+  if (n === 0) {
+    return Object.is(n, -0) ? '-0.0' : '0.0';
+  }
+  // toExponential() gives the shortest round-trip digits with a
+  // normalized mantissa: |n| = d1.d2...dk x 10^e, d1 != '0'.
+  const sign = n < 0 ? '-' : '';
+  const [mant, expPart] = Math.abs(n).toExponential().split('e');
+  const e = parseInt(expPart, 10);
+  const digits = mant.replace('.', '');
+  if (e < -3 || e >= 7) {
+    const mantissa = digits.length > 1 ? digits.charAt(0) + '.' + digits.slice(1) : digits + '.0';
+    return sign + mantissa + 'E' + e;
+  }
+  if (e >= 0) {
+    const intLen = e + 1;
+    if (intLen >= digits.length) {
+      return sign + digits + '0'.repeat(intLen - digits.length) + '.0';
+    }
+    return sign + digits.slice(0, intLen) + '.' + digits.slice(intLen);
+  }
+  return sign + '0.' + '0'.repeat(-e - 1) + digits;
+};
+
 // Port of Java ModelUtils.formatDouble: integral values render as plain
 // integers; otherwise the value is rounded half-even to the given scale,
 // trailing zeros are stripped, and the leading zero of values in (-1, 1)

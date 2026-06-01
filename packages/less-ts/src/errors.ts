@@ -10,7 +10,8 @@ export const argCountIgnore = (name: string, min: number, count: number): LessEr
 
 export const argTooMany = (call: string): LessError => runtimeError(`Too many arguments provided to mixin call ${call}`);
 
-export const divideByZero = (arg: string): LessError => runtimeError(`Attempt to divide ${arg} by zero`);
+export const divideByZero = (arg: string): LessError =>
+  runtimeError(`ExecuteError DIVIDE_BY_ZERO: Attempt to divide ${arg} by zero.`);
 
 export const expectedBoolOp = (operator: string): LessError =>
   runtimeError(`Expected a boolean operator in expression, got ${operator}`);
@@ -46,7 +47,8 @@ export const internalError = (message: string): LessError => runtimeError(messag
 export const mixinRecurse = (path: string, limit: number): LessError =>
   runtimeError(`Mixin call ${path} exceeded the recursion limit of ${limit}`);
 
-export const mixinUndefined = (path: string): LessError => runtimeError(`Failed to locate a mixin using selector ${path}`);
+export const mixinUndefined = (path: string): LessError =>
+  runtimeError(`ExecuteError MIXIN_UNDEFINED: Failed to locate a mixin using selector ${path}`);
 
 export const namedArgNotFound = (call: string, name: string): LessError =>
   runtimeError(`Binding params for mixin call ${call}, named arg ${name} not found`);
@@ -59,4 +61,4 @@ export const unknownUnit = (repr: string): LessError => runtimeError(`Unknown un
 export const varCircularRef = (name: string): LessError => runtimeError(`Variable ${name} references itself`);
 
 export const varUndefined = (name: string): LessError =>
-  runtimeError(`Failed to locate a definition for the variable ${name} in current scope`);
+  runtimeError(`ExecuteError VAR_UNDEFINED: Failed to locate a definition for the variable ${name} in current scope`);

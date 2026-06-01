@@ -1,5 +1,5 @@
 import { Buffer, Node, NodeType } from '../common';
-import { formatDouble } from '../utils';
+import { formatDouble, javaDouble } from '../utils';
 
 export const enum Unit {
   PERCENTAGE = '%',
@@ -118,6 +118,18 @@ export class Dimension extends Node {
       return this.value === (n as Dimension).value && this.unit === (n as Dimension).unit;
     }
     return false;
+  }
+
+  /**
+   * The form used in error messages, mirroring Java's modelRepr:
+   * type, value, and unit display.
+   */
+  modelRepr(): string {
+    let s = `DIMENSION ${javaDouble(this.value)}`;
+    if (this.unit !== undefined) {
+      s += ` ${unitDisplay(this.unit)}`;
+    }
+    return s;
   }
 
   repr(buf: Buffer): void {

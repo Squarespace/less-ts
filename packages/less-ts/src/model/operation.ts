@@ -213,10 +213,9 @@ const operateDimension = (env: ExecEnv, op: Operator, n0: Dimension, n1: Dimensi
       if (scaled !== 0.0) {
         result = n0.value / scaled;
       } else {
-        // Java renders the operand as its type plus value: DIMENSION 1.0
-        const v = n0.value;
-        const num = v % 1 === 0 ? `${v}.0` : String(v);
-        env.errors.push(divideByZero(`DIMENSION ${num}`));
+        // Java renders the operand as its model repr, e.g. DIMENSION 1.0,
+        // DIMENSION 1.0 PX (pixels).
+        env.errors.push(divideByZero(n0.modelRepr()));
       }
       break;
 

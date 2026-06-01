@@ -1,5 +1,5 @@
 import { Context, Node } from '../common';
-import { repeat, whitespace } from '../utils';
+import { whitespace } from '../utils';
 import { isSkippable } from './types';
 import { UNITS } from '../model';
 
@@ -16,7 +16,7 @@ export const enum StreamFlags {
   OPENSPACE = 1,
 }
 
-const { min, max } = Math;
+const { max } = Math;
 
 // Holds forward references for parselets
 export class Parselets {
@@ -278,11 +278,7 @@ export class LessStream {
   checkComplete(): void {
     this.skipWs();
     if (this.peek() !== undefined) {
-      // TODO: finish error formatting
-      // const limit = min(this.length, 80);
-      // const rest = this.source.substring(this.furthest, limit);
-      throw new Error(parseError(this.source, this.furthest));
-      // throw new Error('incomplete parse:\n' + rest);
+      throw new Error(parseError());
     }
   }
 
@@ -422,86 +418,8 @@ export class LessStream {
   }
 }
 
-const WINDOW_SIZE = 74;
-
 /**
- * Construct a parse error.
+ * The message Java attaches to a parse that cannot complete. The source
+ * position is not part of the message.
  */
-export const parseError = (source: string, index: number): string => {
-  let buf = '';
-  buf += 'Line   Statement\n';
-  buf += '----   ---------\n';
-
-  const offsets: [number, number][] = [];
-  let charPos = 0;
-  let i = 0;
-  while (i < source.length) {
-    const start = i;
-    charPos = index - start;
-    i = source.indexOf('\n', i);
-    if (i === -1) {
-      i = source.length;
-    }
-    i++;
-    offsets.push([start, i]);
-    if (i > index) {
-      break;
-    }
-  }
-
-  const size = offsets.length;
-  for (i = max(0, size - 5); i < size; i++) {
-    const pos = offsets[i];
-    buf += position(i + 1, 4);
-
-    if (i + 1 === size) {
-      const len = pos[1] - pos[0];
-      if (len > WINDOW_SIZE) {
-        const errpos = pos[0] + charPos;
-        const skip = Math.floor(WINDOW_SIZE / 2.0);
-        const leftpos = max(errpos - skip, pos[0]);
-        charPos -= leftpos - pos[0] - 4;
-        buf += '... ';
-        buf += source.substring(leftpos, min(leftpos + WINDOW_SIZE, pos[1]));
-      } else {
-        buf += source.substring(pos[0], pos[1]);
-      }
-    } else {
-      buf += compressString(source.substring(pos[0], pos[1]));
-    }
-  }
-  if (buf[buf.length - 1] !== '\n') {
-    buf += '\n';
-  }
-  buf += repeat(' ', 7);
-  buf += repeat('.', charPos);
-  buf += '^\n\n';
-  buf += 'SyntaxError: INCOMPLETE_PARSE Unable to complete parse.\n';
-  return buf;
-};
-
-const position = (line: number, colWidth: number): string => {
-  const pos = line.toString();
-  const w = colWidth - pos.length;
-  let buf = '';
-  for (let i = 0; i < w; i++) {
-    buf += ' ';
-  }
-  buf += pos;
-  buf += '   ';
-  return buf;
-};
-
-const compressString = (v: string): string => {
-  const { length } = v;
-  if (length <= WINDOW_SIZE) {
-    return v;
-  }
-  let buf = '';
-  const visible = WINDOW_SIZE - 4;
-  const segSize = Math.floor(visible / 2.0);
-  buf += v.substring(0, visible - segSize);
-  buf += ' ... ';
-  buf += v.substring(length - segSize, length);
-  return buf;
-};
+export const parseError = (): string => 'SyntaxError INCOMPLETE_PARSE Unable to complete parse.';
