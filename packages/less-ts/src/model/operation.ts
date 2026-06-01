@@ -119,7 +119,10 @@ const operate = (env: ExecEnv, op: Operator, left: Node, right: Node): Node => {
         if (dim.unit) {
           env.errors.push(incompatibleUnits(dim.unit, 'color'));
         }
-        right = new RGBColor(dim.value, dim.value, dim.value, 1.0);
+        // The scalar becomes an int channel, which truncates the
+        // fraction: #fff * 0.5 -> #000.
+        const v = Math.trunc(dim.value);
+        right = new RGBColor(v, v, v, 1.0);
       }
       if (right.type === NodeType.COLOR) {
         return operateColor(env, op, (left as BaseColor).toRGB(), (right as BaseColor).toRGB());
@@ -137,17 +140,24 @@ const operate = (env: ExecEnv, op: Operator, left: Node, right: Node): Node => {
 };
 
 /**
- * Apply an operator to color arguments.
+ * Apply an operator to color arguments. Channel math is integer:
+ * division truncates (128 / 3 = 42), and a zero channel divides by
+ * 1, not 255.
  */
 const operateColor = (env: ExecEnv, op: Operator, c0: RGBColor, c1: RGBColor): RGBColor => {
   const { r, g, b } = c1;
-  const a = Math.min(1.0, c0.a + c1.a);
+  const a = c0.a + c1.a; // the ctor clamps it to [0, 1]
   switch (op) {
     case Operator.ADD:
       return new RGBColor(c0.r + r, c0.g + g, c0.b + b, a);
 
     case Operator.DIVIDE:
-      return new RGBColor(r ? c0.r / r : 255, g ? c0.g / g : 255, b ? c0.b / b : 255, a);
+      return new RGBColor(
+        Math.trunc(c0.r / (r === 0 ? 1 : r)),
+        Math.trunc(c0.g / (g === 0 ? 1 : g)),
+        Math.trunc(c0.b / (b === 0 ? 1 : b)),
+        a
+      );
     case Operator.MULTIPLY:
       return new RGBColor(r * c0.r, g * c0.g, b * c0.b, a);
 
