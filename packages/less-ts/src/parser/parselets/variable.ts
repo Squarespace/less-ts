@@ -1,6 +1,7 @@
 import { Node } from '../../common';
 import { Chars } from '../types';
-import { LessStream, Parselet } from '../stream';
+import { LessStream, Parselet, parseError } from '../stream';
+import { Patch } from '../../compat';
 import { Variable } from '../../model';
 
 export class VariableParselet implements Parselet {
@@ -26,6 +27,16 @@ export class VariableParselet implements Parselet {
     }
 
     const name = '@' + stm.token();
+    // BUG3: a variable followed by '();' is accepted at legacy
+    // levels; the parens are consumed with the variable. Fixed
+    // levels reject the input.
+    if (stm.peek() === Chars.LEFT_PARENTHESIS && stm.peekn(1) === Chars.RIGHT_PARENTHESIS && stm.peekn(2) === Chars.SEMICOLON) {
+      if (stm.ctx.compat.enabled(Patch.BUG3)) {
+        stm.seekn(2);
+      } else {
+        throw new Error(parseError());
+      }
+    }
     return new Variable(name, indirect, false);
   }
 }

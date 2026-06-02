@@ -1,8 +1,9 @@
 import { Node } from '../../common';
 import { Chars } from '../types';
 import { LessStream, Parselet, Parselets } from '../stream';
-import { parseOperator, Dimension, Operation, Operator } from '../../model';
+import { parseOperator, Dimension, Operation, Operator, Url } from '../../model';
 import { whitespace } from '../../utils';
+import { Patch } from '../../compat';
 
 export class AdditionParselet implements Parselet {
   parse(stm: LessStream): Node | undefined {
@@ -13,12 +14,20 @@ export class AdditionParselet implements Parselet {
 
     let operation = op0;
     while (true) {
+      // BUG4: a dangling operator (no right operand). Mark so the
+      // fixed level can roll it back.
+      const pos = stm.mark();
       const operator = this.parseOperator(stm);
       if (operator === undefined) {
         break;
       }
       const op1 = stm.parse(Parselets.MULTIPLICATION);
       if (op1 === undefined) {
+        // Legacy: the operator stays consumed. Fixed: roll it back
+        // so the enclosing parse fails.
+        if (!stm.ctx.compat.enabled(Patch.BUG4)) {
+          stm.restore(pos);
+        }
         break;
       }
       operation = new Operation(operator, operation, op1);
@@ -66,9 +75,16 @@ export class MultiplicationParselet implements Parselet {
         return op0;
       }
 
+      // BUG4: restore the operator when the right side fails to
+      // parse, so it can be treated as a plain CSS separator
+      // (e.g. url(x) / cover center). Legacy: it stays consumed.
+      const pos = stm.mark();
       stm.seek1();
       const op1 = stm.parse(Parselets.OPERAND);
       if (op1 === undefined) {
+        if (!stm.ctx.compat.enabled(Patch.BUG4)) {
+          stm.restore(pos);
+        }
         break;
       }
       operation = new Operation(op, operation, op1);
@@ -86,7 +102,14 @@ export class OperandParselet implements Parselet {
       negate = true;
       stm.seek1();
     }
+    const mark = stm.mark();
     const node = stm.parse(Parselets.OPERAND_SUB);
+    // url() is a value, not a math operand, e.g. the
+    // "background: url(x) / 100% 50%" size/position shorthand.
+    if (node instanceof Url) {
+      stm.restore(mark);
+      return undefined;
+    }
     return node === undefined ? node : negate ? new Operation(Operator.MULTIPLY, node, new Dimension(-1, undefined)) : node;
   }
 }

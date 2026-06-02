@@ -270,13 +270,75 @@ describe('BUG2: a block-less @media', () => {
   test('an @media with a block is unaffected', () => {
     const src = '@media all {\n  .a { x: 1; }\n}\n';
     for (const level of [0, 1, 2]) {
-      expect(new LessCompiler({ compatLevel: level }).compile(src).css).toEqual(
-        '@media all {\n  .a {\n    x: 1;\n  }\n}\n',
-      );
+      expect(new LessCompiler({ compatLevel: level }).compile(src).css).toEqual('@media all {\n  .a {\n    x: 1;\n  }\n}\n');
     }
   });
 
   test('an override forces the tolerance on at a fixed level', () => {
     expect(new LessCompiler({ compatLevel: 2, compatPatches: { BUG2: true } }).compile(root).css).toEqual('.a {\n  x: 1;\n}\n');
+  });
+});
+
+describe('BUG3: a variable followed by empty parens', () => {
+  const src = '@foo: 1;\n.a {\n  x: @foo();\n}\n';
+
+  test('legacy levels drop the parens and keep the reference', () => {
+    expect(new LessCompiler({}).compile(src).css).toEqual('.a {\n  x: 1;\n}\n');
+    expect(new LessCompiler({ compatLevel: 0 }).compile(src).css).toEqual('.a {\n  x: 1;\n}\n');
+  });
+
+  test('legacy levels: the tolerance applies mid-block', () => {
+    const mid = '@foo: 1;\n.a {\n  x: @foo();\n  y: 2;\n}\n';
+    expect(new LessCompiler({}).compile(mid).css).toEqual('.a {\n  x: 1;\n  y: 2;\n}\n');
+    expect(new LessCompiler({ compatLevel: 0 }).compile(mid).css).toEqual('.a {\n  x: 1;\n  y: 2;\n}\n');
+  });
+
+  test('fixed levels reject the input', () => {
+    for (const level of [1, 2]) {
+      expect(() => new LessCompiler({ compatLevel: level }).compile(src)).toThrow(PARSE_ERROR);
+    }
+  });
+
+  test('an override forces the tolerance on at a fixed level', () => {
+    expect(new LessCompiler({ compatLevel: 2, compatPatches: { BUG3: true } }).compile(src).css).toEqual('.a {\n  x: 1;\n}\n');
+  });
+});
+
+describe('BUG4: invalid additions', () => {
+  const src = '@foo: 10px;\n.a {\n  x: @foo + px;\n  y: 1 + px;\n  z: 2 -;\n}\n';
+  const legacyCss = '.a {\n  x: 10px px;\n  y: 1 px;\n  z: 2 -;\n}\n';
+
+  test('legacy levels keep the dangling operator', () => {
+    expect(new LessCompiler({}).compile(src).css).toEqual(legacyCss);
+    expect(new LessCompiler({ compatLevel: 0 }).compile(src).css).toEqual(legacyCss);
+  });
+
+  test('fixed levels reject the input', () => {
+    for (const level of [1, 2]) {
+      expect(() => new LessCompiler({ compatLevel: level }).compile(src)).toThrow(PARSE_ERROR);
+    }
+  });
+
+  test('valid math is unaffected at both levels', () => {
+    const math = '.a {\n  x: 1 + 2px;\n}\n';
+    for (const level of [0, 1, 2]) {
+      expect(new LessCompiler({ compatLevel: level }).compile(math).css).toEqual('.a {\n  x: 3px;\n}\n');
+    }
+  });
+
+  test('a slash before a non-operand is dropped at legacy levels and kept at fixed levels', () => {
+    // The released surface drops the slash: the value renders as
+    // '10px url(x)'. Fixed levels restore the slash so the expression
+    // keeps it as a separator: '10px / url(x)'.
+    const slash = '.a {\n  background: 10px / url(x);\n}\n';
+    expect(new LessCompiler({}).compile(slash).css).toEqual('.a {\n  background: 10px url(x);\n}\n');
+    expect(new LessCompiler({ compatLevel: 0 }).compile(slash).css).toEqual('.a {\n  background: 10px url(x);\n}\n');
+    for (const level of [1, 2]) {
+      expect(new LessCompiler({ compatLevel: level }).compile(slash).css).toEqual('.a {\n  background: 10px / url(x);\n}\n');
+    }
+  });
+
+  test('an override forces the tolerance on at a fixed level', () => {
+    expect(new LessCompiler({ compatLevel: 2, compatPatches: { BUG4: true } }).compile(src).css).toEqual(legacyCss);
   });
 });
