@@ -1,3 +1,4 @@
+import { CompatLevel, Patch } from '../compat';
 import {
   Buffer,
   Context,
@@ -39,10 +40,18 @@ export class RuntimeBuffer implements Buffer {
   // Maximum number of digits after the decimal point for numbers
   numericScale: number = 8;
 
-  constructor(readonly compress: boolean, readonly fastcolor: boolean, readonly spacer: string, readonly chars: Separators) {}
+  // Compat level for this compile, threaded from the context for
+  // render-side gates
+  constructor(
+    readonly compress: boolean,
+    readonly fastcolor: boolean,
+    readonly spacer: string,
+    readonly chars: Separators,
+    readonly compat: CompatLevel,
+  ) {}
 
   copy(): Buffer {
-    return new RuntimeBuffer(this.compress, this.fastcolor, this.spacer, this.chars);
+    return new RuntimeBuffer(this.compress, this.fastcolor, this.spacer, this.chars, this.compat);
   }
 
   /**
@@ -282,6 +291,11 @@ export class RuntimeContext implements Context {
   // Cap on the maximum recursion depth (in LESS terms, not JS stack)
   readonly mixinRecursionLimit: number;
 
+  // Compat level for this compile: level 0 is the released surface.
+  // Gates read compat.enabled(patch); the level and the per-site
+  // overrides apply in either order.
+  readonly compat: CompatLevel;
+
   // Errors that have occurred at runtime
   readonly errors: LessErrorEvent[] = [];
 
@@ -296,6 +310,19 @@ export class RuntimeContext implements Context {
     this.strictMath = opts.strictMath || false;
     this.nocache = opts.nocache || false;
     this.mixinRecursionLimit = opts.mixinRecursionLimit || DEFAULT_MIXIN_RECURSION_LIMIT;
+    // Level and overrides expand independently: withLevel keeps the
+    // override set and withPatch keeps the level, so the result does
+    // not depend on which option is named first.
+    let compat = CompatLevel.at(opts.compatLevel ?? 0);
+    const overrides = opts.compatPatches;
+    if (overrides) {
+      for (const id of Object.keys(overrides)) {
+        if (overrides[id]) {
+          compat = compat.withPatch(id as Patch);
+        }
+      }
+    }
+    this.compat = compat;
     this.chars = {
       listsep: this.compress ? ',' : ', ',
       rulesep: this.compress ? ':' : ': ',
@@ -331,7 +358,7 @@ export class RuntimeContext implements Context {
    * Build a new Buffer instance.
    */
   newBuffer(): Buffer {
-    return new RuntimeBuffer(this.compress, this.fastcolor, this.spacer, this.chars);
+    return new RuntimeBuffer(this.compress, this.fastcolor, this.spacer, this.chars, this.compat);
   }
 
   /**

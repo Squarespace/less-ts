@@ -1,4 +1,4 @@
-import { CompatLevel, Patch, THRESHOLDS, maxThreshold } from '../src';
+import { CompatLevel, LessCompiler, Patch, THRESHOLDS, maxThreshold } from '../src';
 
 const ALL = Object.values(Patch);
 
@@ -124,3 +124,67 @@ describe('CompatLevel', () => {
   });
 });
 
+// A sheet that touches several surfaces: variables, color math,
+// dimensions, a value-position function call (literal at level 0),
+// a guard and a mixin.
+const SHEET = `
+@base: #808080;
+.a {
+  color: @base;
+  width: @base / 3;
+  margin: 10px + 5px;
+}
+.b { filter: lighten(#fff, 10%); }
+.c when (true) { top: 1; }
+.d { .a(); }
+`;
+
+describe('options wiring', () => {
+  test('default options and explicit level 0 compile byte-identical', () => {
+    const a = new LessCompiler({});
+    const b = new LessCompiler({ compatLevel: 0 });
+    expect(a.compile(SHEET)).toEqual(b.compile(SHEET));
+  });
+
+  test('a no-op override at the default level compiles byte-identical', () => {
+    // BUG1 is already legacy-active at level 0; forcing it on
+    // changes nothing.
+    const a = new LessCompiler({});
+    const b = new LessCompiler({ compatLevel: 0, compatPatches: { BUG1: true } });
+    expect(a.compile(SHEET)).toEqual(b.compile(SHEET));
+  });
+
+  test('level and overrides expand on the context', () => {
+    const ctx = new LessCompiler({ compatLevel: 2, compatPatches: { BUG1: true } }).context();
+    expect(ctx.compat.level).toBe(2);
+    expect(ctx.compat.enabled(Patch.BUG1)).toBe(true);
+    expect(ctx.compat.enabled(Patch.BUG2)).toBe(false);
+    expect(ctx.compat.enabled(Patch.NUMBER_EXPO)).toBe(false);
+  });
+
+  test('the options land on the same surface as the factory chain', () => {
+    // Setter-order parity: the level and the overrides compose the
+    // same way in either order.
+    const fromOptions = new LessCompiler({ compatLevel: 2, compatPatches: { BUG1: true, BUG2: true } }).context().compat;
+    const chained = CompatLevel.at(0).withPatch(Patch.BUG1).withPatch(Patch.BUG2).withLevel(2);
+    expect(fromOptions.level).toBe(chained.level);
+    for (const id of ALL) {
+      expect(fromOptions.enabled(id)).toBe(chained.enabled(id));
+    }
+  });
+
+  test('buffers carry the compat level', () => {
+    // At level 1 the threshold-1 patches are fixed; the
+    // threshold-2 patches are still legacy-active.
+    const ctx = new LessCompiler({ compatLevel: 1 }).context();
+    const buf = ctx.newBuffer();
+    expect(buf.compat.level).toBe(1);
+    expect(buf.compat.enabled(Patch.BUG1)).toBe(false);
+    expect(buf.compat.enabled(Patch.BUG2)).toBe(false);
+    expect(buf.compat.enabled(Patch.NUMBER_EXPO)).toBe(true);
+  });
+
+  test('a negative level in options throws at context construction', () => {
+    expect(() => new LessCompiler({ compatLevel: -1 }).context()).toThrow('compat level must be >= 0, got -1');
+  });
+});

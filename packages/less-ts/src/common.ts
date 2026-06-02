@@ -1,3 +1,5 @@
+import { CompatLevel } from './compat';
+
 /**
  * Types of node in the LESS syntax.
  */
@@ -207,6 +209,12 @@ export interface Context {
   readonly errors: LessErrorEvent[];
 
   /**
+   * Compat level for this compile: which legacy behaviors are
+   * active. Level 0 is the released surface.
+   */
+  readonly compat: CompatLevel;
+
+  /**
    * Capture all errors on the given execution environment.
    */
   captureErrors(node: Node, env: ExecEnv): void;
@@ -316,6 +324,16 @@ export interface Options {
 
   // Maximum depth of mixin recursion
   readonly mixinRecursionLimit?: number;
+
+  // Compat level for this compile. 0 keeps every legacy behavior
+  // active (the released surface); a patch's fix applies at its
+  // threshold level and above.
+  readonly compatLevel?: number;
+
+  // Per-site overrides forcing legacy behaviors on regardless of
+  // level. A level change keeps them; the two options apply in
+  // either order.
+  readonly compatPatches?: { [id: string]: boolean };
 }
 
 export interface Separators {
@@ -350,6 +368,12 @@ export interface Buffer extends Options {
    * Number of decimal points for fractional values.
    */
   numericScale?: number;
+
+  /**
+   * Compat level for this compile, threaded from the context for
+   * render-side gates.
+   */
+  readonly compat: CompatLevel;
 
   /**
    * Append a string to the buffer.
