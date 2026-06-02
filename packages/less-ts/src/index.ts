@@ -1,4 +1,5 @@
 export * from './common';
+export * from './compat';
 export * from './compiler';
 export * from './errors';
 export * from './json';
