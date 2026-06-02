@@ -1,6 +1,7 @@
 import { Node, NodeType } from '../../common';
 import { Chars } from '../types';
 import { LessStream, Parselet, Parselets } from '../stream';
+import { Patch } from '../../compat';
 import { Block, Ruleset, Selectors, Stylesheet } from '../../model';
 
 export class PrimaryParselet implements Parselet {
@@ -9,20 +10,42 @@ export class PrimaryParselet implements Parselet {
     let node: Node | undefined;
     stm.skipEmpty();
 
-    const pos = stm.mark();
-    node = stm.parse(Parselets.PRIMARY_SUB);
-    while (node !== undefined) {
+    while (true) {
+      // BUG1: at legacy levels a stray '+' directly before the closing
+      // brace is dropped and the brace ends the block.
+      if (this.skipStrayPlus(stm)) {
+        continue;
+      }
+      node = stm.parse(Parselets.PRIMARY_SUB);
+      if (node === undefined) {
+        break;
+      }
       if (node.type === NodeType.BLOCK) {
         block.appendBlock(node as Block);
       } else {
         block.add(node);
       }
       stm.skipEmpty();
-      stm.mark(pos);
-      node = stm.parse(Parselets.PRIMARY_SUB);
     }
     stm.skipEmpty();
     return block;
+  }
+
+  // BUG1 (legacy): consume a stray '+' when the next statement is a
+  // closing brace. Only whitespace may sit between the two; on a miss
+  // the stream is restored so the statement fails as usual.
+  private skipStrayPlus(stm: LessStream): boolean {
+    if (!stm.ctx.compat.enabled(Patch.BUG1) || stm.peek() !== Chars.PLUS_SIGN) {
+      return false;
+    }
+    const mark = stm.mark();
+    stm.seek1();
+    stm.skipWs();
+    if (stm.peek() !== Chars.RIGHT_CURLY_BRACKET) {
+      stm.restore(mark);
+      return false;
+    }
+    return true;
   }
 }
 

@@ -1,7 +1,13 @@
 import { Node } from '../../common';
 import { Chars } from '../types';
-import { LessStream, Parselet, Parselets } from '../stream';
+import { LessStream, Parselet, Parselets, parseError } from '../stream';
+import { Patch } from '../../compat';
 import { Block, BlockDirective, Directive, Features, Import, Media } from '../../model';
+
+// Placeholder for a tolerated block-less @media (BUG2): it renders
+// nothing, so the directive is dropped and the statements that follow
+// attach to the enclosing block.
+const DUMMY_MEDIA = new Media(new Features([]), new Block());
 
 export class DirectiveParselet implements Parselet {
   parse(stm: LessStream): Node | undefined {
@@ -96,7 +102,13 @@ export class DirectiveParselet implements Parselet {
     const features = stm.parse(Parselets.FEATURES);
     const block = stm.parse(Parselets.BLOCK);
     if (block === undefined) {
-      return undefined;
+      // BUG2: a block-less @media.
+      if (stm.ctx.compat.enabled(Patch.BUG2)) {
+        // Legacy: drop the directive, keep the statements that follow.
+        return DUMMY_MEDIA;
+      }
+      // Fixed: reject the directive outright.
+      throw new Error(parseError());
     }
     return new Media(features as Features, block as Block);
   }

@@ -188,3 +188,95 @@ describe('options wiring', () => {
     expect(() => new LessCompiler({ compatLevel: -1 }).context()).toThrow('compat level must be >= 0, got -1');
   });
 });
+
+// The message Java attaches to a parse that cannot complete.
+const PARSE_ERROR = 'SyntaxError INCOMPLETE_PARSE Unable to complete parse.';
+
+describe('BUG1: a stray + before the closing brace', () => {
+  const src = '.a {\n  x: 1;\n  + }\n';
+  const bare = '.a {\n  + }\n';
+  const nested = '.a {\n  .b { x: 1; + }\n}\n';
+
+  test('legacy levels drop the + and close the block', () => {
+    // The stray + is consumed; the rule survives.
+    expect(new LessCompiler({}).compile(src).css).toEqual('.a {\n  x: 1;\n}\n');
+    expect(new LessCompiler({ compatLevel: 0 }).compile(src).css).toEqual('.a {\n  x: 1;\n}\n');
+  });
+
+  test('legacy levels: a ruleset left empty renders nothing', () => {
+    expect(new LessCompiler({}).compile(bare).css).toEqual('');
+  });
+
+  test('legacy levels: the tolerance applies in nested blocks', () => {
+    expect(new LessCompiler({}).compile(nested).css).toEqual('.a .b {\n  x: 1;\n}\n');
+  });
+
+  test('legacy levels: only whitespace may follow the +', () => {
+    expect(() => new LessCompiler({}).compile('.a {\n  x: 1;\n  + /* c */ }\n')).toThrow(PARSE_ERROR);
+    expect(() => new LessCompiler({}).compile('.a {\n  x: 1;\n  + foo }\n')).toThrow(PARSE_ERROR);
+  });
+
+  test('fixed levels reject the stray +', () => {
+    for (const level of [1, 2]) {
+      expect(() => new LessCompiler({ compatLevel: level }).compile(src)).toThrow(PARSE_ERROR);
+      expect(() => new LessCompiler({ compatLevel: level }).compile(bare)).toThrow(PARSE_ERROR);
+      expect(() => new LessCompiler({ compatLevel: level }).compile(nested)).toThrow(PARSE_ERROR);
+    }
+  });
+
+  test('a + in a value or a leading selector combinator is unaffected', () => {
+    expect(new LessCompiler({}).compile('.a {\n  width: 1px + 2px;\n}\n').css).toEqual('.a {\n  width: 3px;\n}\n');
+    for (const level of [0, 1, 2]) {
+      expect(new LessCompiler({ compatLevel: level }).compile('+ .a {\n  x: 1;\n}\n').css).toEqual('+ .a {\n  x: 1;\n}\n');
+    }
+  });
+
+  test('an override forces the tolerance on at a fixed level', () => {
+    expect(new LessCompiler({ compatLevel: 2, compatPatches: { BUG1: true } }).compile(src).css).toEqual('.a {\n  x: 1;\n}\n');
+  });
+});
+
+describe('BUG2: a block-less @media', () => {
+  const root = '@media all\n.a {\n  x: 1;\n}\n';
+  const nested = '.a {\n  x: 1;\n  @media all }\n';
+
+  test('legacy levels drop the directive at the root', () => {
+    expect(new LessCompiler({}).compile(root).css).toEqual('.a {\n  x: 1;\n}\n');
+    expect(new LessCompiler({ compatLevel: 0 }).compile(root).css).toEqual('.a {\n  x: 1;\n}\n');
+  });
+
+  test('legacy levels drop the directive in a nested block', () => {
+    expect(new LessCompiler({}).compile(nested).css).toEqual('.a {\n  x: 1;\n}\n');
+  });
+
+  test('legacy levels: statements that follow attach to the enclosing block', () => {
+    expect(new LessCompiler({}).compile('.a { @media all .b { x: 1; } }\n').css).toEqual('.a .b {\n  x: 1;\n}\n');
+    expect(new LessCompiler({}).compile('@media all { @media screen .a { x: 1; } }\n').css).toEqual(
+      '@media all {\n  .a {\n    x: 1;\n  }\n}\n',
+    );
+  });
+
+  test('legacy levels: a trailing semicolon is dropped with the directive', () => {
+    expect(new LessCompiler({}).compile('@media all; .a { x: 1; }\n').css).toEqual('.a {\n  x: 1;\n}\n');
+  });
+
+  test('fixed levels reject the block-less directive', () => {
+    for (const level of [1, 2]) {
+      expect(() => new LessCompiler({ compatLevel: level }).compile(root)).toThrow(PARSE_ERROR);
+      expect(() => new LessCompiler({ compatLevel: level }).compile(nested)).toThrow(PARSE_ERROR);
+    }
+  });
+
+  test('an @media with a block is unaffected', () => {
+    const src = '@media all {\n  .a { x: 1; }\n}\n';
+    for (const level of [0, 1, 2]) {
+      expect(new LessCompiler({ compatLevel: level }).compile(src).css).toEqual(
+        '@media all {\n  .a {\n    x: 1;\n  }\n}\n',
+      );
+    }
+  });
+
+  test('an override forces the tolerance on at a fixed level', () => {
+    expect(new LessCompiler({ compatLevel: 2, compatPatches: { BUG2: true } }).compile(root).css).toEqual('.a {\n  x: 1;\n}\n');
+  });
+});
