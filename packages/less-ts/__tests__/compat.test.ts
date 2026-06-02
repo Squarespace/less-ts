@@ -342,3 +342,41 @@ describe('BUG4: invalid additions', () => {
     expect(new LessCompiler({ compatLevel: 2, compatPatches: { BUG4: true } }).compile(src).css).toEqual(legacyCss);
   });
 });
+
+describe('NONFINITE_AS_ZERO: non-finite values render as 0', () => {
+  // The Java reference produces these values with sqrt(-1) and
+  // pow(2, 1024), but function dispatch is not wired in this tree, so
+  // the overflow math below reaches the same render site at every
+  // level. 10^160 * 10^160 is 10^320, past the largest double.
+  const H = '1' + '0'.repeat(160);
+  const inf = `.a {\n  x: (${H} * ${H});\n}\n`;
+  const ninf = `.a {\n  x: -(${H} * ${H});\n}\n`;
+  const nan = `.a {\n  x: (${H} * ${H}) - (${H} * ${H});\n}\n`;
+
+  test('legacy levels render non-finite values as 0', () => {
+    for (const level of [0, 1]) {
+      expect(new LessCompiler({ compatLevel: level }).compile(inf).css).toEqual('.a {\n  x: 0;\n}\n');
+      expect(new LessCompiler({ compatLevel: level }).compile(ninf).css).toEqual('.a {\n  x: 0;\n}\n');
+      expect(new LessCompiler({ compatLevel: level }).compile(nan).css).toEqual('.a {\n  x: 0;\n}\n');
+    }
+  });
+
+  test('the default options keep the 0 render', () => {
+    expect(new LessCompiler({}).compile(inf).css).toEqual('.a {\n  x: 0;\n}\n');
+    expect(new LessCompiler({}).compile(nan).css).toEqual('.a {\n  x: 0;\n}\n');
+  });
+
+  test('fixed levels render the visible text', () => {
+    const fixed = new LessCompiler({ compatLevel: 2 });
+    expect(fixed.compile(inf).css).toEqual('.a {\n  x: Infinity;\n}\n');
+    expect(fixed.compile(ninf).css).toEqual('.a {\n  x: -Infinity;\n}\n');
+    expect(fixed.compile(nan).css).toEqual('.a {\n  x: NaN;\n}\n');
+  });
+
+  test('an override forces the legacy render at a fixed level', () => {
+    const legacy = new LessCompiler({ compatLevel: 2, compatPatches: { NONFINITE_AS_ZERO: true } });
+    expect(legacy.compile(inf).css).toEqual('.a {\n  x: 0;\n}\n');
+    expect(legacy.compile(ninf).css).toEqual('.a {\n  x: 0;\n}\n');
+    expect(legacy.compile(nan).css).toEqual('.a {\n  x: 0;\n}\n');
+  });
+});

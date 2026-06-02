@@ -83,7 +83,7 @@ export class RGBColor extends BaseColor {
       buf.num(r).str(listsep);
       buf.num(g).str(listsep);
       buf.num(b).str(listsep);
-      buf.str(formatDouble(a, buf.numericScale));
+      buf.str(formatDouble(a, buf.numericScale, buf.compat));
       buf.str(')');
       return;
     }

@@ -1,3 +1,5 @@
+import { CompatLevel, Patch } from '../compat';
+
 export const whitespace = (ch: string): boolean => {
   return (
     (ch >= '\t' && ch <= '\r') ||
@@ -111,10 +113,17 @@ export const javaDouble = (n: number): string => {
 // is dropped. The drop applies to the rounded string, so values that
 // round to "0" or "1" (e.g. 1e-9, 0.999999999) render as an empty
 // string, as Java does.
-export const formatDouble = (n: number, scale: number = 8): string => {
+//
+// Non-finite values render as '0' while NONFINITE_AS_ZERO is active (the
+// released behavior); at the fixed level the visible text renders:
+// NaN, Infinity, -Infinity, the same strings Java Double.toString
+// emits.
+export const formatDouble = (n: number, scale: number = 8, compat: CompatLevel = CompatLevel.defaultLevel()): string => {
   if (!Number.isFinite(n)) {
-    // Non-finite values render as 0 (the released 1.7.2 behavior).
-    return '0';
+    if (compat.enabled(Patch.NONFINITE_AS_ZERO)) {
+      return '0';
+    }
+    return String(n);
   }
   if (n === Math.trunc(n)) {
     // Java appends (long)value: the cast is exact in [-2^63, 2^63), and

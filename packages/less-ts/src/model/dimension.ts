@@ -138,7 +138,7 @@ export class Dimension extends Node {
     // at 8 decimals with trailing zeros stripped, and the leading zero
     // of values in (-1, 1) dropped. Values that round to 0 or 1
     // (1e-9, 0.999999999) render as an empty string, as Java does.
-    buf.str(formatDouble(this.value, buf.numericScale));
+    buf.str(formatDouble(this.value, buf.numericScale, buf.compat));
     if (this.unit) {
       buf.str(this.unit);
     }
