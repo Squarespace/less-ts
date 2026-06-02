@@ -71,3 +71,22 @@ suite('corpus parity (TS vs Java main)', () => {
     expect(compileTs(compiler, tc.name)).toBe(tc.expected);
   });
 });
+
+// Channel math at the compat levels (COLOR_CHANNEL_PRECISION gate):
+// the color op fixtures byte-match the Java ladder pins at the
+// legacy and the fixed level.
+const LADDER_ROOT = join(ROOT, 'levels', 'java-ladder');
+const CHANNEL = ['230-color-math-div', '231-color-math-mul', '232-color-math-mul2', '235-color-math-digest'];
+const ladderPinned = CHANNEL.every((n) => [0, 2].every((level) => fs.existsSync(join(LADDER_ROOT, String(level), n + '.css'))));
+
+const ladderSuite = ladderPinned ? describe : describe.skip;
+
+ladderSuite('corpus parity vs the Java ladder (channel math)', () => {
+  for (const level of [0, 2]) {
+    test.each(CHANNEL.map((n): [string, string] => [n, n]))(`level ${level}: %s`, (name) => {
+      const less = fs.readFileSync(join(LESS_DIR, name + '.less'), 'utf8');
+      const expected = fs.readFileSync(join(LADDER_ROOT, String(level), name + '.css')).toString('utf8');
+      expect(new LessCompiler({ compatLevel: level }).compile(less).css).toBe(expected);
+    });
+  }
+});

@@ -1,4 +1,5 @@
 import { Buffer, ExecEnv, Node, NodeName, NodeType } from '../common';
+import { Patch } from '../compat';
 import { badColorMath, divideByZero, expectedMathOp, incompatibleUnits, invalidOperation, invalidOperation1 } from '../errors';
 import { colorFromName, BaseColor, RGBColor } from './color';
 import { unitConversionFactor, unitDisplay, Dimension, Unit } from './dimension';
@@ -59,7 +60,11 @@ export const parseOperator = (op: string | undefined): Operator | undefined => {
 };
 
 export class Operation extends Node {
-  constructor(readonly operator: Operator, readonly left: Node, readonly right: Node) {
+  constructor(
+    readonly operator: Operator,
+    readonly left: Node,
+    readonly right: Node,
+  ) {
     super(NodeType.OPERATION);
   }
 
@@ -124,10 +129,16 @@ const operate = (env: ExecEnv, op: Operator, left: Node, right: Node): Node => {
           env.errors.push(incompatibleUnits(unitDisplay(dim.unit), 'COLOR'));
           return left;
         }
-        // Java converts the scalar to an int channel (truncates the
-        // fraction): #fff * 0.5 -> #000.
-        const v = Math.trunc(dim.value);
-        right = new RGBColor(v, v, v, 1.0);
+        // COLOR_CHANNEL_PRECISION: legacy converts the scalar to an
+        // int channel, truncating the fraction (#fff * 0.5 -> #000).
+        // Fixed levels keep the fraction; the ctor's round is the
+        // final one (#fff * 0.5 -> 127.5 -> grey).
+        if (env.ctx.compat.enabled(Patch.COLOR_CHANNEL_PRECISION)) {
+          const v = Math.trunc(dim.value);
+          right = new RGBColor(v, v, v, 1.0);
+        } else {
+          return operateColorScalar(env, op, (left as BaseColor).toRGB(), dim.value);
+        }
       }
       if (right.type === NodeType.COLOR) {
         return operateColor(env, op, (left as BaseColor).toRGB(), (right as BaseColor).toRGB());
@@ -153,29 +164,64 @@ const operate = (env: ExecEnv, op: Operator, left: Node, right: Node): Node => {
 };
 
 /**
- * Apply an operator to color arguments. Channel math is integer:
- * division truncates (128 / 3 = 42), and a zero channel divides by
- * 1, not 255.
+ * Apply an operator to color arguments. The channels are ints (the
+ * ctor rounds), so only division can leave a fraction. While
+ * COLOR_CHANNEL_PRECISION is active it truncates (128 / 3 = 42); at
+ * the fixed level the fraction survives to the ctor's round
+ * (128 / 3 -> 43). A zero channel divides by 1, not 255.
  */
 const operateColor = (env: ExecEnv, op: Operator, c0: RGBColor, c1: RGBColor): RGBColor => {
   const { r, g, b } = c1;
   const a = c0.a + c1.a; // the ctor clamps it to [0, 1]
+  const legacy = env.ctx.compat.enabled(Patch.COLOR_CHANNEL_PRECISION);
   switch (op) {
     case Operator.ADD:
       return new RGBColor(c0.r + r, c0.g + g, c0.b + b, a);
 
     case Operator.DIVIDE:
-      return new RGBColor(
-        Math.trunc(c0.r / (r === 0 ? 1 : r)),
-        Math.trunc(c0.g / (g === 0 ? 1 : g)),
-        Math.trunc(c0.b / (b === 0 ? 1 : b)),
-        a
-      );
+      if (legacy) {
+        return new RGBColor(
+          Math.trunc(c0.r / (r === 0 ? 1 : r)),
+          Math.trunc(c0.g / (g === 0 ? 1 : g)),
+          Math.trunc(c0.b / (b === 0 ? 1 : b)),
+          a,
+        );
+      }
+      return new RGBColor(c0.r / (r === 0 ? 1 : r), c0.g / (g === 0 ? 1 : g), c0.b / (b === 0 ? 1 : b), a);
     case Operator.MULTIPLY:
       return new RGBColor(r * c0.r, g * c0.g, b * c0.b, a);
 
     case Operator.SUBTRACT:
       return new RGBColor(c0.r - r, c0.g - g, c0.b - b, a);
+
+    default: {
+      env.errors.push(invalidOperation1(op.toString(), 'COLOR'));
+      return c0;
+    }
+  }
+};
+
+/**
+ * Channel math with a fractional scalar (Java
+ * BaseColor.operateFixed): the scalar stays a double until the ctor
+ * rounds, and its alpha is 1.0, so the result's is too.
+ */
+const operateColorScalar = (env: ExecEnv, op: Operator, c0: RGBColor, scalar: number): RGBColor => {
+  const a = c0.a + 1.0; // the ctor clamps it to 1.0
+  switch (op) {
+    case Operator.ADD:
+      return new RGBColor(c0.r + scalar, c0.g + scalar, c0.b + scalar, a);
+
+    case Operator.DIVIDE: {
+      const s = scalar === 0 ? 1 : scalar;
+      return new RGBColor(c0.r / s, c0.g / s, c0.b / s, a);
+    }
+
+    case Operator.MULTIPLY:
+      return new RGBColor(c0.r * scalar, c0.g * scalar, c0.b * scalar, a);
+
+    case Operator.SUBTRACT:
+      return new RGBColor(c0.r - scalar, c0.g - scalar, c0.b - scalar, a);
 
     default: {
       env.errors.push(invalidOperation1(op.toString(), 'COLOR'));

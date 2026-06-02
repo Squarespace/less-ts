@@ -380,3 +380,61 @@ describe('NONFINITE_AS_ZERO: non-finite values render as 0', () => {
     expect(legacy.compile(nan).css).toEqual('.a {\n  x: 0;\n}\n');
   });
 });
+
+describe('COLOR_CHANNEL_PRECISION: channel math precision', () => {
+  // #808080 / 3 is 42.67 per channel. Legacy truncates (42, #2a2a2a);
+  // the fixed level keeps the fraction until the final round (43,
+  // #2b2b2b).
+  const div = '.a {\n  x: #808080 / 3;\n}\n';
+  // #fff * 0.5 is 127.5 per channel. Legacy truncates the scalar
+  // before the op (0, #000); the fixed level rounds the product
+  // (128, the 'grey' keyword, not a hex).
+  const mul = '.a {\n  x: #fff * 0.5;\n}\n';
+  // Color-color division takes the same gate: #808080 / #010203 is
+  // (128, 64, 42.67) -> #80402a legacy, #80402b fixed.
+  const colorDiv = '.a {\n  x: #808080 / #010203;\n}\n';
+  const digest =
+    '.a {\n' +
+    '  a: #808080 / 0;\n' +
+    '  b: #808080 * 1.5;\n' +
+    '  c: #010203 / 2;\n' +
+    '  d: #808080 + 0.5;\n' +
+    '  e: #808080 - 0.5;\n' +
+    '}\n';
+  const legacyDigest = '.a {\n' + '  a: grey;\n' + '  b: grey;\n' + '  c: #000101;\n' + '  d: grey;\n' + '  e: grey;\n' + '}\n';
+  const fixedDigest =
+    '.a {\n' + '  a: grey;\n' + '  b: silver;\n' + '  c: #010102;\n' + '  d: #818181;\n' + '  e: grey;\n' + '}\n';
+
+  test('legacy levels truncate fractional intermediates', () => {
+    for (const level of [0, 1]) {
+      const c = new LessCompiler({ compatLevel: level });
+      expect(c.compile(div).css).toEqual('.a {\n  x: #2a2a2a;\n}\n');
+      expect(c.compile(mul).css).toEqual('.a {\n  x: #000;\n}\n');
+      expect(c.compile(colorDiv).css).toEqual('.a {\n  x: #80402a;\n}\n');
+      expect(c.compile(digest).css).toEqual(legacyDigest);
+    }
+  });
+
+  test('the default options keep the truncation', () => {
+    const c = new LessCompiler({});
+    expect(c.compile(div).css).toEqual('.a {\n  x: #2a2a2a;\n}\n');
+    expect(c.compile(mul).css).toEqual('.a {\n  x: #000;\n}\n');
+    expect(c.compile(colorDiv).css).toEqual('.a {\n  x: #80402a;\n}\n');
+  });
+
+  test('fixed levels keep the fraction until the final round', () => {
+    const c = new LessCompiler({ compatLevel: 2 });
+    expect(c.compile(div).css).toEqual('.a {\n  x: #2b2b2b;\n}\n');
+    expect(c.compile(mul).css).toEqual('.a {\n  x: grey;\n}\n');
+    expect(c.compile(colorDiv).css).toEqual('.a {\n  x: #80402b;\n}\n');
+    expect(c.compile(digest).css).toEqual(fixedDigest);
+  });
+
+  test('an override forces the truncation on at a fixed level', () => {
+    const c = new LessCompiler({ compatLevel: 2, compatPatches: { COLOR_CHANNEL_PRECISION: true } });
+    expect(c.compile(div).css).toEqual('.a {\n  x: #2a2a2a;\n}\n');
+    expect(c.compile(mul).css).toEqual('.a {\n  x: #000;\n}\n');
+    expect(c.compile(colorDiv).css).toEqual('.a {\n  x: #80402a;\n}\n');
+    expect(c.compile(digest).css).toEqual(legacyDigest);
+  });
+});
