@@ -528,5 +528,35 @@
     "fixture": "430-selector-complexity",
     "level": "bare",
     "reason": "gate not implemented: selector complexity overflow is not swallowed, the full combination is rendered"
+  },
+  {
+    "fixture": "500-blend-alpha",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "500-blend-alpha",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "500-blend-alpha",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "501-blend-screen",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "501-blend-screen",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "501-blend-screen",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
   }
 ]
