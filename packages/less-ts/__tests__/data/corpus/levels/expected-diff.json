@@ -1,5 +1,485 @@
 [
   {
+    "fixture": "010-prop-fn-color",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "010-prop-fn-color",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "010-prop-fn-color",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "011-prop-fn-num",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "011-prop-fn-num",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "011-prop-fn-num",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "013-prop-fn-nested",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "013-prop-fn-nested",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "013-prop-fn-nested",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "014-prop-fn-with-var",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "014-prop-fn-with-var",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "014-prop-fn-with-var",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "015-prop-fn-paren",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "015-prop-fn-paren",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "015-prop-fn-paren",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "016-prop-fn-op",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "016-prop-fn-op",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "016-prop-fn-op",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "017-prop-fn-wrapping-calc",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "017-prop-fn-wrapping-calc",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "017-prop-fn-wrapping-calc",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "018-prop-calc-with-fn",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "018-prop-calc-with-fn",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "018-prop-calc-with-fn",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "020-def-fn-color",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "020-def-fn-color",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "020-def-fn-color",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "021-def-fn-num",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "021-def-fn-num",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "021-def-fn-num",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "023-def-fn-nested",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "023-def-fn-nested",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "023-def-fn-nested",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "024-def-fn-op",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "024-def-fn-op",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "024-def-fn-op",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "025-def-fn-paren",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "025-def-fn-paren",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "025-def-fn-paren",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "030-mixin-arg-fn",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "030-mixin-arg-fn",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "030-mixin-arg-fn",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "031-mixin-arg-fn-nested",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "031-mixin-arg-fn-nested",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "031-mixin-arg-fn-nested",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "032-mixin-arg-fn-num",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "032-mixin-arg-fn-num",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "032-mixin-arg-fn-num",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "034-mixin-arg-fn-op",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "034-mixin-arg-fn-op",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "034-mixin-arg-fn-op",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "035-mixin-arg-paren",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "035-mixin-arg-paren",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "035-mixin-arg-paren",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "036-mixin-def-default",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "036-mixin-def-default",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "036-mixin-def-default",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "040-guard-fn-num",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "040-guard-fn-num",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "040-guard-fn-num",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "041-guard-arg-fn",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "041-guard-arg-fn",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "041-guard-arg-fn",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "042-guard-def-var",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "042-guard-def-var",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "042-guard-def-var",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "043-guard-fn-color",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "043-guard-fn-color",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "043-guard-fn-color",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "044-guard-fn-calc",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "044-guard-fn-calc",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "044-guard-fn-calc",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "045-guard-var-arg",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "045-guard-var-arg",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "045-guard-var-arg",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "050-media-fn-num",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "050-media-fn-num",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "050-media-fn-num",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "051-media-fn-color",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "051-media-fn-color",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "051-media-fn-color",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "053-media-def-var",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "053-media-def-var",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "053-media-def-var",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "213-color-alpha",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "213-color-alpha",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "213-color-alpha",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "220-fn-values",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "220-fn-values",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "220-fn-values",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "233-color-alpha-math",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "233-color-alpha-math",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "233-color-alpha-math",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "234-color-ctor-op",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "234-color-ctor-op",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "234-color-ctor-op",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
     "fixture": "400-number-expo",
     "level": "2",
     "reason": "gate not implemented: exponent is not part of a number (1e3 renders as 1 e3)"
@@ -28,5 +508,25 @@
     "fixture": "423-guard-uncomp-ne",
     "level": "2",
     "reason": "gate not implemented: uncomparable guard operands compare like -1, so <= and != match"
+  },
+  {
+    "fixture": "430-selector-complexity",
+    "level": "0",
+    "reason": "gate not implemented: selector complexity overflow is not swallowed, the full combination is rendered"
+  },
+  {
+    "fixture": "430-selector-complexity",
+    "level": "1",
+    "reason": "gate not implemented: selector complexity overflow is not swallowed, the full combination is rendered"
+  },
+  {
+    "fixture": "430-selector-complexity",
+    "level": "2",
+    "reason": "gate not implemented: selector complexity overflow is not swallowed, the full combination is rendered"
+  },
+  {
+    "fixture": "430-selector-complexity",
+    "level": "bare",
+    "reason": "gate not implemented: selector complexity overflow is not swallowed, the full combination is rendered"
   }
 ]

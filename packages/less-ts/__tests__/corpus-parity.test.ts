@@ -15,11 +15,35 @@ import { LessCompiler } from '../src';
 const ROOT = join(__dirname, 'data', 'corpus');
 const LESS_DIR = join(ROOT, 'less');
 const JAVA_DIR = join(ROOT, 'java-main');
+const EXPECTED_DIFF = join(ROOT, 'levels', 'expected-diff.json');
 
 interface Case {
   name: string;
   expected: string; // pinned reference bytes (css or err)
+  expectedDiff: boolean;
 }
+
+// Cells registered in levels/expected-diff.json with level "bare" are
+// expected to diverge on the default surface today for a documented
+// reason (a gate not implemented yet). They assert inequality: when the
+// behavior lands the assertion flips red and the entry must be removed.
+const bareDiffKeys = new Set<string>();
+const loadBareDiffs = (): void => {
+  if (!fs.existsSync(EXPECTED_DIFF)) {
+    return;
+  }
+  const entries = JSON.parse(fs.readFileSync(EXPECTED_DIFF).toString('utf8')) as Array<{
+    fixture: string;
+    level: string;
+    reason: string;
+  }>;
+  for (const e of entries) {
+    if (e.level === 'bare') {
+      bareDiffKeys.add(e.fixture);
+    }
+  }
+};
+loadBareDiffs();
 
 const loadCases = (): Case[] =>
   fs
@@ -30,10 +54,10 @@ const loadCases = (): Case[] =>
       const name = n.slice(0, -'.less'.length);
       const css = join(JAVA_DIR, name + '.css');
       if (fs.existsSync(css)) {
-        return { name, expected: fs.readFileSync(css).toString('utf8') };
+        return { name, expected: fs.readFileSync(css).toString('utf8'), expectedDiff: bareDiffKeys.has(name) };
       }
       const err = join(JAVA_DIR, name + '.err');
-      return { name, expected: fs.readFileSync(err).toString('utf8') };
+      return { name, expected: fs.readFileSync(err).toString('utf8'), expectedDiff: bareDiffKeys.has(name) };
     });
 
 // Compile with the TS compiler at default options and reduce the outcome
@@ -68,7 +92,13 @@ const suite = pinned ? describe : describe.skip;
 
 suite('corpus parity (TS vs Java main)', () => {
   test.each(cases.map((tc): [string, Case] => [tc.name, tc]))('%s', (_n, tc) => {
-    expect(compileTs(compiler, tc.name)).toBe(tc.expected);
+    const got = compileTs(compiler, tc.name);
+    if (tc.expectedDiff) {
+      // Flip detector: red once the behavior lands and the output matches.
+      expect(got).not.toBe(tc.expected);
+    } else {
+      expect(got).toBe(tc.expected);
+    }
   });
 });
 
