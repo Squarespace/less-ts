@@ -558,5 +558,35 @@
     "fixture": "501-blend-screen",
     "level": "2",
     "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "520-mod-zero",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "520-mod-zero",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "520-mod-zero",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "521-mod-normal",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "521-mod-normal",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "521-mod-normal",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
   }
 ]
