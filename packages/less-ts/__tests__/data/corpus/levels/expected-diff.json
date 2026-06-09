@@ -588,5 +588,35 @@
     "fixture": "521-mod-normal",
     "level": "2",
     "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "530-convert-incompatible",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "530-convert-incompatible",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "530-convert-incompatible",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "531-convert-compatible",
+    "level": "0",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "531-convert-compatible",
+    "level": "1",
+    "reason": "value-position calls render literally until the Java-side patch lands"
+  },
+  {
+    "fixture": "531-convert-compatible",
+    "level": "2",
+    "reason": "value-position calls render literally until the Java-side patch lands"
   }
 ]
