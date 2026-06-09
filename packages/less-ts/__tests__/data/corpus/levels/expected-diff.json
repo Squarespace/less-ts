@@ -18,5 +18,15 @@
     "fixture": "411-paren-elem",
     "level": "2",
     "reason": "gate not implemented: unterminated attribute selector or paren element is dropped instead of failing the parse"
+  },
+  {
+    "fixture": "421-guard-uncomp-le",
+    "level": "2",
+    "reason": "gate not implemented: uncomparable guard operands compare like -1, so <= and != match"
+  },
+  {
+    "fixture": "423-guard-uncomp-ne",
+    "level": "2",
+    "reason": "gate not implemented: uncomparable guard operands compare like -1, so <= and != match"
   }
 ]
