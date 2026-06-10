@@ -46,6 +46,10 @@ the `.err` files; shapes: `ExecuteError <TYPE>: <message>` and
 
 ## 2. Fixture matrix (56 fixtures, 35 OK / 21 ERR)
 
+Note: the TS-today column records the TS surface at pinning time
+(pre-alignment). The Java column is the pinned truth; the default
+surface now byte-matches it.
+
 ### 010-019: property values (fn calls in VALUE position)
 
 | Fixture | Java main | TS today |
@@ -175,3 +179,103 @@ renders as-is.
 - The future compat question is unaffected: TS's leaf evaluation can be
   re-enabled behind a gate; Java main's literal render remains the
   default.
+
+## 5. Gate cells (40x-43x, 50x-54x) - pinned at the same tip
+
+These fixtures exercise the compat-level gates not yet implemented on
+the TS side. Pin families as in section 1: `java-main/` (bare) and
+`levels/java-ladder/{0,1,2}/` (wired). The levels harness
+(`corpus-parity-levels.test.ts`) byte-compares TS at each level against
+every ladder pin; `corpus-parity.test.ts` covers the bare surface.
+`levels/expected-diff.json` registers the cells that diverge today for
+a documented reason; registered cells assert inequality (flip
+detector: when the behavior lands the test goes red and the entry is
+removed), all others assert strict equality.
+
+### 40x number exponent (400, 401)
+
+Legacy (bare/L0/L1): no exponent grammar - `9.999999999999999e+31`
+renders `10 e 31`, `7E705E` renders `7 E705E`, `1e3` renders `1 e3`,
+`1.5e-3` renders `1.5 e-3`, `2E2` renders `2 E2`; `em`/`ex` unaffected.
+Fixed (L2): single numbers - `99999999999999990000000000000000`,
+`Infinity E` (the overflow renders visibly because the non-finite
+legacy is lifted at L2), `1000`, `.0015`, `200`. TS today: legacy
+tokenization at every level. Green bare/L0/L1; L2 registered.
+
+### 41x unterminated selector (410 attr, 411 paren element)
+
+Legacy: silently dropped, the bare element is styled (`a { color: red;
+}`). Fixed (L2): `SyntaxError INCOMPLETE_PARSE Unable to complete
+parse.` (the pin type flips css-to-err at L2). TS matches the legacy
+side at every level today; L2 registered.
+
+### 42x uncomparable guard truth table (420-426)
+
+Shape `.m(@a) when (@a <OP> 10px) { p: 1; }` + `.x { .m(red); }` (color
+vs dimension - uncomparable). Java legacy = uncomparable compares as
+-1: `<` T, `<=` T, `=` F, `!=` T, `>` F, `>=` F. Java fixed (L2) =
+only `<` T. TS today matches the legacy table at every level. Green
+except 421 (`<=`) and 423 (`!=`) at L2 (registered). 426 is the
+comparable control (green at every level).
+
+### 43x selector complexity overflow (430)
+
+Shape: 65 comma siblings wrapping 63 nested single-selector levels.
+Java legacy: the overflow is swallowed at the last nested level, the
+rendered selectors end at `.b61` (19897 bytes). Java L2: `ExecuteError
+SELECTOR_TOO_COMPLEX: Selector exceeds the complexity threshold`. TS
+today: no threshold; renders the full combination (20222 bytes) at
+every level. Diverges on all four surfaces (registered bare/0/1/2);
+the level-0 divergence is tracked as a follow-up.
+
+### 50x color blend alpha (500 multiply, 501 screen)
+
+`multiply(rgba(255, 0, 0, 0.5), rgba(0, 0, 255, 0.25))`. Bare: literal
+call. Wired L0/L1: opaque result (`#000` / `#f0f`). Wired L2: keeps
+the larger input alpha (`rgba(0, 0, 0, .5)` / `rgba(255, 0, 255, .5)`).
+TS today renders the call literally at every level (the
+function-table family); the wired cells are registered.
+
+### 51x replace regex groups (510 group refs, 511 backslash)
+
+`replace` is ext-only on Java and the ladder reference wires the
+default function table, so every pinned surface renders the call
+literally and TS matches byte-for-byte (green at every level). The
+legacy/fixed replacement contract (group refs vs literal insert) is
+exercised by the gate work's unit tests, not by these pins.
+
+### 52x mod zero (520) + control (521)
+
+`mod(10, 0)`: bare literal; wired L0/L1 `0` (silent NaN renders 0);
+wired L2 `ExecuteError DIVIDE_BY_ZERO: Attempt to divide DIMENSION 10.0
+by zero.` `mod(11, 3)` control: `2` on every wired surface. TS today:
+literal at every level; the wired cells are registered.
+
+### 53x convert incompatible units (530) + control (531)
+
+`convert(16px, em)`: bare literal; wired L0/L1 `0em`; wired L2
+`ExecuteError INCOMPATIBLE_UNITS: No conversion is possible from PX
+(pixels) to EM (element font size)`. `convert(1in, px)` control: `96px`
+on every wired surface. TS today: literal at every level; the wired
+cells are registered.
+
+### 54x mixin arguments (540) + variadic named arg (541)
+
+Mixin mechanics: bare byte-equals wired L0/L1. 540 (`.m(@a, @b) { p:
+@arguments; }` / `.x { .m(@b: 2, @a: 1); }`): legacy `p: 2 1` (binding
+insertion order), fixed `p: 1 2` (declaration order); TS matches the
+legacy side today, L2 registered. 541 (`.m(@b...) { p: @b; }` / `.x {
+.m(@b: 1); }`): legacy `ExecuteError ARG_NAMED_NOTFOUND: Named arg @b
+not found` on every legacy surface, fixed `p: 1`; TS matches the
+legacy side, L2 registered.
+
+### Base 56 at the wired levels
+
+32 fixtures diverge identically at L0/L1/L2 (the function-table
+family: TS renders calls literally, the wired reference evaluates -
+the pins are the future reference); 24 are green at every wired level
+(the calc, color-output, channel-math, and error cells). Notable
+type-flip cells among the 32: 016/018/024/034/040-043/045/233/234
+(java evaluated vs TS operation error), 017 (java INVALID_ARG_EXT vs
+TS literal), 044 (different error message on both sides). Per-cell
+registration is the expected-diff.json registry.
