@@ -1,4 +1,5 @@
-import { CompatLevel, LessCompiler, Patch, THRESHOLDS, maxThreshold } from '../src';
+import { CompatLevel, LessCompiler, Patch, RGBColor, THRESHOLDS, maxThreshold } from '../src';
+import { BLENDING } from '../src/plugins/color';
 
 const ALL = Object.values(Patch);
 
@@ -436,5 +437,42 @@ describe('COLOR_CHANNEL_PRECISION: channel math precision', () => {
     expect(c.compile(mul).css).toEqual('.a {\n  x: #000;\n}\n');
     expect(c.compile(colorDiv).css).toEqual('.a {\n  x: #80402a;\n}\n');
     expect(c.compile(digest).css).toEqual(legacyDigest);
+  });
+});
+
+describe('COLOR_BLEND_ALPHA: blends keep the larger input alpha when fixed', () => {
+  // Value-position calls render literally at every level, so the
+  // blend table is exercised directly; the rendered strings match
+  // the corpus pins for the blend-alpha fixture.
+  const c1 = new RGBColor(255, 0, 0, 0.5);
+  const c2 = new RGBColor(0, 0, 255, 0.25);
+  const ctxAt = (level: number, patches?: { [id: string]: boolean }) =>
+    new LessCompiler(patches === undefined ? { compatLevel: level } : { compatLevel: level, compatPatches: patches }).context();
+  const blend = (name: string, level: number, patches?: { [id: string]: boolean }): RGBColor =>
+    BLENDING[name].invoke(ctxAt(level, patches).newEnv(), [c1, c2]) as RGBColor;
+  const render = (name: string, level: number, patches?: { [id: string]: boolean }): string =>
+    ctxAt(level, patches).render(blend(name, level, patches));
+
+  test('fixed levels keep the larger input alpha', () => {
+    for (const name of Object.keys(BLENDING)) {
+      expect(blend(name, 2).a).toBe(0.5);
+    }
+    expect(render('multiply', 2)).toEqual('rgba(0, 0, 0, .5)');
+  });
+
+  test('legacy levels blend opaque', () => {
+    for (const name of Object.keys(BLENDING)) {
+      expect(blend(name, 0).a).toBe(1.0);
+      expect(blend(name, 1).a).toBe(1.0);
+    }
+    expect(render('multiply', 0)).toEqual('#000');
+    expect(render('multiply', 1)).toEqual('#000');
+  });
+
+  test('an override forces the opaque blend at a fixed level', () => {
+    expect(render('multiply', 2, { COLOR_BLEND_ALPHA: true })).toEqual('#000');
+    for (const name of Object.keys(BLENDING)) {
+      expect(blend(name, 2, { COLOR_BLEND_ALPHA: true }).a).toBe(1.0);
+    }
   });
 });

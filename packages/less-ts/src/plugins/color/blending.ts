@@ -1,9 +1,15 @@
 import { ExecEnv, Function, Node } from '../../common';
+import { Patch } from '../../compat';
 import { RGBColor } from '../../model';
 import { BaseFunction } from '../base';
 import { rgb } from './util';
 
 const { abs } = Math;
+
+// COLOR_BLEND_ALPHA: legacy blend results are opaque; fixed levels keep
+// the larger input alpha.
+const blendAlpha = (env: ExecEnv, c1: RGBColor, c2: RGBColor): number =>
+  env.ctx.compat.enabled(Patch.COLOR_BLEND_ALPHA) ? 1.0 : Math.max(c1.a, c2.a);
 
 class Average extends BaseFunction {
   constructor() {
@@ -16,7 +22,7 @@ class Average extends BaseFunction {
     const r = (c1.r + c2.r) / 2.0;
     const g = (c1.g + c2.g) / 2.0;
     const b = (c1.b + c2.b) / 2.0;
-    return new RGBColor(r, g, b, 1.0);
+    return new RGBColor(r, g, b, blendAlpha(env, c1, c2));
   }
 }
 
@@ -31,7 +37,7 @@ class Difference extends BaseFunction {
     const r = abs(c1.r - c2.r);
     const g = abs(c1.g - c2.g);
     const b = abs(c1.b - c2.b);
-    return new RGBColor(r, g, b, 1.0);
+    return new RGBColor(r, g, b, blendAlpha(env, c1, c2));
   }
 }
 
@@ -46,7 +52,7 @@ class Exclusion extends BaseFunction {
     const r = exclusion(c1.r, c2.r);
     const g = exclusion(c1.g, c2.g);
     const b = exclusion(c1.b, c2.b);
-    return new RGBColor(r, g, b, 1.0);
+    return new RGBColor(r, g, b, blendAlpha(env, c1, c2));
   }
 }
 
@@ -61,7 +67,7 @@ class Hardlight extends BaseFunction {
     const r = hardlight(c1.r, c2.r);
     const g = hardlight(c1.g, c2.g);
     const b = hardlight(c1.b, c2.b);
-    return new RGBColor(r, g, b, 1.0);
+    return new RGBColor(r, g, b, blendAlpha(env, c1, c2));
   }
 }
 
@@ -76,7 +82,7 @@ class Multiply extends BaseFunction {
     const r = (c1.r * c2.r) / 255;
     const g = (c1.g * c2.g) / 255;
     const b = (c1.b * c2.b) / 255;
-    return new RGBColor(r, g, b, 1.0);
+    return new RGBColor(r, g, b, blendAlpha(env, c1, c2));
   }
 }
 
@@ -91,7 +97,7 @@ class Negation extends BaseFunction {
     const r = negation(c1.r, c2.r);
     const g = negation(c1.g, c2.g);
     const b = negation(c1.b, c2.b);
-    return new RGBColor(r, g, b, 1.0);
+    return new RGBColor(r, g, b, blendAlpha(env, c1, c2));
   }
 }
 
@@ -106,7 +112,7 @@ class Overlay extends BaseFunction {
     const r = overlay(c1.r, c2.r);
     const g = overlay(c1.g, c2.g);
     const b = overlay(c1.b, c2.b);
-    return new RGBColor(r, g, b, 1.0);
+    return new RGBColor(r, g, b, blendAlpha(env, c1, c2));
   }
 }
 
@@ -121,7 +127,7 @@ class Screen extends BaseFunction {
     const r = screen(c1.r, c2.r);
     const g = screen(c1.g, c2.g);
     const b = screen(c1.b, c2.b);
-    return new RGBColor(r, g, b, 1.0);
+    return new RGBColor(r, g, b, blendAlpha(env, c1, c2));
   }
 }
 
@@ -136,7 +142,7 @@ class Softlight extends BaseFunction {
     const r = softlight(c1.r, c2.r);
     const g = softlight(c1.g, c2.g);
     const b = softlight(c1.b, c2.b);
-    return new RGBColor(r, g, b, 1.0);
+    return new RGBColor(r, g, b, blendAlpha(env, c1, c2));
   }
 }
 
