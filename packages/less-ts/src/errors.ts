@@ -50,8 +50,8 @@ export const mixinRecurse = (path: string, limit: number): LessError =>
 export const mixinUndefined = (path: string): LessError =>
   runtimeError(`ExecuteError MIXIN_UNDEFINED: Failed to locate a mixin using selector ${path}`);
 
-export const namedArgNotFound = (call: string, name: string): LessError =>
-  runtimeError(`Binding params for mixin call ${call}, named arg ${name} not found`);
+export const namedArgNotFound = (name: string): LessError =>
+  runtimeError(`ExecuteError ARG_NAMED_NOTFOUND: Named arg ${name} not found`);
 
 export const uncomparableType = (type: string): LessError =>
   runtimeError(`ExecuteError UNCOMPARABLE_TYPE: Unable to compare instances of ${type}`);

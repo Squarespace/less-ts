@@ -72,8 +72,7 @@ export class MixinMatcher {
       // Check if named argument does not correspond to a parameter
       const j = names.indexOf(name);
       if (j === -1) {
-        const callName = this.ctx.render(this.call.selector);
-        this.env.errors.push(namedArgNotFound(callName, name));
+        this.env.errors.push(namedArgNotFound(name));
         continue;
       }
 
