@@ -1,4 +1,6 @@
 import { ExecEnv, Function, Node, NodeType } from '../common';
+import { Patch } from '../compat';
+import { divideByZero } from '../errors';
 import { unitConversionFactor, Dimension, Unit } from '../model';
 import { BaseFunction } from './base';
 
@@ -114,11 +116,15 @@ class Mod extends BaseFunction {
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const dividend = args[0] as Dimension;
     const divisor = (args[1] as Dimension).value;
-    let res: number = NaN;
-    if (divisor !== 0) {
-      res = dividend.value % divisor;
+    // MOD_ZERO_STRICT: legacy returns NaN silently; fixed levels
+    // fail the compile like a division by zero does.
+    if (divisor === 0) {
+      if (!env.ctx.compat.enabled(Patch.MOD_ZERO_STRICT)) {
+        env.errors.push(divideByZero(dividend.modelRepr()));
+      }
+      return new Dimension(NaN, dividend.unit);
     }
-    return new Dimension(res, dividend.unit);
+    return new Dimension(dividend.value % divisor, dividend.unit);
   }
 }
 

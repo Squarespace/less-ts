@@ -1,5 +1,23 @@
-import { Block, CompatLevel, LessCompiler, Patch, RGBColor, RenderEnv, Ruleset, Selector, Selectors, THRESHOLDS, TextElement, maxThreshold } from '../src';
+import {
+  maxThreshold,
+  Block,
+  CompatLevel,
+  Dimension,
+  Keyword,
+  LessCompiler,
+  Patch,
+  RenderEnv,
+  Ruleset,
+  RGBColor,
+  Selector,
+  Selectors,
+  TextElement,
+  THRESHOLDS,
+  Unit,
+} from '../src';
 import { BLENDING } from '../src/plugins/color';
+import { MATH } from '../src/plugins/math';
+import { MISC } from '../src/plugins/misc';
 
 const ALL = Object.values(Patch);
 
@@ -693,5 +711,101 @@ describe('SELECTOR_COMPLEXITY_OVERFLOW: selector complexity threshold', () => {
     expect(() => env.push(manySelectors(100, 'b'))).toThrow(TOO_COMPLEX);
     expect(env.frame).toBe(before);
     expect(env.depth).toBe(1);
+  });
+});
+
+describe('MOD_ZERO_STRICT: mod(x, 0) obeys the division contract when fixed', () => {
+  // Value-position calls render literally at every level in this tree,
+  // so the table is exercised directly; the message bytes match the
+  // ladder pins for the mod-zero fixture.
+  const ctxAt = (level: number, patches?: { [id: string]: boolean }) =>
+    new LessCompiler(patches === undefined ? { compatLevel: level } : { compatLevel: level, compatPatches: patches }).context();
+
+  test('legacy levels return NaN silently, rendered as 0', () => {
+    for (const level of [0, 1]) {
+      const ctx = ctxAt(level);
+      const env = ctx.newEnv();
+      const res = MATH.mod.invoke(env, [new Dimension(10), new Dimension(0)]) as Dimension;
+      expect(env.errors.length).toEqual(0);
+      expect(ctx.render(res)).toEqual('0');
+    }
+  });
+
+  test('fixed levels fail with DIVIDE_BY_ZERO', () => {
+    const env = ctxAt(2).newEnv();
+    MATH.mod.invoke(env, [new Dimension(10), new Dimension(0)]);
+    expect(env.errors[0].message).toEqual('ExecuteError DIVIDE_BY_ZERO: Attempt to divide DIMENSION 10.0 by zero.');
+  });
+
+  test('a nonzero divisor is unaffected at every level', () => {
+    for (const level of [0, 1, 2]) {
+      const ctx = ctxAt(level);
+      const env = ctx.newEnv();
+      const res = MATH.mod.invoke(env, [new Dimension(11), new Dimension(3)]) as Dimension;
+      expect(env.errors.length).toEqual(0);
+      expect(ctx.render(res)).toEqual('2');
+    }
+  });
+
+  test('combined legacy overrides return NaN rendered as 0', () => {
+    // The mod legacy path plus the zero render of non-finite values.
+    const ctx = ctxAt(0, { MOD_ZERO_STRICT: true, NONFINITE_AS_ZERO: true });
+    const env = ctx.newEnv();
+    const res = MATH.mod.invoke(env, [new Dimension(10), new Dimension(0)]) as Dimension;
+    expect(env.errors.length).toEqual(0);
+    expect(ctx.render(res)).toEqual('0');
+  });
+
+  test('an override forces the silent path on at a fixed level', () => {
+    // Only MOD is forced on; the NaN renders visibly.
+    const ctx = ctxAt(2, { MOD_ZERO_STRICT: true });
+    const env = ctx.newEnv();
+    const res = MATH.mod.invoke(env, [new Dimension(10), new Dimension(0)]) as Dimension;
+    expect(env.errors.length).toEqual(0);
+    expect(ctx.render(res)).toEqual('NaN');
+  });
+});
+
+describe('CONVERT_INCOMPATIBLE_UNITS: convert() fails to incompatible units when fixed', () => {
+  // Value-position calls render literally at every level in this tree,
+  // so the table is exercised directly; the message bytes match the
+  // ladder pins for the convert-incompatible fixture.
+  const ctxAt = (level: number, patches?: { [id: string]: boolean }) =>
+    new LessCompiler(patches === undefined ? { compatLevel: level } : { compatLevel: level, compatPatches: patches }).context();
+
+  test('legacy levels emit 0 with the target unit', () => {
+    for (const level of [0, 1]) {
+      const ctx = ctxAt(level);
+      const env = ctx.newEnv();
+      const res = MISC.convert.invoke(env, [new Dimension(16, Unit.PX), new Keyword('em')]) as Dimension;
+      expect(env.errors.length).toEqual(0);
+      expect(ctx.render(res)).toEqual('0em');
+    }
+  });
+
+  test('fixed levels fail with INCOMPATIBLE_UNITS', () => {
+    const env = ctxAt(2).newEnv();
+    MISC.convert.invoke(env, [new Dimension(16, Unit.PX), new Keyword('em')]);
+    expect(env.errors[0].message).toEqual(
+      'ExecuteError INCOMPATIBLE_UNITS: No conversion is possible from PX (pixels) to EM (element font size)'
+    );
+  });
+
+  test('a compatible conversion is unaffected at every level', () => {
+    for (const level of [0, 1, 2]) {
+      const ctx = ctxAt(level);
+      const env = ctx.newEnv();
+      const res = MISC.convert.invoke(env, [new Dimension(1, Unit.IN), new Keyword('px')]) as Dimension;
+      expect(env.errors.length).toEqual(0);
+      expect(ctx.render(res)).toEqual('96px');
+    }
+  });
+
+  test('an override forces the silent path on at a fixed level', () => {
+    const ctx = ctxAt(2, { CONVERT_INCOMPATIBLE_UNITS: true });
+    const env = ctx.newEnv();
+    const res = MISC.convert.invoke(env, [new Dimension(16, Unit.PX), new Keyword('em')]) as Dimension;
+    expect(env.errors.length).toEqual(0);
+    expect(ctx.render(res)).toEqual('0em');
   });
 });

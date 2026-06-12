@@ -1,6 +1,7 @@
 import { ExecEnv, Function, Node, NodeType } from '../common';
-import { unknownUnit } from '../errors';
-import { stringToUnit, unitConversionFactor, Anonymous, Dimension, Keyword, Quoted, RGBColor, Unit } from '../model';
+import { Patch } from '../compat';
+import { incompatibleUnits, unknownUnit } from '../errors';
+import { stringToUnit, unitConversionFactor, unitDisplay, Anonymous, Dimension, Keyword, Quoted, RGBColor, Unit } from '../model';
 import { BaseFunction } from './base';
 
 const ANON_EMPTY = new Anonymous('');
@@ -29,6 +30,11 @@ class Convert extends BaseFunction {
     const dim = args[0] as Dimension;
     const destUnit = toUnit(env, args[1]);
     const factor = unitConversionFactor(dim.unit, destUnit);
+    // CONVERT_INCOMPATIBLE_UNITS: legacy emits 0 with the target
+    // unit; fixed levels fail the compile.
+    if (factor === 0 && !env.ctx.compat.enabled(Patch.CONVERT_INCOMPATIBLE_UNITS)) {
+      env.errors.push(incompatibleUnits(unitDisplay(dim.unit), unitDisplay(destUnit)));
+    }
     return new Dimension(dim.value * factor, destUnit);
   }
 }
