@@ -2,6 +2,7 @@ import { Node } from '../../common';
 import { whitespace } from '../../utils';
 import { isCombinator, isSelectorEnd, Chars } from '../types';
 import { LessStream, Parselet, Parselets } from '../stream';
+import { Patch } from '../../compat';
 
 import {
   Anonymous,
@@ -53,9 +54,13 @@ export class ElementParselet implements Parselet {
   }
 
   private parseAttribute(stm: LessStream, comb?: Combinator): Node | undefined {
+    const mark = stm.mark();
     if (!stm.seekIf(Chars.LEFT_SQUARE_BRACKET)) {
       return undefined;
     }
+    // Legacy levels drop an unterminated attribute silently; fixed
+    // levels restore the mark so the parse fails.
+    const legacy = stm.ctx.compat.enabled(Patch.ATTR_SELECTOR_UNTERMINATED);
 
     let key: Node | undefined;
     if (stm.matchAttributeKey()) {
@@ -64,6 +69,9 @@ export class ElementParselet implements Parselet {
       key = stm.parse(Parselets.QUOTED);
     }
     if (key === undefined) {
+      if (!legacy) {
+        stm.restore(mark);
+      }
       return undefined;
     }
 
@@ -80,6 +88,9 @@ export class ElementParselet implements Parselet {
       }
     }
     if (!stm.seekIf(Chars.RIGHT_SQUARE_BRACKET)) {
+      if (!legacy) {
+        stm.restore(mark);
+      }
       return undefined;
     }
     return new AttributeElement(comb, parts);
@@ -101,6 +112,7 @@ export class ElementParselet implements Parselet {
 
   private parseSub(stm: LessStream): Node | undefined {
     stm.skipWs();
+    const mark = stm.mark();
     if (!stm.seekIf(Chars.LEFT_PARENTHESIS)) {
       return undefined;
     }
@@ -108,6 +120,12 @@ export class ElementParselet implements Parselet {
     stm.skipWs();
     if (value && stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
       return new Paren(value);
+    }
+    // The same gate covers a parenthesized element: legacy leaves the
+    // consumed '(' so it is dropped; fixed levels restore the mark so
+    // the parse fails.
+    if (!stm.ctx.compat.enabled(Patch.ATTR_SELECTOR_UNTERMINATED)) {
+      stm.restore(mark);
     }
     return undefined;
   }

@@ -490,16 +490,6 @@
     "reason": "gate not implemented: exponent is not part of a number (1e3 renders as 1 e3)"
   },
   {
-    "fixture": "410-attr-unterm",
-    "level": "2",
-    "reason": "gate not implemented: unterminated attribute selector or paren element is dropped instead of failing the parse"
-  },
-  {
-    "fixture": "411-paren-elem",
-    "level": "2",
-    "reason": "gate not implemented: unterminated attribute selector or paren element is dropped instead of failing the parse"
-  },
-  {
     "fixture": "430-selector-complexity",
     "level": "0",
     "reason": "gate not implemented: selector complexity overflow is not swallowed, the full combination is rendered"
