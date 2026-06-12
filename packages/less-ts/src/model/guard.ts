@@ -1,5 +1,6 @@
 import { Buffer, ExecEnv, Node, NodeName, NodeType } from '../common';
 import { expectedBoolOp, uncomparableType } from '../errors';
+import { Patch } from '../compat';
 import { Anonymous } from './general';
 import { colorFromName, BaseColor, RGBColor } from './color';
 import { unitConversionFactor, Dimension, Unit } from './dimension';
@@ -89,17 +90,17 @@ export class Condition extends Node {
       }
 
       case NodeType.COLOR:
-        res = compareColor(op0 as BaseColor, op1);
+        res = compareColor(env, op0 as BaseColor, op1);
         break;
 
       case NodeType.DIMENSION:
-        res = compareDimension(op0 as Dimension, op1);
+        res = compareDimension(env, op0 as Dimension, op1);
         break;
 
       case NodeType.KEYWORD:
       case NodeType.TRUE:
       case NodeType.FALSE:
-        res = compareKeyword(op0 as Keyword, op1);
+        res = compareKeyword(env, op0 as Keyword, op1);
         break;
 
       case NodeType.QUOTED: {
@@ -125,6 +126,11 @@ export class Condition extends Node {
         return (
           operator === Operator.GREATER_THAN || operator === Operator.GREATER_THAN_OR_EQUAL || operator === Operator.NOT_EQUAL
         );
+      case UNCOMPARABLE:
+        // '<' keeps the legacy quirk (upstream ordering parity).
+        // The other operators are false: no ordering or equality
+        // exists between the operands.
+        return operator === Operator.LESS_THAN;
       default:
         return false;
     }
@@ -187,7 +193,17 @@ const truthValue = (env: ExecEnv, node: Node): boolean => {
   }
 };
 
-const compareColor = (left: BaseColor, right: Node): number => {
+// Returned by the compare helpers when the operands cannot be
+// compared, e.g. a color against a dimension.
+const UNCOMPARABLE = 2;
+
+// Legacy (patch on): uncomparable operands compare as -1, so '<',
+// '<=' and '!=' evaluate true. Fixed: UNCOMPARABLE, only '<'
+// stays true.
+const uncomparable = (env: ExecEnv): number =>
+  env.ctx.compat.enabled(Patch.GUARD_COMPARE_UNCOMPARABLE) ? -1 : UNCOMPARABLE;
+
+const compareColor = (env: ExecEnv, left: BaseColor, right: Node): number => {
   let rval: RGBColor | undefined;
   if (right.type === NodeType.KEYWORD) {
     rval = colorFromName((right as Keyword).value);
@@ -195,15 +211,15 @@ const compareColor = (left: BaseColor, right: Node): number => {
     rval = (right as BaseColor).toRGB();
   }
   if (!rval) {
-    return -1;
+    return uncomparable(env);
   }
   const lval = left.toRGB();
   return lval.r === rval.r && lval.g === rval.g && lval.b === rval.b && lval.a === rval.a ? 0 : -1;
 };
 
-const compareDimension = (left: Dimension, right: Node): number => {
+const compareDimension = (env: ExecEnv, left: Dimension, right: Node): number => {
   if (right.type !== NodeType.DIMENSION) {
-    return -1;
+    return uncomparable(env);
   }
 
   const rval = right as Dimension;
@@ -218,20 +234,20 @@ const compareDimension = (left: Dimension, right: Node): number => {
     factor = unitConversionFactor(rval.unit, baseunit);
     if (factor === 0) {
       // Units are not compatible
-      return -1;
+      return uncomparable(env);
     }
     value *= factor;
   }
   return basevalue < value ? -1 : basevalue > value ? 1 : 0;
 };
 
-const compareKeyword = (left: Keyword, right: Node): number => {
+const compareKeyword = (env: ExecEnv, left: Keyword, right: Node): number => {
   switch (right.type) {
     case NodeType.FALSE:
     case NodeType.KEYWORD:
     case NodeType.TRUE:
       return compareString(left.value, (right as Keyword).value);
     default:
-      return -1;
+      return uncomparable(env);
   }
 };

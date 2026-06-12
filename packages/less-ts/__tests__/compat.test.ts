@@ -533,3 +533,65 @@ describe('VARIADIC_NAMED_ARG: a named arg targeting the variadic', () => {
     expect(c.compile(src).errors[0].errors[0].message).toEqual(err);
   });
 });
+
+describe('GUARD_COMPARE_UNCOMPARABLE: uncomparable guard operands', () => {
+  // A color on the left, a dimension on the right: there is no
+  // ordering or equality between them. The corpus pins the same
+  // truth table at every level (fixtures 420-426).
+  const src = (op: string): string => `.m(@a) when (@a ${op} 10px) { p: 1; }\n.x { .m(red); }\n`;
+
+  // Released (legacy) table: uncomparable operands compare as -1, so
+  // '<', '<=' and '!=' are true.
+  const legacyTrue = ['<', '<=', '!='];
+  const legacyFalse = ['=', '>', '>='];
+
+  test('legacy levels follow the released truth table', () => {
+    for (const level of [0, 1]) {
+      const c = new LessCompiler({ compatLevel: level });
+      for (const op of legacyTrue) {
+        expect(c.compile(src(op)).css).toEqual('.x {\n  p: 1;\n}\n');
+      }
+      for (const op of legacyFalse) {
+        expect(c.compile(src(op)).css).toEqual('');
+      }
+    }
+  });
+
+  test('the default options keep the released table', () => {
+    const c = new LessCompiler({});
+    for (const op of legacyTrue) {
+      expect(c.compile(src(op)).css).toEqual('.x {\n  p: 1;\n}\n');
+    }
+    for (const op of legacyFalse) {
+      expect(c.compile(src(op)).css).toEqual('');
+    }
+  });
+
+  test('fixed levels keep only the < quirk', () => {
+    // '<' stays true upstream (less.js ordering parity); everything
+    // else is false.
+    const c = new LessCompiler({ compatLevel: 2 });
+    expect(c.compile(src('<')).css).toEqual('.x {\n  p: 1;\n}\n');
+    for (const op of ['<=', '=', '!=', '>', '>=']) {
+      expect(c.compile(src(op)).css).toEqual('');
+    }
+  });
+
+  test('comparable operands are unaffected at every level', () => {
+    for (const level of [0, 1, 2]) {
+      const c = new LessCompiler({ compatLevel: level });
+      const eq = '.m(@a) when (@a = 10px) { p: 1; }\n.x { .m(10px); }\n';
+      expect(c.compile(eq).css).toEqual('.x {\n  p: 1;\n}\n');
+    }
+  });
+
+  test('an override forces the legacy table on at a fixed level', () => {
+    const c = new LessCompiler({ compatLevel: 2, compatPatches: { GUARD_COMPARE_UNCOMPARABLE: true } });
+    for (const op of legacyTrue) {
+      expect(c.compile(src(op)).css).toEqual('.x {\n  p: 1;\n}\n');
+    }
+    for (const op of legacyFalse) {
+      expect(c.compile(src(op)).css).toEqual('');
+    }
+  });
+});
