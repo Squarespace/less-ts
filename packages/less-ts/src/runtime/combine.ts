@@ -3,16 +3,28 @@ import { cartesianProduct } from './utils';
 
 const KEYWORD_AND = new Keyword('and');
 
-/**
- * Merges a set of selectors with one or more ancestors. This computes the cartesian
- * product of the two sets of selectors, and handles wildcard replacement.
- */
-export const combineSelectors = (ancestors: Selectors, current: Selectors): Selectors => {
+// Selector complexity threshold. A combine that exceeds this many
+// elements fails the compile (fixed levels) or drops the current
+// selector (legacy levels).
+const SELECTOR_THRESHOLD = 4096;
+
+const selectorTooComplex = (): Error =>
+  new Error('ExecuteError SELECTOR_TOO_COMPLEX: Selector exceeds the complexity threshold');
+
+// Combines a set of selectors with its ancestors: the cartesian
+// product with wildcard replacement.
+//
+// sharedBudget true spans one complexity counter across every flatten
+// call, capping the combined selector set (the fixed-level contract).
+// false gives each call a fresh counter, the released per-call
+// overflow contract, which the legacy levels need for byte-parity.
+export const combineSelectors = (ancestors: Selectors, current: Selectors, sharedBudget: boolean = false): Selectors => {
   const result = new Selectors([]);
+  const complexity = [0];
   for (const selector of current.selectors) {
     // If selector does not have a wildcard, just prepend it to the ancestors.
     if (!selector.hasWildcard) {
-      flatten([ancestors.selectors, [selector]], result);
+      flatten([ancestors.selectors, [selector]], result, sharedBudget ? complexity : [0]);
       continue;
     }
 
@@ -37,12 +49,14 @@ export const combineSelectors = (ancestors: Selectors, current: Selectors): Sele
       inputs.push([temp]);
     }
 
-    flatten(inputs, result);
+    flatten(inputs, result, sharedBudget ? complexity : [0]);
   }
   return result;
 };
 
-export const flatten = (selectors: Selector[][], result: Selectors): void => {
+// One flatten step of a combine. complexity carries the running element
+// count; the combine decides whether the calls share it.
+export const flatten = (selectors: Selector[][], result: Selectors, complexity: number[]): void => {
   const product = cartesianProduct(selectors);
   for (const tmp of product) {
     let flat: Element[] = [];
@@ -50,6 +64,10 @@ export const flatten = (selectors: Selector[][], result: Selectors): void => {
       flat = flat.concat(sel.elements);
     }
     result.selectors.push(new Selector(flat));
+    complexity[0] += flat.length;
+    if (complexity[0] > SELECTOR_THRESHOLD) {
+      throw selectorTooComplex();
+    }
   }
 };
 

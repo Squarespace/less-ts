@@ -1,4 +1,4 @@
-import { CompatLevel, LessCompiler, Patch, RGBColor, THRESHOLDS, maxThreshold } from '../src';
+import { Block, CompatLevel, LessCompiler, Patch, RGBColor, RenderEnv, Ruleset, Selector, Selectors, THRESHOLDS, TextElement, maxThreshold } from '../src';
 import { BLENDING } from '../src/plugins/color';
 
 const ALL = Object.values(Patch);
@@ -593,5 +593,105 @@ describe('GUARD_COMPARE_UNCOMPARABLE: uncomparable guard operands', () => {
     for (const op of legacyFalse) {
       expect(c.compile(src(op)).css).toEqual('');
     }
+  });
+});
+
+describe('SELECTOR_COMPLEXITY_OVERFLOW: selector complexity threshold', () => {
+  // The error message, verbatim from the Java ladder pins.
+  const TOO_COMPLEX = 'ExecuteError SELECTOR_TOO_COMPLEX: Selector exceeds the complexity threshold';
+
+  // 64 nested rulesets, 65 sibling selectors each. At the legacy
+  // per-call budget the depth-1 combine fits (65 x 2 = 130 elements
+  // per call), so the grid renders as 4225 selectors. Every deeper
+  // combine needs 4225 x 3 elements in its first call, over the 4096
+  // limit, so the deeper levels fall back to the ancestors and the
+  // output keeps the depth-1 set once. Byte-compared to the ladder.
+  const grid = (): string => {
+    let src = '';
+    for (let i = 0; i < 64; i++) {
+      const sels: string[] = [];
+      for (let j = 0; j < 65; j++) {
+        sels.push('.s' + i + '-' + j);
+      }
+      src += sels.join(',\n') + ' {\n';
+    }
+    src += 'x: 1;\n';
+    for (let i = 0; i < 64; i++) {
+      src += '}\n';
+    }
+    return src;
+  };
+
+  test('legacy levels drop the overflowing nested selector', () => {
+    for (const level of [0, 1]) {
+      const res = new LessCompiler({ compatLevel: level }).compile(grid());
+      expect(res.errors.length).toEqual(0);
+      expect(res.css).toContain('.s0-0 .s1-0,');
+      // 4225 combined selectors + the rule + the closing brace.
+      expect(res.css.split('\n').length).toBe(4228);
+    }
+  });
+
+  test('the default options keep the fallback', () => {
+    const res = new LessCompiler({}).compile(grid());
+    expect(res.errors.length).toEqual(0);
+    expect(res.css.split('\n').length).toBe(4228);
+  });
+
+  test('fixed levels fail the compile', () => {
+    expect(() => new LessCompiler({ compatLevel: 2 }).compile(grid())).toThrow(TOO_COMPLEX);
+  });
+
+  test('an override forces the fallback on at a fixed level', () => {
+    const c = new LessCompiler({ compatLevel: 2, compatPatches: { SELECTOR_COMPLEXITY_OVERFLOW: true } });
+    const res = c.compile(grid());
+    expect(res.errors.length).toEqual(0);
+    expect(res.css.split('\n').length).toBe(4228);
+  });
+
+  test('legacy levels: deeper nesting falls back to the ancestors', () => {
+    // 65 top-level selectors nested 63 deep. The shallow combines fit
+    // the budget, but the last one (65 x 64 = 4160 elements) exceeds
+    // it, so the deepest rule keeps the ancestor selector, missing the
+    // final .b62. Fixed levels fail the whole compile.
+    const sels = Array.from({ length: 65 }, (_v, i) => '.a' + i).join(',\n');
+    let nested = '';
+    for (let i = 0; i < 63; i++) {
+      nested += '.b' + i + ' {\n';
+    }
+    nested += 'color: red;\n';
+    for (let i = 0; i < 63; i++) {
+      nested += '}\n';
+    }
+    const src = sels + ' {\n' + nested + '}\n';
+
+    const legacy = new LessCompiler({}).compile(src);
+    expect(legacy.errors.length).toEqual(0);
+    expect(legacy.css).toContain('.b61 {');
+    expect(legacy.css.split('\n').length).toEqual(68);
+
+    expect(() => new LessCompiler({ compatLevel: 2 }).compile(src)).toThrow(TOO_COMPLEX);
+  });
+
+  // A ruleset with count sibling selectors '.p0'..'.pN'.
+  const manySelectors = (count: number, prefix: string): Ruleset =>
+    new Ruleset(
+      new Selectors(Array.from({ length: count }, (_v, i) => new Selector([new TextElement(undefined, '.' + prefix + i)]))),
+      new Block([]),
+    );
+
+  test('a failed push leaves the env frame and depth unchanged', () => {
+    // At the fixed levels a complexity overflow is a hard error. The
+    // env must not commit a new frame or depth until the merge that
+    // can throw has succeeded: a caller further up the stack may
+    // recover from the exception (safe mode) and keep rendering, and
+    // would otherwise inherit a half-pushed env.
+    const ctx = new LessCompiler({ compatLevel: 2 }).context();
+    const env = new RenderEnv(ctx);
+    env.push(manySelectors(100, 'a'));
+    const before = env.frame;
+    expect(() => env.push(manySelectors(100, 'b'))).toThrow(TOO_COMPLEX);
+    expect(env.frame).toBe(before);
+    expect(env.depth).toBe(1);
   });
 });

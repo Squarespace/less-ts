@@ -35,6 +35,7 @@ import {
 import { combineFeatures, combineSelectors } from './combine';
 import { CssModel } from './css';
 import { whitespace } from '../utils';
+import { Patch } from '../compat';
 
 const EMPTY_FEATURES = new Features([], true);
 const EMPTY_SELECTORS = new Selectors([]);
@@ -53,12 +54,28 @@ export class RenderFrame {
     return this._features ? this._features : this.parent ? this.parent.features() : EMPTY_FEATURES;
   }
 
-  mergeSelectors(current?: Selectors): void {
+  // Merges the current selectors into this frame. When the merge
+  // overflows the complexity limit and fallbackOnOverflow is set (the
+  // legacy levels), the overflow is swallowed: the current selector is
+  // dropped and the frame keeps the ancestors. Otherwise the compile
+  // fails.
+  mergeSelectors(current?: Selectors, fallbackOnOverflow: boolean = false): void {
     const ancestors = this.parent ? this.parent.selectors() : EMPTY_SELECTORS;
     if (!current || current.selectors.length === 0) {
       this._selectors = ancestors;
-    } else {
-      this._selectors = combineSelectors(ancestors, current);
+      return;
+    }
+    try {
+      this._selectors = combineSelectors(ancestors, current, !fallbackOnOverflow);
+    } catch (e) {
+      // SELECTOR_COMPLEXITY_OVERFLOW: legacy levels drop the current
+      // selector and keep the ancestors; fixed levels propagate the
+      // error.
+      if (fallbackOnOverflow) {
+        this._selectors = ancestors;
+      } else {
+        throw e;
+      }
     }
   }
 
@@ -85,15 +102,21 @@ export class RenderEnv {
     const { type } = blockNode;
     const selectors = type === NodeType.RULESET ? (blockNode as Ruleset).selectors : undefined;
     const features = type === NodeType.MEDIA ? (blockNode as Media).features : undefined;
-    this.depth++;
-    this.frame = new RenderFrame(this.frame, blockNode, this.depth);
+    // Build the candidate frame and let it absorb the selector merge
+    // before committing. mergeSelectors can throw (a selector
+    // complexity overflow at the fixed levels), and a caller further
+    // up the stack may recover from that and keep rendering, so a
+    // thrown push must leave frame and depth exactly as they were.
+    const next = new RenderFrame(this.frame, blockNode, this.depth + 1);
     if (type === NodeType.BLOCK_DIRECTIVE) {
-      this.frame.pushEmptySelectors();
+      next.pushEmptySelectors();
     } else if (selectors) {
-      this.frame.mergeSelectors(selectors);
+      next.mergeSelectors(selectors, this.ctx.compat.enabled(Patch.SELECTOR_COMPLEXITY_OVERFLOW));
     } else if (features) {
-      this.frame.mergeFeatures(features);
+      next.mergeFeatures(features);
     }
+    this.depth++;
+    this.frame = next;
   }
 
   pop(): void {

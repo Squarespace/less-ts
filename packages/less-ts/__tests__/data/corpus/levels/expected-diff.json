@@ -490,26 +490,6 @@
     "reason": "gate not implemented: exponent is not part of a number (1e3 renders as 1 e3)"
   },
   {
-    "fixture": "430-selector-complexity",
-    "level": "0",
-    "reason": "gate not implemented: selector complexity overflow is not swallowed, the full combination is rendered"
-  },
-  {
-    "fixture": "430-selector-complexity",
-    "level": "1",
-    "reason": "gate not implemented: selector complexity overflow is not swallowed, the full combination is rendered"
-  },
-  {
-    "fixture": "430-selector-complexity",
-    "level": "2",
-    "reason": "gate not implemented: selector complexity overflow is not swallowed, the full combination is rendered"
-  },
-  {
-    "fixture": "430-selector-complexity",
-    "level": "bare",
-    "reason": "gate not implemented: selector complexity overflow is not swallowed, the full combination is rendered"
-  },
-  {
     "fixture": "500-blend-alpha",
     "level": "0",
     "reason": "value-position calls render literally until the Java-side patch lands"
