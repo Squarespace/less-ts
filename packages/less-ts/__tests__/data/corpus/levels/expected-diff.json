@@ -480,16 +480,6 @@
     "reason": "value-position calls render literally until the Java-side patch lands"
   },
   {
-    "fixture": "400-number-expo",
-    "level": "2",
-    "reason": "gate not implemented: exponent is not part of a number (1e3 renders as 1 e3)"
-  },
-  {
-    "fixture": "401-number-expo-neg",
-    "level": "2",
-    "reason": "gate not implemented: exponent is not part of a number (1e3 renders as 1 e3)"
-  },
-  {
     "fixture": "500-blend-alpha",
     "level": "0",
     "reason": "value-position calls render literally until the Java-side patch lands"

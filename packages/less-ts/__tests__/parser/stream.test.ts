@@ -39,3 +39,47 @@ test('element', () => {
   expect(stm.matchElement1()).toBe(false);
   expect(stm.token()).toEqual('');
 });
+
+test('dimension value: the released grammar has no exponent', () => {
+  // The legacy number: '1e3' is 1 + the identifier 'e3', '7E705E'
+  // is 7 + 'E705E'. A unit after the number is unaffected.
+  for (const [raw, number] of [
+    ['1e3', '1'],
+    ['7E705E', '7'],
+  ] as Array<[string, string]>) {
+    const stm = stream(raw);
+    expect(stm.matchDimensionValueLegacy()).toBe(true);
+    expect(stm.token()).toEqual(number);
+  }
+  for (const [raw, number, unit] of [
+    ['10em', '10', 'em'],
+    ['2ex', '2', 'ex'],
+  ] as Array<[string, string, string]>) {
+    const stm = stream(raw);
+    expect(stm.matchDimensionValueLegacy()).toBe(true);
+    expect(stm.token()).toEqual(number);
+    expect(stm.matchDimensionUnit()).toBe(true);
+    expect(stm.token()).toEqual(unit);
+  }
+});
+
+test('dimension value: a fixed tokenizer takes the exponent into the number', () => {
+  const stm = new LessStream(new LessCompiler({ compatLevel: 2 }).context(), '1.5e-3');
+  expect(stm.matchDimensionValue()).toBe(true);
+  expect(stm.token()).toEqual('1.5e-3');
+});
+
+test('dimension value: the exponent needs a digit to follow', () => {
+  // A unit after the number is unaffected: 'e' followed by a letter
+  // is not an exponent, so the number stops before the unit.
+  for (const [raw, number, unit] of [
+    ['10em', '10', 'em'],
+    ['2ex', '2', 'ex'],
+  ] as Array<[string, string, string]>) {
+    const stm = new LessStream(new LessCompiler({ compatLevel: 2 }).context(), raw);
+    expect(stm.matchDimensionValue()).toBe(true);
+    expect(stm.token()).toEqual(number);
+    expect(stm.matchDimensionUnit()).toBe(true);
+    expect(stm.token()).toEqual(unit);
+  }
+});

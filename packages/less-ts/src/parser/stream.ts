@@ -67,7 +67,15 @@ const enum Patterns {
   ATTRIBUTE_OP = '[|~*$^]?=',
   BOOL_OPERATOR = '<>|=[<>]*|[<>]=*|!=',
   CALL_NAME = '([\\w-_]+|%|progid:[\\w\\.]+)\\(',
-  DIMENSION_VALUE = '[+-]?\\d*\\.?\\d+',
+
+  // Exponent-aware number: '1e2', '2E2', '1.5e-3'. 'e' is an
+  // exponent only when a digit or sign follows, so units like 'em'
+  // or 'ex' never get swallowed (the unit is matched separately).
+  DIMENSION_VALUE = '[+-]?(?:\\d+(?:\\.\\d+)?|\\.\\d+)(?:[eE][+-]?\\d+)?',
+  // Released 1.7.2 numeric grammar: no exponent part. '1e3'
+  // tokenizes as number 1 + identifier 'e3'. The legacy side of
+  // Patch.NUMBER_EXPO; level 0 must match the release exactly.
+  DIMENSION_VALUE_LEGACY = '[+-]?\\d*\\.?\\d+',
   DIRECTIVE = '@[a-z-]+',
   ELEMENT0 = '(?:\\d+\\.\\d+|\\d+)%',
   ELEMENT1 = '(?:[.#]?|:*)(?:[\\w-]|[^\\u0000-\\u009f]|\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+',
@@ -113,6 +121,7 @@ export class LessStream {
   private readonly callName: RegExp = compile(Patterns.CALL_NAME);
   private readonly dimensionUnit: RegExp = compile(UNITS.join('|'), true);
   private readonly dimensionValue: RegExp = compile(Patterns.DIMENSION_VALUE);
+  private readonly dimensionValueLegacy: RegExp = compile(Patterns.DIMENSION_VALUE_LEGACY);
   private readonly directive: RegExp = compile(Patterns.DIRECTIVE);
   private readonly element0: RegExp = compile(Patterns.ELEMENT0);
   private readonly element1: RegExp = compile(Patterns.ELEMENT1);
@@ -201,6 +210,10 @@ export class LessStream {
 
   matchDimensionValue(): boolean {
     return this.finish(this.test(this.dimensionValue, this.index));
+  }
+
+  matchDimensionValueLegacy(): boolean {
+    return this.finish(this.test(this.dimensionValueLegacy, this.index));
   }
 
   matchDirective(): boolean {

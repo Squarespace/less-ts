@@ -787,7 +787,7 @@ describe('CONVERT_INCOMPATIBLE_UNITS: convert() fails to incompatible units when
     const env = ctxAt(2).newEnv();
     MISC.convert.invoke(env, [new Dimension(16, Unit.PX), new Keyword('em')]);
     expect(env.errors[0].message).toEqual(
-      'ExecuteError INCOMPATIBLE_UNITS: No conversion is possible from PX (pixels) to EM (element font size)'
+      'ExecuteError INCOMPATIBLE_UNITS: No conversion is possible from PX (pixels) to EM (element font size)',
     );
   });
 
@@ -807,5 +807,60 @@ describe('CONVERT_INCOMPATIBLE_UNITS: convert() fails to incompatible units when
     const res = MISC.convert.invoke(env, [new Dimension(16, Unit.PX), new Keyword('em')]) as Dimension;
     expect(env.errors.length).toEqual(0);
     expect(ctx.render(res)).toEqual('0em');
+  });
+});
+
+describe('NUMBER_EXPO: exponents in numbers', () => {
+  // At legacy levels 'e' is not an exponent: '1e3' tokenizes as the
+  // number 1 and the identifier 'e3', and '7E705E' as 7 and 'E705E'
+  // (both invalid CSS, emitted literally). At the fixed level the
+  // exponent parses as part of the number. 'em' and 'ex' are units
+  // at every level: 'e' is an exponent only when a digit or sign
+  // follows.
+  const cases: Array<[string, string, string]> = [
+    ['1e3', '.a {\n  width: 1e3;\n}\n', '.a {\n  width: 1 e3;\n}\n'],
+    ['7E705E', '.a {\n  x: 7E705E;\n}\n', '.a {\n  x: 7 E705E;\n}\n'],
+    ['1.5e-3', '.a {\n  x: 1.5e-3;\n}\n', '.a {\n  x: 1.5 e-3;\n}\n'],
+    ['10em', '.a {\n  width: 10em;\n}\n', '.a {\n  width: 10em;\n}\n'],
+    ['2ex', '.a {\n  x: 2ex;\n}\n', '.a {\n  x: 2ex;\n}\n'],
+  ];
+  // The fixed level renders each number; 7E705 overflows to
+  // Infinity and the trailing E stays an identifier.
+  const fixedCss: { [key: string]: string } = {
+    '1e3': '.a {\n  width: 1000;\n}\n',
+    '7E705E': '.a {\n  x: Infinity E;\n}\n',
+    '1.5e-3': '.a {\n  x: .0015;\n}\n',
+    '10em': '.a {\n  width: 10em;\n}\n',
+    '2ex': '.a {\n  x: 2ex;\n}\n',
+  };
+
+  test('legacy levels keep the exponent out of the number', () => {
+    for (const level of [0, 1]) {
+      const c = new LessCompiler({ compatLevel: level });
+      for (const [, src, legacy] of cases) {
+        expect(c.compile(src).css).toEqual(legacy);
+      }
+    }
+  });
+
+  test('the default options keep the released tokenization', () => {
+    const c = new LessCompiler({});
+    for (const [, src, legacy] of cases) {
+      expect(c.compile(src).css).toEqual(legacy);
+    }
+  });
+
+  test('fixed levels parse the exponent as part of the number', () => {
+    const c = new LessCompiler({ compatLevel: 2 });
+    for (const [key, src] of cases) {
+      expect(c.compile(src).css).toEqual(fixedCss[key]);
+    }
+  });
+
+  test('an override forces the released tokenization on at a fixed level', () => {
+    const c = new LessCompiler({ compatLevel: 2, compatPatches: { NUMBER_EXPO: true } });
+    for (const [, src, legacy] of cases) {
+      expect(c.compile(src).css).toEqual(legacy);
+    }
   });
 });
