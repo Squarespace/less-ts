@@ -476,3 +476,60 @@ describe('COLOR_BLEND_ALPHA: blends keep the larger input alpha when fixed', () 
     }
   });
 });
+
+describe('ARGUMENTS_ORDER: @arguments emission order', () => {
+  // A call .m(@b: 2, @a: 1) against params (@a, @b): legacy emits in
+  // binding insertion order, fixed in parameter declaration order.
+  const src = '.m(@a, @b) {\n  args: @arguments;\n}\n.x {\n  .m(@b: 2, @a: 1);\n}\n';
+  const legacy = '.x {\n  args: 2 1;\n}\n';
+  const fixed = '.x {\n  args: 1 2;\n}\n';
+
+  test('legacy levels emit in binding insertion order', () => {
+    for (const level of [0, 1]) {
+      expect(new LessCompiler({ compatLevel: level }).compile(src).css).toEqual(legacy);
+    }
+  });
+
+  test('the default options keep the insertion order', () => {
+    expect(new LessCompiler({}).compile(src).css).toEqual(legacy);
+  });
+
+  test('fixed levels emit in parameter declaration order', () => {
+    expect(new LessCompiler({ compatLevel: 2 }).compile(src).css).toEqual(fixed);
+  });
+
+  test('an override forces the insertion order on at a fixed level', () => {
+    const c = new LessCompiler({ compatLevel: 2, compatPatches: { ARGUMENTS_ORDER: true } });
+    expect(c.compile(src).css).toEqual(legacy);
+  });
+});
+
+describe('VARIADIC_NAMED_ARG: a named arg targeting the variadic', () => {
+  // Legacy rejects the named arg; fixed levels bind it directly to the
+  // variadic parameter.
+  const src = '.m(@a, @rest...) {\n  a: @a;\n  rest: @rest;\n}\n.x {\n  .m(1, @rest: 2);\n}\n';
+  const err = 'ExecuteError ARG_NAMED_NOTFOUND: Named arg @rest not found';
+
+  test('legacy levels fail with ARG_NAMED_NOTFOUND', () => {
+    for (const level of [0, 1]) {
+      const res = new LessCompiler({ compatLevel: level }).compile(src);
+      expect(res.errors[0].errors[0].message).toEqual(err);
+    }
+  });
+
+  test('the default options keep the rejection', () => {
+    const res = new LessCompiler({}).compile(src);
+    expect(res.errors[0].errors[0].message).toEqual(err);
+  });
+
+  test('fixed levels bind the named arg to the variadic', () => {
+    const res = new LessCompiler({ compatLevel: 2 }).compile(src);
+    expect(res.errors.length).toEqual(0);
+    expect(res.css).toEqual('.x {\n  a: 1;\n  rest: 2;\n}\n');
+  });
+
+  test('an override forces the rejection on at a fixed level', () => {
+    const c = new LessCompiler({ compatLevel: 2, compatPatches: { VARIADIC_NAMED_ARG: true } });
+    expect(c.compile(src).errors[0].errors[0].message).toEqual(err);
+  });
+});

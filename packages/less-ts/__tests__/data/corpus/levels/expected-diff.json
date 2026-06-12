@@ -618,15 +618,5 @@
     "fixture": "531-convert-compatible",
     "level": "2",
     "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "540-arguments-order",
-    "level": "2",
-    "reason": "gate not implemented: arguments are emitted in parameter declaration order"
-  },
-  {
-    "fixture": "541-variadic-named-arg",
-    "level": "2",
-    "reason": "gate not implemented: a named arg targeting the variadic parameter binds to it"
   }
 ]

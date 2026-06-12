@@ -1,4 +1,5 @@
 import { Context, ExecEnv, Node } from '../common';
+import { Patch } from '../compat';
 import { argTooMany, internalError, namedArgNotFound } from '../errors';
 import {
   Argument,
@@ -62,6 +63,10 @@ export class MixinMatcher {
     // Bind all named arguments.
     const { args } = this.args;
     const argSize = args.length;
+    // VARIADIC_NAMED_ARG: legacy rejects a named arg that targets the
+    // variadic parameter; fixed levels bind it directly, like less.js.
+    const namedToVariadic = !this.ctx.compat.enabled(Patch.VARIADIC_NAMED_ARG);
+    let variadicNamed = false;
     for (let i = 0; i < argSize; i++) {
       const arg = args[i];
       const { name } = arg;
@@ -71,14 +76,19 @@ export class MixinMatcher {
 
       // Check if named argument does not correspond to a parameter
       const j = names.indexOf(name);
-      if (j === -1) {
+      if (j === -1 && !(namedToVariadic && name === variadicName)) {
         this.env.errors.push(namedArgNotFound(name));
         continue;
+      }
+      if (namedToVariadic && name === variadicName) {
+        variadicNamed = true;
       }
 
       // Bind value and remove name from list
       bindings[name] = arg.value;
-      names.splice(j, 1);
+      if (j !== -1) {
+        names.splice(j, 1);
+      }
     }
 
     // Bind all remaining positional arguments.
@@ -120,20 +130,52 @@ export class MixinMatcher {
       }
     }
 
-    // Build the final argument -> params bindings
+    // Build the final argument -> params bindings. Bindings keep their
+    // insertion order; @arguments follows them at legacy levels and
+    // the parameter declaration order at fixed levels
+    // (ARGUMENTS_ORDER), like less.js.
     const _arguments = new Expression([]);
     const block = new Block([]);
     for (const key of Object.keys(bindings)) {
-      const value = bindings[key];
-      block.add(new Definition(key, value));
-      _arguments.add(value);
+      block.add(new Definition(key, bindings[key]));
     }
-    if (variadicName && variadic) {
+    if (variadicName && variadic && !variadicNamed) {
       block.add(new Definition(variadicName, variadic));
     }
-    if (variadic) {
-      for (const value of variadic.values) {
-        _arguments.add(value);
+    if (this.ctx.compat.enabled(Patch.ARGUMENTS_ORDER)) {
+      for (const key of Object.keys(bindings)) {
+        _arguments.add(bindings[key]);
+      }
+      if (variadic) {
+        for (const value of variadic.values) {
+          _arguments.add(value);
+        }
+      }
+    } else {
+      // Parameter declaration order.
+      for (const param of params) {
+        if (param.variadic) {
+          if (variadicNamed) {
+            const value = bindings[variadicName as string];
+            if (value !== undefined) {
+              _arguments.add(value);
+            }
+          } else if (variadic) {
+            for (const value of variadic.values) {
+              _arguments.add(value);
+            }
+          }
+          continue;
+        }
+        const paramName = param.name;
+        if (paramName === undefined) {
+          // Pattern match: contributes no value to @arguments.
+          continue;
+        }
+        const value = bindings[paramName];
+        if (value !== undefined) {
+          _arguments.add(value);
+        }
       }
     }
     block.add(new Definition('@arguments', _arguments));
