@@ -1,4 +1,5 @@
 import { ExecEnv, Function, Node, NodeType } from '../common';
+import { Patch } from '../compat';
 import { formatFunctionArgs } from '../errors';
 import { Anonymous, BaseColor, Quoted } from '../model';
 import { BaseFunction } from './base';
@@ -94,6 +95,28 @@ class Format extends BaseFunction {
   }
 }
 
+class Replace extends BaseFunction {
+  constructor() {
+    super('replace', '*s*:s');
+  }
+
+  invoke(env: ExecEnv, args: Node[]): Node | undefined {
+    env.warnings.push('use of replace() is currently experimental');
+    const stringArg = args[0] as Quoted;
+    const string = asString(env, stringArg, true);
+    const pattern = asString(env, args[1] as Quoted, true);
+    // REPLACE_REGEX_GROUPS: legacy treats $n in the replacement as
+    // regex group references. Fixed levels escape the dollars so the
+    // replacement inserts literally.
+    let replacement = asString(env, args[2] as Quoted, true);
+    if (!env.ctx.compat.enabled(Patch.REPLACE_REGEX_GROUPS)) {
+      replacement = replacement.replace(/\$/g, '$$$$');
+    }
+    const output = new Anonymous(string.replace(new RegExp(pattern, 'g'), replacement));
+    return new Quoted(stringArg.delim, stringArg.escaped, [output]);
+  }
+}
+
 const asString = (env: ExecEnv, node: Node, escape: boolean): string => {
   if (escape && node.type === NodeType.QUOTED) {
     const str = (node as Quoted).copy();
@@ -107,4 +130,5 @@ export const STRING: { [x: string]: Function } = {
   e: new EFunc(),
   escape: new Escape(),
   '%': new Format(),
+  replace: new Replace(),
 };
