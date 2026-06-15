@@ -779,6 +779,57 @@ describe('SELECTOR_COMPLEXITY_OVERFLOW: selector complexity threshold', () => {
     expect(env.frame).toBe(before);
     expect(env.depth).toBe(1);
   });
+
+  // A flat top-level list whose single selector exceeds the budget
+  // (4097 elements). The per-call flatten overflows, but the list has
+  // no ancestors: the legacy fallback keeps the current list (the
+  // released overflow contract) instead of dropping the rule.
+  const flatOverflow = (): string => {
+    let sel = '';
+    for (let i = 0; i < 4097; i++) {
+      sel += (i ? ' ' : '') + '.e' + i;
+    }
+    return sel + ' { color: red; }\n';
+  };
+
+  test('legacy levels keep a flat list that overflows per call', () => {
+    const src = flatOverflow();
+    for (const opts of [{}, { compatLevel: 0 }, { compatLevel: 1 }]) {
+      const res = new LessCompiler(opts).compile(src);
+      expect(res.errors.length).toEqual(0);
+      expect(res.css.startsWith('.e0 .e1 .e2 ')).toBe(true);
+      expect(res.css.split('.e').length - 1).toBe(4097);
+      expect(res.css).toContain('color: red;');
+    }
+  });
+
+  test('fixed levels fail on a flat list that overflows', () => {
+    expect(() => new LessCompiler({ compatLevel: 2 }).compile(flatOverflow())).toThrow(TOO_COMPLEX);
+  });
+
+  // 32 x 21 x 3 nested comma lists (the corpus 432 window). Each inner
+  // combine expands one current selector against 672 ancestors: 2016
+  // elements per call, under the budget; the combined set is 6048, over
+  // it. Legacy levels count per call and keep every combination; the
+  // fixed level shares the budget and fails.
+  const window = (): string => {
+    const c = Array.from({ length: 32 }, (_v, i) => '.c' + i).join(', ');
+    const m = Array.from({ length: 21 }, (_v, i) => '.m' + i).join(', ');
+    return c + ' {\n' + m + ' {\n' + '.x1, .x2, .x3 {\n  color: red;\n}\n}\n}\n';
+  };
+
+  test('legacy levels keep a nested window whose combined set overflows', () => {
+    for (const level of [0, 1]) {
+      const res = new LessCompiler({ compatLevel: level }).compile(window());
+      expect(res.errors.length).toEqual(0);
+      expect(res.css.match(/\.x[123]/g)).toHaveLength(2016);
+      expect(res.css).toContain('color: red;');
+    }
+  });
+
+  test('fixed levels fail on a nested window whose combined set overflows', () => {
+    expect(() => new LessCompiler({ compatLevel: 2 }).compile(window())).toThrow(TOO_COMPLEX);
+  });
 });
 
 describe('MOD_ZERO_STRICT: mod(x, 0) obeys the division contract when fixed', () => {

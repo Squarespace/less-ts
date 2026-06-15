@@ -56,9 +56,9 @@ export class RenderFrame {
 
   // Merges the current selectors into this frame. When the merge
   // overflows the complexity limit and fallbackOnOverflow is set (the
-  // legacy levels), the overflow is swallowed: the current selector is
-  // dropped and the frame keeps the ancestors. Otherwise the compile
-  // fails.
+  // legacy levels), the overflow is swallowed: nested rules keep the
+  // ancestors, a flat top-level list keeps its own selectors. Otherwise
+  // the compile fails.
   mergeSelectors(current?: Selectors, fallbackOnOverflow: boolean = false): void {
     const ancestors = this.parent ? this.parent.selectors() : EMPTY_SELECTORS;
     if (!current || current.selectors.length === 0) {
@@ -68,11 +68,13 @@ export class RenderFrame {
     try {
       this._selectors = combineSelectors(ancestors, current, !fallbackOnOverflow);
     } catch (e) {
-      // SELECTOR_COMPLEXITY_OVERFLOW: legacy levels drop the current
-      // selector and keep the ancestors; fixed levels propagate the
-      // error.
+      // SELECTOR_COMPLEXITY_OVERFLOW: legacy levels swallow the
+      // overflow. A nested rule degrades to its parent selector. A
+      // flat top-level list has no ancestors, so it keeps its own
+      // selector list (the released overflow contract). Fixed levels
+      // propagate the error.
       if (fallbackOnOverflow) {
-        this._selectors = ancestors;
+        this._selectors = ancestors.selectors.length === 0 ? current : ancestors;
       } else {
         throw e;
       }
