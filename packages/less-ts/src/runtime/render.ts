@@ -185,6 +185,12 @@ export class Renderer {
     this.renderImports(block);
     this._renderBlock(block, false);
     this.env.pop();
+    // A single trailing comment when the per-compile warning
+    // budgets suppressed anything.
+    const suppressed = this.ctx.suppressedWarningSummary();
+    if (suppressed !== undefined) {
+      this.model.warning(`/* WARNING[${++this.warningId}] suppressed: ${suppressed} */\n`);
+    }
     return this.model.render();
   }
 

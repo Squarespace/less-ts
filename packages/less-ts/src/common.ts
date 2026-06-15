@@ -235,6 +235,12 @@ export interface Context {
   resetWarnings(): void;
 
   /**
+   * One-line summary of budget-suppressed warnings, or undefined
+   * when nothing was suppressed.
+   */
+  suppressedWarningSummary(): string | undefined;
+
+  /**
    * Construct a new buffer.
    */
   newBuffer(): Buffer;
@@ -349,6 +355,14 @@ export interface Options {
   // level. A level change keeps them; the two options apply in
   // either order.
   readonly compatPatches?: { [id: string]: boolean };
+
+  // Per-compile warning budget: at most this many warnings overall.
+  // 0 (the default) disables the overall limit.
+  readonly maxWarnings?: number;
+
+  // Per-compile warning budget: at most this many warnings of one
+  // type. Defaults to 25; 0 disables the per-type limit.
+  readonly maxWarningsPerType?: number;
 }
 
 export interface Separators {

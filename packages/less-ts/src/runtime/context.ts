@@ -306,6 +306,16 @@ export class RuntimeContext implements Context {
   readonly warnings: string[] = [];
   private readonly warningKeys = new Set<string>();
 
+  // Per-compile warning budgets (see allowWarning): how many
+  // warnings of each type, and in total, are emitted before the
+  // rest are suppressed. 0 disables a limit.
+  private readonly maxWarnings: number;
+  private readonly maxWarningsPerType: number;
+  private readonly warningEmitted = new Map<string, number>();
+  private readonly warningSuppressed = new Map<string, number>();
+  private totalWarningEmitted = 0;
+  private totalWarningSuppressed = 0;
+
   // Current mixin depth
   mixinDepth: number = 0;
 
@@ -315,6 +325,8 @@ export class RuntimeContext implements Context {
     this.fastcolor = opts.fastcolor === undefined ? false : opts.fastcolor;
     this.spacer = repeat(' ', this.indentSize);
     this.strictMath = opts.strictMath || false;
+    this.maxWarnings = opts.maxWarnings ?? 0;
+    this.maxWarningsPerType = opts.maxWarningsPerType ?? 25;
     this.nocache = opts.nocache || false;
     this.mixinRecursionLimit = opts.mixinRecursionLimit || DEFAULT_MIXIN_RECURSION_LIMIT;
     // Level and overrides expand independently: withLevel keeps the
@@ -356,13 +368,87 @@ export class RuntimeContext implements Context {
 
   /**
    * Record a recovery warning. Exact-message repeats are free; the
-   * first recording wins.
+   * first sighting takes the dedupe key, then the per-compile
+   * budgets decide whether it is recorded.
    */
   addWarning(warning: string): void {
     if (!this.warningKeys.has(warning)) {
       this.warningKeys.add(warning);
-      this.warnings.push(warning);
+      if (this.allowWarning(warning)) {
+        this.warnings.push(warning);
+      }
     }
+  }
+
+  /**
+   * The type bucket for a warning: evaluation warnings embed their
+   * error type (ExecuteError INCOMPATIBLE_UNITS: ...); the recovery
+   * prefixes bucket by phase; everything else is parse-recovery.
+   */
+  static warningType(warning: string): string {
+    if (warning.startsWith('eval: dropped')) {
+      return 'eval-drop';
+    }
+    if (warning.startsWith('render: skipped') || warning.startsWith('render: truncated')) {
+      return 'render-skip';
+    }
+    const m = /(?:SyntaxError|ExecuteError)\s+([A-Z][A-Z0-9_]+)\s*:/.exec(warning);
+    if (m) {
+      return m[1];
+    }
+    return 'parse-recovery';
+  }
+
+  /**
+   * Budget gate for recorded warnings: true when the warning may be
+   * emitted. Suppressed counts track distinct messages only (dedupe
+   * runs first), per type and in total.
+   */
+  private allowWarning(warning: string): boolean {
+    if (this.maxWarningsPerType <= 0 && this.maxWarnings <= 0) {
+      return true;
+    }
+    const type = RuntimeContext.warningType(warning);
+    if (this.maxWarningsPerType > 0 && (this.warningEmitted.get(type) ?? 0) >= this.maxWarningsPerType) {
+      this.warningSuppressed.set(type, (this.warningSuppressed.get(type) ?? 0) + 1);
+      return false;
+    }
+    if (this.maxWarnings > 0 && this.totalWarningEmitted >= this.maxWarnings) {
+      this.totalWarningSuppressed++;
+      return false;
+    }
+    this.warningEmitted.set(type, (this.warningEmitted.get(type) ?? 0) + 1);
+    this.totalWarningEmitted++;
+    return true;
+  }
+
+  /**
+   * One-line summary of budget-suppressed warnings, undefined when
+   * nothing was suppressed. Emitted as a single trailing comment at
+   * render end.
+   */
+  suppressedWarningSummary(): string | undefined {
+    if (this.warningSuppressed.size === 0 && this.totalWarningSuppressed === 0) {
+      return undefined;
+    }
+    const parts: string[] = [];
+    let total = 0;
+    this.warningSuppressed.forEach((count, type) => {
+      parts.push(`${count} ${type}`);
+      total += count;
+    });
+    if (this.totalWarningSuppressed > 0) {
+      parts.push(`${this.totalWarningSuppressed} overall`);
+      total += this.totalWarningSuppressed;
+    }
+    const limits: string[] = [];
+    if (this.maxWarningsPerType > 0) {
+      limits.push(`limit ${this.maxWarningsPerType} per type`);
+    }
+    if (this.maxWarnings > 0) {
+      limits.push(`limit ${this.maxWarnings} overall`);
+    }
+    return `${total} warnings suppressed (${parts.join(', ')}); ${limits.join(', ')}`;
   }
 
   /**
@@ -386,6 +472,10 @@ export class RuntimeContext implements Context {
   resetWarnings(): void {
     this.warnings.length = 0;
     this.warningKeys.clear();
+    this.warningEmitted.clear();
+    this.warningSuppressed.clear();
+    this.totalWarningEmitted = 0;
+    this.totalWarningSuppressed = 0;
   }
 
   /**
