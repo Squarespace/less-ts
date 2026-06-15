@@ -19,6 +19,9 @@ export class LessCompiler {
   compile(raw: string): CompileResult {
     const tree = this.parse(raw) as Stylesheet;
     const ctx = this.context();
+    // Compile start: a reused context must not leak its warning
+    // ledger into this compile.
+    ctx.resetWarnings();
     const evaluator = new Evaluator(ctx);
     const env = ctx.newEnv();
     const evald = evaluator.evaluateStylesheet(env, tree);

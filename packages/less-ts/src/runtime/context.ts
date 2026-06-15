@@ -174,14 +174,15 @@ export class RuntimeExecEnv implements ExecEnv {
   // Errors during evaluation
   errors: LessError[] = [];
 
-  // Warnings during evaluation; picked up by the next evaluated
-  // rule or definition and rendered as a comment before it.
-  warnings: string[] = [];
+  // Warnings ride the context ledger; they are picked up by the
+  // next evaluated rule or definition and rendered as a comment
+  // before it.
+  addWarning(warning: string): void {
+    this.ctx.addWarning(warning);
+  }
 
   takeWarnings(): string[] {
-    const w = this.warnings;
-    this.warnings = [];
-    return w;
+    return this.ctx.drainWarnings();
   }
 
   constructor(readonly ctx: Context, initialStack: IBlockNode[]) {
@@ -299,6 +300,12 @@ export class RuntimeContext implements Context {
   // Errors that have occurred at runtime
   readonly errors: LessErrorEvent[] = [];
 
+  // Recovery warnings recorded during this compile. Each exact
+  // message is recorded once; the evaluator drains them when it
+  // attaches them to the next evaluated rule or definition.
+  readonly warnings: string[] = [];
+  private readonly warningKeys = new Set<string>();
+
   // Current mixin depth
   mixinDepth: number = 0;
 
@@ -345,6 +352,40 @@ export class RuntimeContext implements Context {
         stack,
       });
     }
+  }
+
+  /**
+   * Record a recovery warning. Exact-message repeats are free; the
+   * first recording wins.
+   */
+  addWarning(warning: string): void {
+    if (!this.warningKeys.has(warning)) {
+      this.warningKeys.add(warning);
+      this.warnings.push(warning);
+    }
+  }
+
+  /**
+   * Return and clear the recorded warnings, and the dedupe keys with
+   * them: a warning raised after a drain is not a repeat.
+   */
+  drainWarnings(): string[] {
+    const drained = this.warnings.slice(0);
+    this.warnings.length = 0;
+    this.warningKeys.clear();
+    return drained;
+  }
+
+  /**
+   * Clear the warning ledger without returning it. Called at the
+   * start of each compile: a prior compile on a reused context that
+   * failed after recording warnings (a drain never ran) must not
+   * leak stale entries, nor suppress identical fresh warnings via
+   * stale dedupe keys.
+   */
+  resetWarnings(): void {
+    this.warnings.length = 0;
+    this.warningKeys.clear();
   }
 
   /**

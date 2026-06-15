@@ -247,7 +247,7 @@ const operateDimension = (env: ExecEnv, op: Operator, n0: Dimension, n1: Dimensi
     // to unitless arithmetic.
     if (u1 !== undefined && u1 !== Unit.PERCENTAGE) {
       const info = incompatibleUnits(unitDisplay(u0), unitDisplay(u1));
-      env.warnings.push(`${info.message}.. stripping unit.`);
+      env.addWarning(`${info.message}.. stripping unit.`);
     }
     factor = 1.0;
   }

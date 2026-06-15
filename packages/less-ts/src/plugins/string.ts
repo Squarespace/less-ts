@@ -101,7 +101,7 @@ class Replace extends BaseFunction {
   }
 
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
-    env.warnings.push('use of replace() is currently experimental');
+    env.addWarning('use of replace() is currently experimental');
     const stringArg = args[0] as Quoted;
     const string = asString(env, stringArg, true);
     const pattern = asString(env, args[1] as Quoted, true);

@@ -220,6 +220,21 @@ export interface Context {
   captureErrors(node: Node, env: ExecEnv): void;
 
   /**
+   * Record a recovery warning; exact-message repeats are free.
+   */
+  addWarning(warning: string): void;
+
+  /**
+   * Return and clear the recorded warnings and their dedupe keys.
+   */
+  drainWarnings(): string[];
+
+  /**
+   * Clear the warning ledger. Called at the start of each compile.
+   */
+  resetWarnings(): void;
+
+  /**
    * Construct a new buffer.
    */
   newBuffer(): Buffer;
@@ -262,13 +277,13 @@ export interface ExecEnv {
   errors: LessError[];
 
   /**
-   * Warnings raised during evaluation (e.g. INCOMPATIBLE_UNITS).
-   * Picked up by the next evaluated rule or definition.
+   * Record a warning (e.g. INCOMPATIBLE_UNITS) on the context
+   * ledger. Picked up by the next evaluated rule or definition.
    */
-  warnings: string[];
+  addWarning(warning: string): void;
 
   /**
-   * Pull pending warnings off the environment, clearing them.
+   * Pull pending warnings off the context ledger, clearing them.
    */
   takeWarnings(): string[];
 
