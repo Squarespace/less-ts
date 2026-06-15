@@ -1,62 +1,80 @@
-import { renderNode, RuntimeContext } from '../../src/runtime';
+import { renderNode, RuntimeContext, Evaluator, Renderer } from '../../src/runtime';
+import { LessStream, STYLESHEET } from '../../src/parser';
+import { Stylesheet } from '../../src/model';
 import { LessCompiler } from '../../src';
 
 const newCtx = () => new RuntimeContext({}, renderNode);
 
-describe('warning ledger', () => {
+describe('recovery warning ledger (context)', () => {
   test('exact-message repeats are recorded once', () => {
     const ctx = newCtx();
-    const env = ctx.newEnv();
-    env.addWarning('first');
-    env.addWarning('first');
-    env.addWarning('second');
-    expect(env.takeWarnings()).toEqual(['first', 'second']);
+    ctx.addWarning('first');
+    ctx.addWarning('first');
+    ctx.addWarning('second');
+    expect(ctx.drainWarnings()).toEqual(['first', 'second']);
   });
 
   test('a drained message can be recorded again', () => {
     // Draining clears the dedupe keys: a warning raised after a
     // drain is not a repeat.
     const ctx = newCtx();
-    const env = ctx.newEnv();
-    env.addWarning('first');
-    expect(env.takeWarnings()).toEqual(['first']);
-    env.addWarning('first');
-    expect(env.takeWarnings()).toEqual(['first']);
+    ctx.addWarning('first');
+    expect(ctx.drainWarnings()).toEqual(['first']);
+    ctx.addWarning('first');
+    expect(ctx.drainWarnings()).toEqual(['first']);
   });
 
   test('draining returns a copy and clears the ledger', () => {
     const ctx = newCtx();
-    const env = ctx.newEnv();
-    env.addWarning('first');
-    const drained = env.takeWarnings();
+    ctx.addWarning('first');
+    const drained = ctx.drainWarnings();
     drained.push('mutated');
-    expect(env.takeWarnings()).toEqual([]);
-  });
-
-  test('a failed compile leaves the ledger for the next compile on a reused context', () => {
-    // Compile A records warnings, then fails before the evaluator
-    // attaches them (no drain runs). Without the start-of-compile
-    // reset, compile B on this context inherits the stale entry,
-    // and its dedupe key swallows B's identical fresh warning.
-    const ctx = newCtx();
-    const a = ctx.newEnv();
-    a.addWarning('stale');
-    const b = ctx.newEnv();
-    b.addWarning('stale');
-    b.addWarning('fresh');
-    expect(b.takeWarnings()).toEqual(['stale', 'fresh']);
+    expect(ctx.drainWarnings()).toEqual([]);
   });
 
   test('resetWarnings starts a reused context clean', () => {
+    // A prior compile that failed after recording warnings (a drain
+    // never ran) must not leak stale entries, nor suppress identical
+    // fresh warnings via stale dedupe keys.
     const ctx = newCtx();
-    const a = ctx.newEnv();
-    a.addWarning('stale');
-    // Compile start: the reset clears entries and dedupe keys, so
-    // an identical fresh warning in compile B is not a repeat.
+    ctx.addWarning('stale');
     ctx.resetWarnings();
-    const b = ctx.newEnv();
-    b.addWarning('stale');
-    expect(b.takeWarnings()).toEqual(['stale']);
+    ctx.addWarning('stale');
+    expect(ctx.drainWarnings()).toEqual(['stale']);
+  });
+});
+
+describe('evaluation warnings (env channel)', () => {
+  test('repeats are recorded; the budget is the only cap', () => {
+    // Evaluation warnings are not deduped (unlike the context
+    // ledger): repeats are capped purely by the budget.
+    const ctx = newCtx();
+    const env = ctx.newEnv();
+    env.addWarning('first');
+    env.addWarning('first');
+    expect(env.takeWarnings()).toEqual(['first', 'first']);
+  });
+
+  test('a copied env carries its own list', () => {
+    // The mixin guard evaluates on a copy: a dropped member's
+    // warnings die with the copy.
+    const ctx = newCtx();
+    const env = ctx.newEnv();
+    const copy = env.copy();
+    copy.addWarning('mine');
+    expect(env.takeWarnings()).toEqual([]);
+    expect(copy.takeWarnings()).toEqual(['mine']);
+  });
+
+  test('discardWarnings clears the list and rolls back the budget', () => {
+    const ctx = new RuntimeContext({ maxWarningsPerType: 1 }, renderNode);
+    const env = ctx.newEnv();
+    env.addWarning('ExecuteError INCOMPATIBLE_UNITS: one');
+    env.discardWarnings();
+    // The rolled-back slot is available again.
+    env.addWarning('ExecuteError INCOMPATIBLE_UNITS: two');
+    expect(env.takeWarnings()).toEqual(['ExecuteError INCOMPATIBLE_UNITS: two']);
+    expect(ctx.suppressedWarningSummary()).toBeUndefined();
   });
 });
 
@@ -261,14 +279,14 @@ describe('warning budgets', () => {
   });
 
   test('suppressed counts track distinct messages; repeats of a suppressed message are free', () => {
+    // The ledger dedupes before the budget, so a repeat of a
+    // suppressed message takes no key and no count.
     const ctx = new RuntimeContext({ maxWarningsPerType: 2 }, renderNode);
-    const env = ctx.newEnv();
-    env.addWarning('ExecuteError INCOMPATIBLE_UNITS: one');
-    env.addWarning('ExecuteError INCOMPATIBLE_UNITS: two');
-    env.addWarning('ExecuteError INCOMPATIBLE_UNITS: three');
-    // A repeat of the suppressed message takes no key and no count.
-    env.addWarning('ExecuteError INCOMPATIBLE_UNITS: three');
-    expect(env.takeWarnings()).toEqual(['ExecuteError INCOMPATIBLE_UNITS: one', 'ExecuteError INCOMPATIBLE_UNITS: two']);
+    ctx.addWarning('ExecuteError INCOMPATIBLE_UNITS: one');
+    ctx.addWarning('ExecuteError INCOMPATIBLE_UNITS: two');
+    ctx.addWarning('ExecuteError INCOMPATIBLE_UNITS: three');
+    ctx.addWarning('ExecuteError INCOMPATIBLE_UNITS: three');
+    expect(ctx.drainWarnings()).toEqual(['ExecuteError INCOMPATIBLE_UNITS: one', 'ExecuteError INCOMPATIBLE_UNITS: two']);
     expect(ctx.suppressedWarningSummary()).toBe('1 warnings suppressed (1 INCOMPATIBLE_UNITS); limit 2 per type');
   });
 
@@ -285,13 +303,122 @@ describe('warning budgets', () => {
 
   test('resetWarnings also clears the budget accounting', () => {
     const ctx = new RuntimeContext({ maxWarningsPerType: 1 }, renderNode);
-    const a = ctx.newEnv();
-    a.addWarning('ExecuteError DIVIDE_BY_ZERO: one');
-    a.addWarning('ExecuteError DIVIDE_BY_ZERO: two');
+    ctx.addWarning('ExecuteError DIVIDE_BY_ZERO: one');
+    ctx.addWarning('ExecuteError DIVIDE_BY_ZERO: two');
     ctx.resetWarnings();
-    const b = ctx.newEnv();
-    b.addWarning('ExecuteError DIVIDE_BY_ZERO: two');
-    expect(b.takeWarnings()).toEqual(['ExecuteError DIVIDE_BY_ZERO: two']);
+    ctx.addWarning('ExecuteError DIVIDE_BY_ZERO: two');
+    expect(ctx.drainWarnings()).toEqual(['ExecuteError DIVIDE_BY_ZERO: two']);
     expect(ctx.suppressedWarningSummary()).toBeUndefined();
+  });
+});
+
+describe('warning-comment rendering', () => {
+  // Byte pins against Java main at default options.
+
+  test('a scope whose only content is a warning comment is pruned', () => {
+    expect(new LessCompiler({}).compile('.a { @w: 90ch + 5px; }\n').css).toBe('');
+  });
+
+  test('warnings render inside content-bearing scopes', () => {
+    expect(new LessCompiler({}).compile('.a { @w: 90ch + 5px; x: 1; }\n').css).toBe(
+      ".a {\n  /* WARNING[1] raised evaluating definition '@w': ExecuteError INCOMPATIBLE_UNITS: No conversion is possible from CH (advance measure of '0' glyph) to PX (pixels).. stripping unit. */\n  x: 1;\n}\n",
+    );
+  });
+
+  test('empty scopes stay pruned whether or not a sibling renders', () => {
+    expect(new LessCompiler({}).compile('.a { @w: calc(90%); } .b { x: 1; }\n').css).toBe('.b {\n  x: 1;\n}\n');
+  });
+
+  test('a failing guard drops its evaluation warnings', () => {
+    // The guard evaluates on a copied env; the copy's warnings die
+    // with it, so nothing reaches the ledger or the next rule.
+    expect(new LessCompiler({}).compile('.m(@v) when (90ch + 5px = 1) { x: 1; }\n.a { .m(1); }\n').css).toBe('');
+  });
+
+  test('a passing guard carries its warnings onto the matched rule', () => {
+    expect(new LessCompiler({}).compile('.m(@v) when (90ch + 5px = 95ch) { x: 1; }\n.a { .m(1); }\n').css).toBe(
+      ".a {\n  /* WARNING[1] raised evaluating next rule: ExecuteError INCOMPATIBLE_UNITS: No conversion is possible from CH (advance measure of '0' glyph) to PX (pixels).. stripping unit. */\n  x: 1;\n}\n",
+    );
+  });
+
+  test('a failing guard leaves the next sibling rule clean', () => {
+    expect(new LessCompiler({}).compile('.m(@v) when (90ch + 5px = 1) { x: 1; }\n.a { .m(1); }\n.b { y: 2; }\n').css).toBe(
+      '.b {\n  y: 2;\n}\n',
+    );
+  });
+
+  test('definition warnings lead an otherwise-empty sheet, summarized at the end', () => {
+    // 42 definitions whose values evaluate, no rules. The first 25
+    // warnings attach to their definitions, the other 17 are
+    // suppressed; the budget summary populates the otherwise-empty
+    // sheet, so the definition comments lead the output.
+    const DISPLAY: [string, string][] = [
+      ['ch', "CH (advance measure of '0' glyph)"],
+      ['em', 'EM (element font size)'],
+      ['ex', "EX (x-height of element's font)"],
+      ['rem', 'REM (font size of root element)'],
+      ['vh', "VH (viewport's height)"],
+      ['vw', "VW (viewport's width)"],
+      ['vmin', "VMIN (viewport's smaller dimension)"],
+      ['vmax', "VMAX (viewport's larger dimension)"],
+      ['vm', 'VM'],
+      ['fr', 'FR (fractions)'],
+      ['s', 'S (seconds)'],
+      ['ms', 'MS (milliseconds)'],
+      ['dpi', 'DPI (dots per inch)'],
+      ['dpcm', 'DPCM (dots per centimeter)'],
+      ['dppx', "DPPX (dots per 'px' unit)"],
+      ['hz', 'HZ (hertz)'],
+      ['khz', 'KHZ (kilohertz)'],
+      ['deg', 'DEG (degrees)'],
+      ['grad', 'GRAD (gradians)'],
+      ['rad', 'RAD (radians)'],
+      ['turn', 'TURN (turns)'],
+    ];
+    let sheet = '';
+    DISPLAY.forEach(([u], i) => {
+      sheet += `@w${i}: 90${u} + 5px;\n`;
+    });
+    DISPLAY.forEach(([u], i) => {
+      sheet += `@v${i}: 90px + 5${u};\n`;
+    });
+    let expected = '';
+    let n = 0;
+    DISPLAY.forEach(([u, disp], i) => {
+      if (i < 21) {
+        expected += `/* WARNING[${++n}] raised evaluating definition '@w${i}': ExecuteError INCOMPATIBLE_UNITS: No conversion is possible from ${disp} to PX (pixels).. stripping unit. */\n`;
+      }
+    });
+    DISPLAY.forEach(([u, disp], i) => {
+      if (n < 25) {
+        expected += `/* WARNING[${++n}] raised evaluating definition '@v${i}': ExecuteError INCOMPATIBLE_UNITS: No conversion is possible from PX (pixels) to ${disp}.. stripping unit. */\n`;
+      }
+    });
+    expected += '/* WARNING[26] suppressed: 17 warnings suppressed (17 INCOMPATIBLE_UNITS); limit 25 per type */\n';
+    expect(new LessCompiler({}).compile(sheet).css).toBe(expected);
+  });
+
+  test('unattached ledger entries drain at render start, leading the output', () => {
+    const ctx = newCtx();
+    const tree = new LessStream(ctx, '.a { x: 1; }\n').parse(STYLESHEET) as Stylesheet;
+    const env = ctx.newEnv();
+    const evald = new Evaluator(ctx).evaluateStylesheet(env, tree);
+    ctx.addWarning('ExecuteError INCOMPATIBLE_UNITS: seeded at render start');
+    const css = Renderer.render(ctx, evald);
+    expect(css).toBe(
+      '/* WARNING[1] raised during recovery: ExecuteError INCOMPATIBLE_UNITS: seeded at render start */\n.a {\n  x: 1;\n}\n',
+    );
+  });
+
+  test('a recovery drain comment is the only signal in a drop-only sheet', () => {
+    // The drains stay populating: they keep an otherwise-empty
+    // sheet from rendering as nothing.
+    const ctx = newCtx();
+    const tree = new LessStream(ctx, '').parse(STYLESHEET) as Stylesheet;
+    const env = ctx.newEnv();
+    const evald = new Evaluator(ctx).evaluateStylesheet(env, tree);
+    ctx.addWarning('eval: dropped rule: test');
+    const css = Renderer.render(ctx, evald);
+    expect(css).toBe('/* WARNING[1] raised during recovery: eval: dropped rule: test */\n');
   });
 });

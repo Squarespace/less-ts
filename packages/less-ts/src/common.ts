@@ -220,9 +220,18 @@ export interface Context {
   captureErrors(node: Node, env: ExecEnv): void;
 
   /**
-   * Record a recovery warning; exact-message repeats are free.
+   * Record a recovery warning on the context ledger. Exact-message
+   * repeats are free. Drained at render start and end.
    */
   addWarning(warning: string): void;
+
+  /**
+   * Budget gate shared by both warning entry points (the context
+   * ledger and the evaluation env): true when the warning may be
+   * recorded. Suppressed counts track distinct messages only on the
+   * ledger (dedupe runs before the budget there).
+   */
+  allowWarning(warning: string): boolean;
 
   /**
    * Return and clear the recorded warnings and their dedupe keys.
@@ -239,6 +248,12 @@ export interface Context {
    * when nothing was suppressed.
    */
   suppressedWarningSummary(): string | undefined;
+
+  /**
+   * Undo the budget accounting for one warning that was appended but
+   * never surfaced.
+   */
+  rollbackWarning(warning: string): void;
 
   /**
    * Construct a new buffer.
@@ -283,15 +298,30 @@ export interface ExecEnv {
   errors: LessError[];
 
   /**
-   * Record a warning (e.g. INCOMPATIBLE_UNITS) on the context
-   * ledger. Picked up by the next evaluated rule or definition.
+   * Warnings raised during evaluation (e.g. INCOMPATIBLE_UNITS).
+   * Picked up by the next evaluated rule or definition; a copied
+   * env (e.g. for a mixin guard) carries its own list, so a dropped
+   * member's warnings die with the copy.
+   */
+  warnings: string[];
+
+  /**
+   * Record an evaluation warning, subject to the per-compile budgets
+   * (no dedupe: repeats are capped purely by the budget).
    */
   addWarning(warning: string): void;
 
   /**
-   * Pull pending warnings off the context ledger, clearing them.
+   * Pull pending warnings off the environment, clearing them.
    */
   takeWarnings(): string[];
+
+  /**
+   * Clear the pending warnings and roll back their budget accounting
+   * (a dropped member's partial warnings neither bleed into the next
+   * rule nor consume slots they will never surface in).
+   */
+  discardWarnings(): string[];
 
   dump(): string;
 

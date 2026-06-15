@@ -174,15 +174,33 @@ export class RuntimeExecEnv implements ExecEnv {
   // Errors during evaluation
   errors: LessError[] = [];
 
-  // Warnings ride the context ledger; they are picked up by the
-  // next evaluated rule or definition and rendered as a comment
-  // before it.
+  // Warnings during evaluation; picked up by the next evaluated
+  // rule or definition and rendered as a comment before it. This
+  // env owns its list: a copy (e.g. for a mixin guard) carries its
+  // own, so a dropped member's warnings die with the copy.
+  warnings: string[] = [];
+
   addWarning(warning: string): void {
-    this.ctx.addWarning(warning);
+    // The evaluation phase is the earliest choke point: warnings
+    // never accumulate beyond the budgets. No dedupe here - repeats
+    // are capped purely by the budget.
+    if (this.ctx.allowWarning(warning)) {
+      this.warnings.push(warning);
+    }
   }
 
   takeWarnings(): string[] {
-    return this.ctx.drainWarnings();
+    const w = this.warnings;
+    this.warnings = [];
+    return w;
+  }
+
+  discardWarnings(): string[] {
+    const w = this.takeWarnings();
+    for (const x of w) {
+      this.ctx.rollbackWarning(x);
+    }
+    return w;
   }
 
   constructor(readonly ctx: Context, initialStack: IBlockNode[]) {
@@ -300,9 +318,9 @@ export class RuntimeContext implements Context {
   // Errors that have occurred at runtime
   readonly errors: LessErrorEvent[] = [];
 
-  // Recovery warnings recorded during this compile. Each exact
-  // message is recorded once; the evaluator drains them when it
-  // attaches them to the next evaluated rule or definition.
+  // Recovery warnings recorded on this context (the parse/render
+  // phases). Each exact message is recorded once; the renderer
+  // drains them at render start and end.
   readonly warnings: string[] = [];
   private readonly warningKeys = new Set<string>();
 
@@ -367,9 +385,9 @@ export class RuntimeContext implements Context {
   }
 
   /**
-   * Record a recovery warning. Exact-message repeats are free; the
-   * first sighting takes the dedupe key, then the per-compile
-   * budgets decide whether it is recorded.
+   * Record a recovery warning on the context ledger. Exact-message
+   * repeats are free; the first sighting takes the dedupe key, then
+   * the per-compile budgets decide whether it is recorded.
    */
   addWarning(warning: string): void {
     if (!this.warningKeys.has(warning)) {
@@ -400,11 +418,12 @@ export class RuntimeContext implements Context {
   }
 
   /**
-   * Budget gate for recorded warnings: true when the warning may be
-   * emitted. Suppressed counts track distinct messages only (dedupe
-   * runs first), per type and in total.
+   * Budget gate shared by both warning entry points (the context
+   * ledger and the evaluation env): true when the warning may be
+   * recorded. Suppressed counts increment per type and in total
+   * when the configured limits are exhausted.
    */
-  private allowWarning(warning: string): boolean {
+  allowWarning(warning: string): boolean {
     if (this.maxWarningsPerType <= 0 && this.maxWarnings <= 0) {
       return true;
     }
@@ -420,6 +439,31 @@ export class RuntimeContext implements Context {
     this.warningEmitted.set(type, (this.warningEmitted.get(type) ?? 0) + 1);
     this.totalWarningEmitted++;
     return true;
+  }
+
+  /**
+   * Undo the budget accounting for one warning that was appended but
+   * never surfaced (recovery discards a dropped member's pending
+   * warnings). Keeps rendered + suppressed == generated so the
+   * trailing summary arithmetic matches what the user sees. A no-op
+   * when the budgets are disabled.
+   */
+  rollbackWarning(warning: string): void {
+    if (this.maxWarningsPerType <= 0 && this.maxWarnings <= 0) {
+      return;
+    }
+    if (this.maxWarningsPerType > 0) {
+      const type = RuntimeContext.warningType(warning);
+      const count = this.warningEmitted.get(type);
+      if (count === undefined || count <= 1) {
+        this.warningEmitted.delete(type);
+      } else {
+        this.warningEmitted.set(type, count - 1);
+      }
+    }
+    if (this.maxWarnings > 0 && this.totalWarningEmitted > 0) {
+      this.totalWarningEmitted--;
+    }
   }
 
   /**

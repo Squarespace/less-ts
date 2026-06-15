@@ -178,6 +178,11 @@ export class Renderer {
 
   protected _render(sheet: Stylesheet): string {
     const { block } = sheet;
+    // Ledger entries recorded during parse/eval that never attached
+    // to a rule or definition lead the output.
+    for (const warning of this.ctx.drainWarnings()) {
+      this.model.comment(`/* WARNING[${++this.warningId}] raised during recovery: ${warning} */\n`);
+    }
     if (block.charset) {
       this.model.value(this.ctx.render(block.charset));
     }
@@ -185,11 +190,17 @@ export class Renderer {
     this.renderImports(block);
     this._renderBlock(block, false);
     this.env.pop();
-    // A single trailing comment when the per-compile warning
-    // budgets suppressed anything.
+    // Render-phase ledger entries trail the output, before the budget
+    // summary.
+    for (const warning of this.ctx.drainWarnings()) {
+      this.model.comment(`/* WARNING[${++this.warningId}] raised during recovery: ${warning} */\n`);
+    }
+    // A single trailing comment when the per-compile warning budgets
+    // suppressed anything. Populating: it is the only signal in
+    // drop-only sheets.
     const suppressed = this.ctx.suppressedWarningSummary();
     if (suppressed !== undefined) {
-      this.model.warning(`/* WARNING[${++this.warningId}] suppressed: ${suppressed} */\n`);
+      this.model.comment(`/* WARNING[${++this.warningId}] suppressed: ${suppressed} */\n`);
     }
     return this.model.render();
   }
