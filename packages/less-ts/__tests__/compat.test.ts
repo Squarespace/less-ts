@@ -208,6 +208,59 @@ describe('options wiring', () => {
   });
 });
 
+describe('safeMode wiring', () => {
+  const PLAIN = '.a {\n  x: 1px;\n}\n';
+
+  test('the default is strict', () => {
+    expect(new LessCompiler({}).context().safeMode()).toBe(false);
+    expect(new LessCompiler({ safeMode: false }).context().safeMode()).toBe(false);
+  });
+
+  test('the option lands on the context', () => {
+    expect(new LessCompiler({ safeMode: true }).context().safeMode()).toBe(true);
+  });
+
+  test('the override wins over the option', () => {
+    const ctx = new LessCompiler({ safeMode: true }).context();
+    ctx.safeModeOverride(false);
+    expect(ctx.safeMode()).toBe(false);
+  });
+
+  test('the override persists on the context', () => {
+    // One compile per context is the assumed usage: the override is
+    // still in effect on a later use of the same context.
+    const ctx = new LessCompiler({}).context();
+    ctx.safeModeOverride(true);
+    expect(ctx.safeMode()).toBe(true);
+    expect(ctx.safeMode()).toBe(true);
+  });
+
+  test('undefined clears the override', () => {
+    const ctx = new LessCompiler({ safeMode: true }).context();
+    ctx.safeModeOverride(false);
+    expect(ctx.safeMode()).toBe(false);
+    ctx.safeModeOverride();
+    expect(ctx.safeMode()).toBe(true);
+  });
+
+  test('the override never mutates the shared options', () => {
+    const opts = { safeMode: false };
+    const c = new LessCompiler(opts);
+    const ctx = c.context();
+    ctx.safeModeOverride(true);
+    expect(opts.safeMode).toBe(false);
+    expect(ctx.safeMode()).toBe(true);
+    // A context built later from the same options sees the option
+    // value, not the earlier override.
+    expect(c.context().safeMode()).toBe(false);
+  });
+
+  test('no output change yet', () => {
+    // Plumbing only: nothing reads the mode for behavior.
+    expect(new LessCompiler({ safeMode: true }).compile(PLAIN)).toEqual(new LessCompiler({}).compile(PLAIN));
+  });
+});
+
 // The message Java attaches to a parse that cannot complete.
 const PARSE_ERROR = 'SyntaxError INCOMPLETE_PARSE Unable to complete parse.';
 

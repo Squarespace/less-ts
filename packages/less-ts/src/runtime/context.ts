@@ -337,6 +337,11 @@ export class RuntimeContext implements Context {
   // Current mixin depth
   mixinDepth: number = 0;
 
+  // Context-scoped recovery-mode override (see safeModeOverride):
+  // persists on this context, never written through to the shared
+  // options object.
+  private overrideSafeMode?: boolean;
+
   constructor(readonly opts: Options = { compress: false }, readonly renderer: NodeRenderer) {
     this.indentSize = opts.indentSize || 2;
     this.compress = opts.compress || false;
@@ -520,6 +525,23 @@ export class RuntimeContext implements Context {
     this.warningSuppressed.clear();
     this.totalWarningEmitted = 0;
     this.totalWarningSuppressed = 0;
+  }
+
+  /**
+   * Recovery mode for this compile: the context override when set,
+   * else the options value (default strict).
+   */
+  safeMode(): boolean {
+    return this.overrideSafeMode !== undefined ? this.overrideSafeMode : this.opts.safeMode === true;
+  }
+
+  /**
+   * Sets the recovery-mode override for this context; undefined
+   * clears it. Persists until cleared or the context is discarded.
+   * One compile per context is the assumed usage pattern.
+   */
+  safeModeOverride(flag?: boolean): void {
+    this.overrideSafeMode = flag;
   }
 
   /**

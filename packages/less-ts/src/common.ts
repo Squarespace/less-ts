@@ -205,6 +205,20 @@ export interface Context {
   mixinDepth: number;
   mixinRecursionLimit: number;
 
+  /**
+   * Recovery mode for this compile: the context override when set,
+   * else the options value (default strict). Parse, eval, and
+   * render read this accessor.
+   */
+  safeMode(): boolean;
+
+  /**
+   * Context-scoped recovery-mode override from a per-call boolean:
+   * persists on this context across compiles, never written through
+   * to the shared options. Undefined clears the override.
+   */
+  safeModeOverride(flag?: boolean): void;
+
   readonly renderer: NodeRenderer;
   readonly errors: LessErrorEvent[];
 
@@ -375,6 +389,11 @@ export interface Options {
 
   // Maximum depth of mixin recursion
   readonly mixinRecursionLimit?: number;
+
+  // Best-effort recovery mode. false (default) = strict: a hard
+  // error aborts the compile. true = warn and recover at
+  // well-defined boundaries. Independent of the compat level.
+  readonly safeMode?: boolean;
 
   // Compat level for this compile. 0 keeps every legacy behavior
   // active (the released surface); a patch's fix applies at its
