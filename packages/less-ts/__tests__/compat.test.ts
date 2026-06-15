@@ -612,6 +612,73 @@ describe('GUARD_COMPARE_UNCOMPARABLE: uncomparable guard operands', () => {
       expect(c.compile(src(op)).css).toEqual('');
     }
   });
+
+  // The full uncomparable-pair matrix: every (left, right) pair that
+  // hits the uncomparable path follows the same two tables. Pairs are
+  // [name, mixin arg, guard operand]. Quoted on the left is comparable
+  // (string compare) and stays out of the matrix.
+  const pairs: [string, string, string][] = [
+    ['color vs dimension', 'red', '10px'],
+    ['dimension vs color', '10px', 'red'],
+    ['color vs non-color keyword', 'red', 'foo'],
+    ['keyword vs color', 'foo', 'red'],
+    ['keyword vs dimension', 'foo', '10px'],
+    ['dimension vs keyword', '10px', 'foo'],
+    ['dimension vs incompatible unit', '10s', '10px'],
+    ['true vs dimension', 'true', '10px'],
+    ['dimension vs true', '10px', 'true'],
+    ['color vs quoted', 'red', '"x"'],
+    ['keyword vs quoted', 'foo', '"x"'],
+    ['dimension vs quoted', '10px', '"x"'],
+  ];
+  const pairSrc = (op: string, left: string, right: string): string =>
+    `.m(@a) when (@a ${op} ${right}) { p: 1; }\n.x { .m(${left}); }\n`;
+
+  const expectCss = (
+    c: LessCompiler,
+    label: string,
+    name: string,
+    op: string,
+    left: string,
+    right: string,
+    want: string,
+  ) => {
+    const css = c.compile(pairSrc(op, left, right)).css;
+    if (css !== want) {
+      throw new Error(`${label}: ${name} ${op}\n--- want ---\n${want}\n--- got ---\n${css}`);
+    }
+  };
+
+  const assertTable = (c: LessCompiler, fixed: boolean, label: string) => {
+    const trueOps = fixed ? ['<'] : legacyTrue;
+    const falseOps = fixed ? ['<=', '=', '!=', '>', '>='] : legacyFalse;
+    for (const [name, left, right] of pairs) {
+      for (const op of trueOps) {
+        expectCss(c, label, name, op, left, right, '.x {\n  p: 1;\n}\n');
+      }
+      for (const op of falseOps) {
+        expectCss(c, label, name, op, left, right, '');
+      }
+    }
+  };
+
+  test('every uncomparable pair follows the released table at legacy levels', () => {
+    for (const level of [0, 1]) {
+      assertTable(new LessCompiler({ compatLevel: level }), false, `level ${level}`);
+    }
+  });
+
+  test('the default options keep the released table for every uncomparable pair', () => {
+    assertTable(new LessCompiler({}), false, 'default');
+  });
+
+  test('every uncomparable pair keeps only the < quirk at fixed levels', () => {
+    assertTable(new LessCompiler({ compatLevel: 2 }), true, 'fixed');
+  });
+
+  test('an override forces the released table on for every uncomparable pair', () => {
+    assertTable(new LessCompiler({ compatLevel: 2, compatPatches: { GUARD_COMPARE_UNCOMPARABLE: true } }), false, 'override');
+  });
 });
 
 describe('SELECTOR_COMPLEXITY_OVERFLOW: selector complexity threshold', () => {
