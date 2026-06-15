@@ -17,11 +17,15 @@ export class LessCompiler {
   }
 
   compile(raw: string): CompileResult {
-    const tree = this.parse(raw) as Stylesheet;
+    // One context for the whole compile: parse, eval, and render
+    // share it, so recovery warnings recorded during parse reach
+    // the renderer.
     const ctx = this.context();
     // Compile start: a reused context must not leak its warning
     // ledger into this compile.
     ctx.resetWarnings();
+    const stm = new LessStream(ctx, raw);
+    const tree = stm.parse(STYLESHEET) as Stylesheet;
     const evaluator = new Evaluator(ctx);
     const env = ctx.newEnv();
     const evald = evaluator.evaluateStylesheet(env, tree);

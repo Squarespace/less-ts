@@ -1,6 +1,6 @@
 import { Context, Node } from '../common';
 import { whitespace } from '../utils';
-import { isSkippable } from './types';
+import { Chars, isSkippable } from './types';
 import { UNITS } from '../model';
 
 /**
@@ -102,6 +102,14 @@ export class LessStream {
   index: number = 0;
   flags: number = 0;
   furthest: number = 0;
+
+  // Recovery (safe mode): number of regions dropped by recover().
+  // A top-level parse that recovers and still produces nothing but
+  // comments is a broken sheet (the C6 check in the stylesheet
+  // parselet).
+  recovered: number = 0;
+  // Scan start of the last recovery, for the repeated-start guard.
+  private lastRecoverStart: number = -1;
 
   readonly length: number;
 
@@ -293,6 +301,174 @@ export class LessStream {
     if (this.peek() !== undefined) {
       throw new Error(parseError());
     }
+  }
+
+  /**
+   * Best-effort recovery (safe mode): drops the invalid region starting
+   * at the current position, resynchronizes at a well-defined boundary,
+   * and records a warning. The forward scan tracks brace depth and skips
+   * strings and comments. The sync point is:
+   *   - a '{' at depth 0: when its balanced block closes, resume at the
+   *     statement's line start (the caller's loop re-parses it fresh);
+   *   - a ';' at depth 0: resume at the following statement's line start
+   *     when strictly past the scan start, otherwise consume the ';';
+   *   - a '}' at depth 0 with no candidate block: left for the caller
+   *     (consumed only when it is the region's first character).
+   * With no sync point the remainder of the stream is dropped and the
+   * warning records the truncation. Terminates: resuming at the scan
+   * start itself is allowed once; the repeated-start guard drops the
+   * candidate afterwards, so positions strictly advance from the
+   * second recovery onward.
+   */
+  recover(what: string): void {
+    const source = this.source;
+    const len = this.length;
+    const start = this.index;
+    const startLine = this.lineAt(start);
+    let depth = 0;
+    let quote = '';
+    // Resuming at the scan start itself is a one-shot opportunity.
+    const repeatedStart = start === this.lastRecoverStart;
+    let resume = -1;
+    // Offset just after the most recent newline crossed outside strings
+    // and comments: the next statement's line start. The first such
+    // newline closes the garbage line; later newlines are mid-statement
+    // (multi-line declarations and selector lists are valid LESS) and
+    // are not boundaries.
+    let lastBoundary = start;
+    let firstLine = true;
+    let i = start;
+    while (i < len) {
+      const c = source[i];
+      if (quote !== '') {
+        // Inside a string: skip backslash-escaped characters so an
+        // escaped quote cannot desync the scanner.
+        if (c === Chars.BACKSLASH) {
+          i += 2;
+          continue;
+        }
+        if (c === quote) {
+          quote = '';
+          i++;
+          continue;
+        }
+        if (c === '\n') {
+          // A string with a bare line feed is invalid LESS anyway and
+          // the region is being dropped: end the phantom string at the
+          // newline so it cannot swallow sync points across lines.
+          quote = '';
+          lastBoundary = i + 1;
+        }
+        i++;
+        continue;
+      }
+      if (c === '"' || c === "'") {
+        quote = c;
+        i++;
+        continue;
+      }
+      if (c === Chars.SLASH) {
+        const n = source[i + 1];
+        if (n === Chars.ASTERISK) {
+          const end = source.indexOf('*/', i + 2);
+          i = end < 0 ? len : end + 2;
+          continue;
+        }
+        if (n === Chars.SLASH) {
+          const end = source.indexOf('\n', i + 2);
+          i = end < 0 ? len : end + 1;
+          // A line comment ends at its newline, a boundary only under
+          // the generic-newline rule.
+          if (end >= 0 && firstLine) {
+            lastBoundary = end + 1;
+            firstLine = false;
+          }
+          continue;
+        }
+      }
+      if (c === Chars.LEFT_CURLY_BRACKET) {
+        if (depth === 0 && resume < 0) {
+          if (lastBoundary > start || (lastBoundary === start && !repeatedStart)) {
+            resume = lastBoundary;
+          }
+        }
+        depth++;
+        i++;
+        continue;
+      }
+      if (c === Chars.RIGHT_CURLY_BRACKET) {
+        if (depth === 0) {
+          // No candidate block: the '}' (or the offending token itself)
+          // is the sync point, left for the caller.
+          this.index = (i === start) ? i + 1 : i;
+          this.syncTo(what, startLine, start, '');
+          return;
+        }
+        depth--;
+        if (depth === 0 && resume >= start) {
+          // The candidate statement's block closed: re-parse it fresh.
+          this.index = resume;
+          this.syncTo(what, startLine, start, '');
+          return;
+        }
+        i++;
+        continue;
+      }
+      if (c === Chars.SEMICOLON && depth === 0) {
+        // The ';' terminates the statement that follows the broken one.
+        if (lastBoundary > start) {
+          this.index = lastBoundary;
+        } else {
+          this.index = i + 1;
+        }
+        this.syncTo(what, startLine, start, '');
+        return;
+      }
+      if (c === '\n' && firstLine) {
+        lastBoundary = i + 1;
+        firstLine = false;
+      }
+      i++;
+    }
+    // No sync point found: drop the remainder of the stream.
+    this.index = (resume >= start) ? resume : len;
+    this.syncTo(what, startLine, start, '; rest of input truncated');
+  }
+
+  /**
+   * Completes a recovery jump: fast-forwards the incremental line and
+   * column counters (and furthest) past the dropped region so nodes
+   * parsed after the jump get correct positions, and records the
+   * warning for the skipped region.
+   */
+  private syncTo(what: string, startLine: number, start: number, suffix: string): void {
+    this.lastRecoverStart = start;
+    let newline = -1;
+    for (let i = start; i < this.index; i++) {
+      if (this.source[i] === '\n') {
+        this.lineOffset++;
+        newline = i;
+      }
+    }
+    this.charOffset = (newline < 0) ? this.charOffset + (this.index - start) : this.index - newline - 1;
+    this.furthest = max(this.index, this.furthest);
+    this.recovered++;
+    this.ctx.addWarning('skipped ' + what + ' at line ' + startLine + suffix);
+  }
+
+  /**
+   * Absolute 1-based line of an offset in the source. The incremental
+   * line counter can drift when marks and rollbacks straddle
+   * whitespace, so recovery diagnostics use this instead.
+   */
+  lineAt(offset: number): number {
+    let line = 1;
+    for (let i = 0; i < offset && i < this.length; i++) {
+      if (this.source[i] === '\n') {
+        line++;
+      }
+    }
+    return line;
   }
 
   skipWs(): number {

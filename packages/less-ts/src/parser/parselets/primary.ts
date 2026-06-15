@@ -2,7 +2,7 @@ import { Node, NodeType } from '../../common';
 import { Chars } from '../types';
 import { LessStream, Parselet, Parselets } from '../stream';
 import { Patch } from '../../compat';
-import { Block, Ruleset, Selectors, Stylesheet } from '../../model';
+import { Block, Comment, Ruleset, Selectors, Stylesheet } from '../../model';
 
 export class PrimaryParselet implements Parselet {
   parse(stm: LessStream): Node | undefined {
@@ -16,8 +16,29 @@ export class PrimaryParselet implements Parselet {
       if (this.skipStrayPlus(stm)) {
         continue;
       }
-      node = stm.parse(Parselets.PRIMARY_SUB);
+      try {
+        node = stm.parse(Parselets.PRIMARY_SUB);
+      } catch (e) {
+        if (!stm.ctx.safeMode()) {
+          throw e;
+        }
+        // A sub-parse threw a hard error. Same treatment as a fall-
+        // through: drop the invalid region at the next synchronization
+        // point and continue with the next statement.
+        stm.recover('invalid statement');
+        continue;
+      }
       if (node === undefined) {
+        // A block terminator or the end of input is not a failure.
+        // Otherwise, in recovery mode, drop the invalid region at the
+        // next synchronization point and keep parsing.
+        if (stm.ctx.safeMode()) {
+          const ch = stm.peek();
+          if (ch !== Chars.RIGHT_CURLY_BRACKET && ch !== undefined) {
+            stm.recover('invalid statement');
+            continue;
+          }
+        }
         break;
       }
       if (node.type === NodeType.BLOCK) {
@@ -89,6 +110,23 @@ export class StylesheetParselet implements Parselet {
     const block = stm.parse(Parselets.PRIMARY);
     const sheet = new Stylesheet(block as Block);
     stm.checkComplete();
+    // Recovery that rescues nothing is a broken sheet: a hard error
+    // even in safe mode, so a green build never ships a blank
+    // stylesheet. Comments do not count as output; definitions do (a
+    // def-only sheet is a legitimate variables file).
+    if (stm.ctx.safeMode() && stm.recovered > 0 && emptyOfNonComment(block as Block)) {
+      throw new Error('SyntaxError GENERAL stylesheet produced no output; all input was skipped during recovery');
+    }
     return sheet;
   }
 }
+
+// True when the block holds no rule other than comments.
+const emptyOfNonComment = (block: Block): boolean => {
+  for (const n of block.rules) {
+    if (!(n instanceof Comment)) {
+      return false;
+    }
+  }
+  return true;
+};
