@@ -357,6 +357,58 @@ describe('BUG4: invalid additions', () => {
     }
   });
 
+  // The multiplication() operator-restore matrix, byte-pinned from the
+  // Java reference. Level 0 keeps the released slash-drop (the slash
+  // is consumed when the right side is not an operand); level 1 and 2
+  // restore it. A slash between two operands is an operation at every
+  // level, with or without spaces; url() is not an operand, so a slash
+  // after it is never consumed. The slash decision is mode-independent:
+  // safe mode differs only in error recovery, never in the restore.
+  const slashCases: Array<[string, string, string]> = [
+    // [value source, level 0 value, level 1/2 value]
+    ['10px / url(x)', '10px url(x)', '10px / url(x)'],
+    ['10px/2px', '5px', '5px'],
+    ['10px /2px', '5px', '5px'],
+    ['10px / 2px', '5px', '5px'],
+    ['url(x) / cover center', 'url(x) / cover center', 'url(x) / cover center'],
+    ['10px / cover center', '10px cover center', '10px / cover center'],
+  ];
+
+  test('slash cases match the reference at every level', () => {
+    for (const [value, legacy, fixed] of slashCases) {
+      const src = '.a {\n  background: ' + value + ';\n}\n';
+      for (const level of [0, 1, 2]) {
+        const res = new LessCompiler({ compatLevel: level }).compile(src);
+        expect(res.errors.length).toEqual(0);
+        expect(res.css).toEqual('.a {\n  background: ' + (level === 0 ? legacy : fixed) + ';\n}\n');
+      }
+    }
+  });
+
+  test('the slash decision is independent of compress', () => {
+    for (const [value] of slashCases) {
+      const src = '.a {\n  background: ' + value + ';\n}\n';
+      for (const level of [0, 1, 2]) {
+        const plain = new LessCompiler({ compatLevel: level }).compile(src).css;
+        const min = new LessCompiler({ compatLevel: level, compress: true }).compile(src).css;
+        expect(min.match(/\//g) || []).toHaveLength((plain.match(/\//g) || []).length);
+      }
+    }
+  });
+
+  test('comment-adjacent slashes fail the parse at every level', () => {
+    // '// ' is a line comment that eats the rule terminator; the
+    // comment after the slash leaves a bare '*' where an operand is
+    // due. Both fail before the restore can matter.
+    const failing = ['x: 10px // c;', 'x: 10px / * c */ 2px;'];
+    for (const value of failing) {
+      const src = '.a {\n  ' + value + '\n}\n';
+      for (const level of [0, 1, 2]) {
+        expect(() => new LessCompiler({ compatLevel: level }).compile(src)).toThrow(PARSE_ERROR);
+      }
+    }
+  });
+
   test('an override forces the tolerance on at a fixed level', () => {
     expect(new LessCompiler({ compatLevel: 2, compatPatches: { BUG4: true } }).compile(src).css).toEqual(legacyCss);
   });
