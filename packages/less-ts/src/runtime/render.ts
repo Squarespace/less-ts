@@ -36,6 +36,7 @@ import { combineFeatures, combineSelectors } from './combine';
 import { CssModel } from './css';
 import { whitespace } from '../utils';
 import { Patch } from '../compat';
+import { droppedTypeName } from './evaluate';
 
 const EMPTY_FEATURES = new Features([], true);
 const EMPTY_SELECTORS = new Selectors([]);
@@ -213,67 +214,84 @@ export class Renderer {
       if (n === undefined) {
         continue;
       }
-      switch (n.type) {
-        case NodeType.BLOCK_DIRECTIVE: {
-          const o = n as BlockDirective;
-          env.push(o);
-          model.push(NodeType.BLOCK_DIRECTIVE);
-          model.header(o.name);
-          this._renderBlock(o.block, true);
-          model.pop();
-          env.pop();
-          break;
-        }
-
-        case NodeType.COMMENT: {
-          const o = n as Comment;
-          if (o.block && (!ctx.compress || o.hasBang())) {
-            model.comment(ctx.render(o));
+      try {
+        switch (n.type) {
+          case NodeType.BLOCK_DIRECTIVE: {
+            const o = n as BlockDirective;
+            env.push(o);
+            model.push(NodeType.BLOCK_DIRECTIVE);
+            try {
+              model.header(o.name);
+              this._renderBlock(o.block, true);
+            } finally {
+              // The push and pop must stay balanced even when the
+              // block fails mid-render and a caller recovers from it.
+              model.pop();
+              env.pop();
+            }
+            break;
           }
-          break;
-        }
 
-        case NodeType.DIRECTIVE: {
-          const o = n as Directive;
-          if (o.name !== '@charset') {
-            model.value(ctx.render(o));
+          case NodeType.COMMENT: {
+            const o = n as Comment;
+            if (o.block && (!ctx.compress || o.hasBang())) {
+              model.comment(ctx.render(o));
+            }
+            break;
           }
-          break;
-        }
 
-        case NodeType.IMPORT:
-          if (includeImports) {
-            this.renderImport(n as Import);
+          case NodeType.DIRECTIVE: {
+            const o = n as Directive;
+            if (o.name !== '@charset') {
+              model.value(ctx.render(o));
+            }
+            break;
           }
-          break;
 
-        case NodeType.MEDIA: {
-          const o = n as Media;
-          env.push(o);
-          model.push(NodeType.MEDIA);
-          model.header(`@media ${ctx.render(env.features())}`);
-          this.renderRuleset(new Ruleset(EMPTY_SELECTORS, o.block));
-          model.pop();
-          env.pop();
-          break;
+          case NodeType.IMPORT:
+            if (includeImports) {
+              this.renderImport(n as Import);
+            }
+            break;
+
+          case NodeType.MEDIA: {
+            const o = n as Media;
+            env.push(o);
+            model.push(NodeType.MEDIA);
+            try {
+              model.header(`@media ${ctx.render(env.features())}`);
+              this.renderRuleset(new Ruleset(EMPTY_SELECTORS, o.block));
+            } finally {
+              model.pop();
+              env.pop();
+            }
+            break;
+          }
+
+          case NodeType.DEFINITION: {
+            // Definitions render nothing except their warning comments.
+            const def = n as Definition;
+            this.emitWarnings(`definition '${def.name}'`, def.warnings);
+            break;
+          }
+
+          case NodeType.RULE: {
+            this.emitWarnings('next rule', (n as Rule).warnings);
+            model.value(ctx.render(n));
+            break;
+          }
+
+          case NodeType.RULESET:
+            this.renderRuleset(n as Ruleset);
+            break;
         }
-
-        case NodeType.DEFINITION: {
-          // Definitions render nothing except their warning comments.
-          const def = n as Definition;
-          this.emitWarnings(`definition '${def.name}'`, def.warnings);
-          break;
+      } catch (e) {
+        if (!ctx.safeMode()) {
+          throw e;
         }
-
-        case NodeType.RULE: {
-          this.emitWarnings('next rule', (n as Rule).warnings);
-          model.value(ctx.render(n));
-          break;
-        }
-
-        case NodeType.RULESET:
-          this.renderRuleset(n as Ruleset);
-          break;
+        // Best effort: skip the node that failed to render, warn, and
+        // continue with the next sibling.
+        ctx.addWarning('render: skipped ' + droppedTypeName(n) + ': ' + (e as Error).message);
       }
     }
   }
@@ -281,20 +299,25 @@ export class Renderer {
   protected renderRuleset(r: Ruleset): void {
     this.env.push(r);
     this.model.push(NodeType.RULESET);
-
-    const { selectors } = this.env.selectors();
-    if (selectors.length > 0) {
-      const buf = this.ctx.newBuffer();
-      for (const selector of selectors) {
-        renderSelector(buf, selector);
-        this.model.header(buf.toString());
-        buf.reset();
+    try {
+      const { selectors } = this.env.selectors();
+      if (selectors.length > 0) {
+        const buf = this.ctx.newBuffer();
+        for (const selector of selectors) {
+          renderSelector(buf, selector);
+          this.model.header(buf.toString());
+          buf.reset();
+        }
       }
+      this._renderBlock(r.block, true);
+    } finally {
+      // The push and pop must stay balanced even when the ruleset
+      // fails mid-render and a caller recovers from it: later
+      // siblings attach under the correct frame, and the model's
+      // end-of-render state check sees a balanced stack.
+      this.model.pop();
+      this.env.pop();
     }
-
-    this._renderBlock(r.block, true);
-    this.model.pop();
-    this.env.pop();
   }
 
   protected renderImports(block: Block): void {
@@ -302,6 +325,9 @@ export class Renderer {
       return;
     }
     for (const n of block.rules) {
+      if (n === undefined) {
+        continue;
+      }
       if (n.type === NodeType.IMPORT) {
         this.renderImport(n as Import);
       }

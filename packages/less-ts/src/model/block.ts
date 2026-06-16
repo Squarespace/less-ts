@@ -27,7 +27,10 @@ export const copyMixins = (map: Map<string, Node[]>): Map<string, Node[]> => {
 };
 
 export class Block extends Node implements IBlock {
-  readonly rules: Node[] = [];
+  // A member dropped by recovery (safe mode) leaves its slot empty;
+  // the slot keeps the statement indices stable and every consumer
+  // skips undefined slots.
+  readonly rules: (Node | undefined)[] = [];
   charset?: Directive;
 
   // Ordered list of mixin definitions that share a common mixin path prefix
@@ -40,17 +43,22 @@ export class Block extends Node implements IBlock {
   // that have no imports or mixin calls.
   flags: number = BlockFlags.REBUILD_VARS;
 
-  constructor(rules?: Node[]) {
+  constructor(rules?: (Node | undefined)[]) {
     super(NodeType.BLOCK);
     if (rules) {
       for (const r of rules) {
-        this.add(r);
+        if (r !== undefined) {
+          this.add(r);
+        }
       }
     }
   }
 
   equals(n: Node): boolean {
-    return n.type === NodeType.BLOCK && arrayEquals(this.rules, (n as Block).rules);
+    // Dropped slots are nothing: compare the surviving members.
+    const a = this.rules.filter((x): x is Node => x !== undefined);
+    const b = (n as Block).rules.filter((x): x is Node => x !== undefined);
+    return n.type === NodeType.BLOCK && arrayEquals(a, b);
   }
 
   hasImports(): boolean {
@@ -64,6 +72,9 @@ export class Block extends Node implements IBlock {
   dump(buf: Buffer): void {
     for (let i = 0; i < this.rules.length; i++) {
       const n = this.rules[i];
+      if (n === undefined) {
+        continue;
+      }
       if (n.type === NodeType.DEFINITION) {
         buf
           .indent()
@@ -126,6 +137,9 @@ export class Block extends Node implements IBlock {
 
   appendBlock(block: Block): void {
     for (const n of block.rules) {
+      if (n === undefined) {
+        continue;
+      }
       this.rules.push(n);
       this.update(n);
     }
@@ -179,6 +193,9 @@ export class Block extends Node implements IBlock {
     const len = rules.length;
     for (let i = 0; i < len; i++) {
       const rule = rules[i];
+      if (rule === undefined) {
+        continue;
+      }
       if (rule.type === NodeType.DEFINITION) {
         this.variables[(rule as Definition).name] = rule as Definition;
       }

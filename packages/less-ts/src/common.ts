@@ -174,7 +174,9 @@ export interface IBlockNode {
 }
 
 export interface IBlock {
-  readonly rules: Node[];
+  // Members dropped by recovery (safe mode) leave empty slots; the
+  // slot keeps statement indices stable and consumers skip them.
+  readonly rules: (Node | undefined)[];
 
   mixins?: Map<string, Node[]>;
 

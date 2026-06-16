@@ -19,6 +19,29 @@ import { MixinClosureArrow, MixinMatch, MixinResolver, RulesetMatch } from './re
 
 const EMPTY_BLOCK = new Block([]);
 
+// Node type name for recovery warnings, matching the reference's
+// type-based phrasing ('rule', 'definition', ...).
+export const droppedTypeName = (n: Node): string => {
+  switch (n.type) {
+    case NodeType.RULE:
+      return 'rule';
+    case NodeType.DEFINITION:
+      return 'definition';
+    case NodeType.RULESET:
+      return 'ruleset';
+    case NodeType.MEDIA:
+      return 'media';
+    case NodeType.BLOCK_DIRECTIVE:
+      return 'block_directive';
+    case NodeType.DIRECTIVE:
+      return 'directive';
+    case NodeType.MIXIN:
+      return 'mixin';
+    default:
+      return 'node';
+  }
+};
+
 export class Evaluator {
   // Register closure on a Mixin definition
   private closures: Map<Mixin, ExecEnv> = new Map();
@@ -114,6 +137,7 @@ export class Evaluator {
       if (n === undefined) {
         continue;
       }
+      const errorsBefore = env.errors.length;
       switch (n.type) {
         case NodeType.BLOCK_DIRECTIVE:
           n = this.evaluateBlockDirective(env, n as BlockDirective);
@@ -122,7 +146,12 @@ export class Evaluator {
         case NodeType.DEFINITION: {
           const d = n as Definition;
           n = new Definition(d.name, d.dereference(env));
-          this.attachWarnings(n, env);
+          // A member dropped by the recovery check below keeps
+          // nothing: its pending warnings stay in the env for the
+          // rollback.
+          if (!(env.ctx.safeMode() && env.errors.length > errorsBefore)) {
+            this.attachWarnings(n, env);
+          }
           break;
         }
 
@@ -160,8 +189,13 @@ export class Evaluator {
           } else {
             n = r.eval(env);
           }
-          env.ctx.captureErrors(n, env);
-          this.attachWarnings(n, env);
+          // A member dropped by the recovery check below keeps
+          // nothing: no error event, no warning attachment (the
+          // pending warnings stay in the env for the rollback).
+          if (!(env.ctx.safeMode() && env.errors.length > errorsBefore)) {
+            env.ctx.captureErrors(n, env);
+            this.attachWarnings(n, env);
+          }
           break;
         }
 
@@ -172,6 +206,19 @@ export class Evaluator {
         default:
           n = n.eval(env);
           break;
+      }
+
+      if (env.errors.length > errorsBefore && env.ctx.safeMode()) {
+        // Best effort: drop this member, warn, and continue with the
+        // next sibling. Discarding the env's pending warnings rolls
+        // back their budget slots: the failed member's partial
+        // warnings neither bleed into the next rule nor consume budget
+        // they will never surface in.
+        const [first] = env.errors.splice(errorsBefore);
+        env.discardWarnings();
+        rules[i] = undefined;
+        env.ctx.addWarning('eval: dropped ' + droppedTypeName(n) + ': ' + first.message);
+        continue;
       }
 
       rules[i] = n;
@@ -204,16 +251,33 @@ export class Evaluator {
     const { rules } = block;
     for (let i = 0; i < rules.length; i++) {
       const n = rules[i];
+      if (n === undefined) {
+        continue;
+      }
       if (n.type === NodeType.MIXIN_CALL) {
-        const result = this.executeMixinCall(env, n as MixinCall);
-        ctx.captureErrors(n, env);
+        const call = n as MixinCall;
+        const errorsBefore = env.errors.length;
+        const result = this.executeMixinCall(env, call);
+        if (ctx.safeMode() && env.errors.length > errorsBefore) {
+          // Best effort: drop the failing call and continue with the
+          // next statement; the call's partial env warnings are
+          // discarded, rolling back their budget slots.
+          const [first] = env.errors.splice(errorsBefore);
+          env.discardWarnings();
+          rules[i] = undefined;
+          ctx.addWarning('eval: dropped mixin call: ' + first.message);
+          continue;
+        }
+        ctx.captureErrors(call, env);
 
         const len = result.rules.length;
         if (len > 0) {
           // Replace mixin call site with the result
           rules.splice(i, 1, ...result.rules);
           for (const r of result.rules) {
-            block.update(r);
+            if (r !== undefined) {
+              block.update(r);
+            }
           }
         } else {
           // Snip out the call.
@@ -295,17 +359,22 @@ export class Evaluator {
     }
 
     ctx.mixinDepth++;
+    try {
+      env.push(mixin);
+      const { block } = mixin;
+      this.expandMixins(env, block);
+      this.evaluateRules(env, block, call.important);
 
-    env.push(mixin);
-    const { block } = mixin;
-    this.expandMixins(env, block);
-    this.evaluateRules(env, block, call.important);
-
-    for (const rule of block.rules) {
-      collector.add(rule);
+      for (const rule of block.rules) {
+        if (rule !== undefined) {
+          collector.add(rule);
+        }
+      }
+    } finally {
+      // The depth unwinds on every path, failed or not, so a dropped
+      // call cannot leave the counter high for the next one.
+      ctx.mixinDepth--;
     }
-
-    ctx.mixinDepth--;
 
     // Note: env.pop() calls unnecessary here, since we're throwing
     // away the temporary environment.
@@ -325,11 +394,19 @@ export class Evaluator {
     }
 
     ctx.mixinDepth++;
-    const result = this.evaluateRuleset(env, ruleset, call.important);
-    ctx.mixinDepth--;
+    let result: Ruleset;
+    try {
+      result = this.evaluateRuleset(env, ruleset, call.important);
+    } finally {
+      // The depth unwinds on every path, failed or not, so a dropped
+      // call cannot leave the counter high for the next one.
+      ctx.mixinDepth--;
+    }
 
     for (const n of result.block.rules) {
-      collector.add(n);
+      if (n !== undefined) {
+        collector.add(n);
+      }
     }
 
     return true;
