@@ -14,7 +14,7 @@ export class AlphaParselet implements Parselet {
       if (dim.unit !== undefined) {
         // Java's ALPHA_UNITS_INVALID message includes the dimension as its
         // model repr, e.g. 'Found DIMENSION 10.0 % (percentage)'.
-        throw new Error(
+        stm.parseError(
           `SyntaxError ALPHA_UNITS_INVALID Numeric values for alpha cannot have units. Found ${dim.modelRepr()}`
         );
       }
@@ -22,9 +22,9 @@ export class AlphaParselet implements Parselet {
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
       if (value !== undefined) {
-        throw new Error('expected a unit-less number or variable for alpha');
+        stm.parseError('expected a unit-less number or variable for alpha');
       } else {
-        throw new Error('expected right parenthesis ")" to end alpha');
+        stm.parseError('expected right parenthesis ")" to end alpha');
       }
     }
     return new Alpha(value === undefined ? new Anonymous('') : value);
@@ -114,7 +114,7 @@ export class FunctionCallParselet implements Parselet {
     }
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
-      throw new Error('expected right parenthesis ")" to end url');
+      stm.parseError('expected right parenthesis ")" to end url');
     }
     return new Url(value);
   }

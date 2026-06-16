@@ -49,8 +49,7 @@ export class QuotedParselet implements Parselet {
       }
 
       if (ch === Chars.LINE_FEED) {
-        // TODO: stm.parseError method
-        throw new Error('Quoted string contains a bare line feed');
+        stm.parseError('Quoted string contains a bare line feed');
       }
 
       buf += ch;

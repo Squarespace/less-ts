@@ -9,7 +9,7 @@ export class JavascriptParselet implements Parselet {
       pos++;
     }
     if (stm.peekn(pos) === Chars.GRAVE_ACCENT) {
-      throw new Error('inline JavaScript not supported');
+      stm.parseError('inline JavaScript not supported');
     }
     return undefined;
   }

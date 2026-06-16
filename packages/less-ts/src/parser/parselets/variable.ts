@@ -34,7 +34,7 @@ export class VariableParselet implements Parselet {
       if (stm.ctx.compat.enabled(Patch.BUG3)) {
         stm.seekn(2);
       } else {
-        throw new Error(parseError());
+        stm.parseError(parseError());
       }
     }
     return new Variable(name, indirect, false);

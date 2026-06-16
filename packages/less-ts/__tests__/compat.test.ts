@@ -264,6 +264,15 @@ describe('safeMode wiring', () => {
 // The message Java attaches to a parse that cannot complete.
 const PARSE_ERROR = 'SyntaxError INCOMPLETE_PARSE Unable to complete parse.';
 
+// A compile that fails at the parse stage: no css, one event, and the
+// message is the complete report.
+const parseFail = (src: string, opts: { compatLevel?: number } = {}): void => {
+  const res = new LessCompiler(opts).compile(src);
+  expect(res.css).toEqual('');
+  expect(res.errors.length).toEqual(1);
+  expect(res.errors[0].errors[0].message).toEqual(PARSE_ERROR);
+};
+
 describe('BUG1: a stray + before the closing brace', () => {
   const src = '.a {\n  x: 1;\n  + }\n';
   const bare = '.a {\n  + }\n';
@@ -284,15 +293,15 @@ describe('BUG1: a stray + before the closing brace', () => {
   });
 
   test('legacy levels: only whitespace may follow the +', () => {
-    expect(() => new LessCompiler({}).compile('.a {\n  x: 1;\n  + /* c */ }\n')).toThrow(PARSE_ERROR);
-    expect(() => new LessCompiler({}).compile('.a {\n  x: 1;\n  + foo }\n')).toThrow(PARSE_ERROR);
+    parseFail('.a {\n  x: 1;\n  + /* c */ }\n');
+    parseFail('.a {\n  x: 1;\n  + foo }\n');
   });
 
   test('fixed levels reject the stray +', () => {
     for (const level of [1, 2]) {
-      expect(() => new LessCompiler({ compatLevel: level }).compile(src)).toThrow(PARSE_ERROR);
-      expect(() => new LessCompiler({ compatLevel: level }).compile(bare)).toThrow(PARSE_ERROR);
-      expect(() => new LessCompiler({ compatLevel: level }).compile(nested)).toThrow(PARSE_ERROR);
+      parseFail(src, { compatLevel: level });
+      parseFail(bare, { compatLevel: level });
+      parseFail(nested, { compatLevel: level });
     }
   });
 
@@ -334,8 +343,8 @@ describe('BUG2: a block-less @media', () => {
 
   test('fixed levels reject the block-less directive', () => {
     for (const level of [1, 2]) {
-      expect(() => new LessCompiler({ compatLevel: level }).compile(root)).toThrow(PARSE_ERROR);
-      expect(() => new LessCompiler({ compatLevel: level }).compile(nested)).toThrow(PARSE_ERROR);
+      parseFail(root, { compatLevel: level });
+      parseFail(nested, { compatLevel: level });
     }
   });
 
@@ -367,7 +376,7 @@ describe('BUG3: a variable followed by empty parens', () => {
 
   test('fixed levels reject the input', () => {
     for (const level of [1, 2]) {
-      expect(() => new LessCompiler({ compatLevel: level }).compile(src)).toThrow(PARSE_ERROR);
+      parseFail(src, { compatLevel: level });
     }
   });
 
@@ -387,7 +396,7 @@ describe('BUG4: invalid additions', () => {
 
   test('fixed levels reject the input', () => {
     for (const level of [1, 2]) {
-      expect(() => new LessCompiler({ compatLevel: level }).compile(src)).toThrow(PARSE_ERROR);
+      parseFail(src, { compatLevel: level });
     }
   });
 
@@ -457,7 +466,7 @@ describe('BUG4: invalid additions', () => {
     for (const value of failing) {
       const src = '.a {\n  ' + value + '\n}\n';
       for (const level of [0, 1, 2]) {
-        expect(() => new LessCompiler({ compatLevel: level }).compile(src)).toThrow(PARSE_ERROR);
+        parseFail(src, { compatLevel: level });
       }
     }
   });

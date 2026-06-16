@@ -60,7 +60,7 @@ export class ShorthandParselet implements Parselet {
     }
     const right = stm.parse(Parselets.ENTITY);
     if (left === undefined || right === undefined) {
-      throw new Error('parse error in shorthand parselet');
+      stm.parseError('parse error in shorthand parselet');
     }
     return new Shorthand(left, right);
   }

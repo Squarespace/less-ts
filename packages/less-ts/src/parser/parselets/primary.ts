@@ -115,7 +115,7 @@ export class StylesheetParselet implements Parselet {
     // stylesheet. Comments do not count as output; definitions do (a
     // def-only sheet is a legitimate variables file).
     if (stm.ctx.safeMode() && stm.recovered > 0 && emptyOfNonComment(block as Block)) {
-      throw new Error('SyntaxError GENERAL stylesheet produced no output; all input was skipped during recovery');
+      stm.parseError('SyntaxError GENERAL stylesheet produced no output; all input was skipped during recovery');
     }
     return sheet;
   }

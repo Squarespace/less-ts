@@ -108,7 +108,7 @@ export class DirectiveParselet implements Parselet {
         return DUMMY_MEDIA;
       }
       // Fixed: reject the directive outright.
-      throw new Error(parseError());
+      stm.parseError(parseError());
     }
     return new Media(features as Features, block as Block);
   }

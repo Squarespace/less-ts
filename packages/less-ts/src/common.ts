@@ -111,12 +111,28 @@ export const NodeTypes = Object.keys(NodeName)
     return p;
   }, {} as { [x: string]: number });
 
-export type LessErrorType = 'runtime';
+export type LessErrorType = 'runtime' | 'parse';
 
 export interface LessError {
   type: LessErrorType;
 
   message: string;
+}
+
+/**
+ * Error thrown by the parser when the input cannot be parsed. The
+ * message is the complete report (no position or source context is
+ * attached); the public parse() lets it propagate and compile()
+ * converts it into a LessErrorEvent.
+ */
+export class LessParseError extends Error {
+  constructor(message: string) {
+    super(message);
+    this.name = 'LessParseError';
+    // ES5 target: super(message) keeps a fresh Error prototype, so
+    // restore the chain to keep instanceof working.
+    Object.setPrototypeOf(this, LessParseError.prototype);
+  }
 }
 
 // TODO: record node that raised the error (rule level and up) and

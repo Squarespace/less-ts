@@ -1,5 +1,5 @@
 import { Context, LessErrorEvent, Node, Options } from './common';
-import { Stylesheet } from './model';
+import { ParseError, Stylesheet } from './model';
 import { renderNode, Evaluator, Renderer, RuntimeContext } from './runtime';
 import { LessStream, Parselet, STYLESHEET } from './parser';
 import { ErrorFormatter } from './runtime/errors';
@@ -25,7 +25,16 @@ export class LessCompiler {
     // ledger into this compile.
     ctx.resetWarnings();
     const stm = new LessStream(ctx, raw);
-    const tree = stm.parse(STYLESHEET) as Stylesheet;
+    // A parse failure never escapes: it is reported on the context as a
+    // parse event and the compile returns with empty css.
+    let tree: Stylesheet | undefined;
+    try {
+      tree = stm.parse(STYLESHEET) as Stylesheet;
+    } catch (e) {
+      const message = e instanceof Error ? e.message : String(e);
+      ctx.errors.push({ errors: [{ type: 'parse', message }], node: new ParseError(message), stack: [] });
+      return { css: '', errors: ctx.errors };
+    }
     const evaluator = new Evaluator(ctx);
     const env = ctx.newEnv();
     const evald = evaluator.evaluateStylesheet(env, tree);

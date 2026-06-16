@@ -24,6 +24,16 @@ export class ErrorFormatter {
     }
 
     const buf = this.ctx.newBuffer();
+    if (errors.every((e) => e.type === 'parse')) {
+      // A parse message is the complete report: no error wrapper,
+      // no stack frames, no node render. Mixed and runtime events
+      // take the structured path below.
+      for (const e of errors) {
+        buf.str(e.message);
+      }
+      return buf.toString();
+    }
+
     for (const e of errors) {
       buf.str(`Error: ${e.message}:\n`);
     }

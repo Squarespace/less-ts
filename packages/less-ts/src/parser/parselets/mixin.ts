@@ -45,7 +45,7 @@ export class MixinCallArgsParselet implements Parselet {
         if (tmp !== undefined) {
           if (expressions.length > 0) {
             if (delimSemicolon) {
-              throw new Error('mixed delimiters in mixin call arguments');
+              stm.parseError('mixed delimiters in mixin call arguments');
             }
             containsNamed = true;
           }
@@ -70,7 +70,7 @@ export class MixinCallArgsParselet implements Parselet {
       }
 
       if (containsNamed) {
-        throw new Error('mixed delimiters in mixin call arguments');
+        stm.parseError('mixed delimiters in mixin call arguments');
       }
       if (expressions.length > 1) {
         value = new ExpressionList(expressions);
@@ -84,7 +84,7 @@ export class MixinCallArgsParselet implements Parselet {
 
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
-      throw new Error('expected right parenthesis ")" to end mixin call arguments');
+      stm.parseError('expected right parenthesis ")" to end mixin call arguments');
     }
     if (delimSemicolon) {
       return new MixinCallArgs(';', argsSemicolon);
@@ -98,7 +98,7 @@ export class MixinCallArgsParselet implements Parselet {
     }
     const value = stm.parse(Parselets.EXPRESSION);
     if (value === undefined) {
-      throw new Error('expected expression for named argument');
+      stm.parseError('expected expression for named argument');
     }
     return value;
   }
@@ -203,7 +203,7 @@ export class MixinParamsParselet implements Parselet {
       const value = stm.parse(Parselets.EXPRESSION);
       if (value === undefined) {
         // TODO:
-        throw new Error('expected an expression');
+        stm.parseError('expected an expression');
       }
       return new Parameter(v.name, value, false);
     } else if (this.matchVariadic(stm)) {

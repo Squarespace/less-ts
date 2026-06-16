@@ -1,4 +1,4 @@
-import { Context, Node } from '../common';
+import { Context, LessParseError, Node } from '../common';
 import { whitespace } from '../utils';
 import { Chars, isSkippable } from './types';
 import { UNITS } from '../model';
@@ -299,8 +299,17 @@ export class LessStream {
   checkComplete(): void {
     this.skipWs();
     if (this.peek() !== undefined) {
-      throw new Error(parseError());
+      this.parseError(parseError());
     }
+  }
+
+  /**
+   * Throw a typed parse error carrying the given message. The public
+   * parse() lets it propagate; compile() converts it into a
+   * LessErrorEvent and returns it with empty css.
+   */
+  parseError(message: string): never {
+    throw new LessParseError(message);
   }
 
   /**

@@ -206,6 +206,26 @@ export class Paren extends Node {
   }
 }
 
+/**
+ * Placeholder attached to a parse failure recorded on the context. It
+ * does not participate in evaluation or rendering (a parse failure
+ * ends the compile before either); the message is the report, carried
+ * by the event, and the formatter takes the verbatim path.
+ */
+export class ParseError extends Node {
+  constructor(readonly message: string) {
+    super(NodeType.PARSE_ERROR);
+  }
+
+  equals(n: Node): boolean {
+    return n.type === NodeType.PARSE_ERROR && this.message === (n as ParseError).message;
+  }
+
+  repr(buf: Buffer): void {
+    buf.str(this.message);
+  }
+}
+
 export class Property extends Node {
   constructor(readonly name: string) {
     super(NodeType.PROPERTY);
