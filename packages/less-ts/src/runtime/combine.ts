@@ -4,8 +4,9 @@ import { cartesianProduct } from './utils';
 const KEYWORD_AND = new Keyword('and');
 
 // Selector complexity threshold. A combine that exceeds this many
-// elements fails the compile (fixed levels) or drops the current
-// selector (legacy levels).
+// elements fails the compile (fixed levels), truncates the combined
+// set (fixed levels, safe mode), or drops the current selector
+// (legacy levels).
 const SELECTOR_THRESHOLD = 4096;
 
 const selectorTooComplex = (): Error =>
@@ -18,13 +19,26 @@ const selectorTooComplex = (): Error =>
 // call, capping the combined selector set (the fixed-level contract).
 // false gives each call a fresh counter, the released per-call
 // overflow contract, which the legacy levels need for byte-parity.
-export const combineSelectors = (ancestors: Selectors, current: Selectors, sharedBudget: boolean = false): Selectors => {
+//
+// truncate true bounds the combined set at the threshold instead of
+// throwing: the selector that crosses the limit stays, the scan stops,
+// and the truncated flag is set for the caller to warn on. A truncate
+// request always shares one counter, so the cap spans the whole
+// combined set.
+export const combineSelectors = (
+  ancestors: Selectors,
+  current: Selectors,
+  sharedBudget: boolean = false,
+  truncate: boolean = false,
+  truncated: boolean[] | undefined = undefined,
+): Selectors => {
   const result = new Selectors([]);
   const complexity = [0];
+  const shared = sharedBudget || truncate;
   for (const selector of current.selectors) {
     // If selector does not have a wildcard, just prepend it to the ancestors.
     if (!selector.hasWildcard) {
-      flatten([ancestors.selectors, [selector]], result, sharedBudget ? complexity : [0]);
+      flatten([ancestors.selectors, [selector]], result, shared ? complexity : [0], truncate, truncated);
       continue;
     }
 
@@ -49,14 +63,22 @@ export const combineSelectors = (ancestors: Selectors, current: Selectors, share
       inputs.push([temp]);
     }
 
-    flatten(inputs, result, sharedBudget ? complexity : [0]);
+    flatten(inputs, result, shared ? complexity : [0], truncate, truncated);
   }
   return result;
 };
 
 // One flatten step of a combine. complexity carries the running element
-// count; the combine decides whether the calls share it.
-export const flatten = (selectors: Selector[][], result: Selectors, complexity: number[]): void => {
+// count; the combine decides whether the calls share it. On overflow the
+// call throws, unless truncate is set: then the just-appended selector
+// stays, the truncated flag is raised, and the scan stops.
+export const flatten = (
+  selectors: Selector[][],
+  result: Selectors,
+  complexity: number[],
+  truncate: boolean = false,
+  truncated: boolean[] | undefined = undefined,
+): void => {
   const product = cartesianProduct(selectors);
   for (const tmp of product) {
     let flat: Element[] = [];
@@ -66,6 +88,12 @@ export const flatten = (selectors: Selector[][], result: Selectors, complexity: 
     result.selectors.push(new Selector(flat));
     complexity[0] += flat.length;
     if (complexity[0] > SELECTOR_THRESHOLD) {
+      if (truncate) {
+        if (truncated !== undefined) {
+          truncated[0] = true;
+        }
+        return;
+      }
       throw selectorTooComplex();
     }
   }

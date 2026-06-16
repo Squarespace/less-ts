@@ -5,8 +5,11 @@ import { LessCompiler } from '../../src';
 // is dropped - its pending warnings rolled back, a warning recorded -
 // and the next sibling evaluates. A node that fails to render is
 // skipped with a warning, and the render env and model stacks stay
-// balanced so later siblings attach under the correct frame. The
-// bytes below are the reference output, captured at level 0.
+// balanced so later siblings attach under the correct frame. A
+// selector combine that overflows the complexity limit truncates at
+// the fixed level instead of skipping the ruleset. The bytes below
+// are the reference output, captured at level 0 for the eval cells
+// and level 2 for the render cells.
 
 const VAR_UNDEFINED =
   'ExecuteError VAR_UNDEFINED: Failed to locate a definition for the variable @undef in current scope';
@@ -16,8 +19,7 @@ const recovery = (n: number, warning: string): string =>
   `/* WARNING[${n}] raised during recovery: ${warning} */\n`;
 
 // A 65-sibling grid nested 63 deep: the depth-62 combine exceeds the
-// complexity limit at the fixed level (4160 elements), so its render
-// push fails.
+// complexity limit at the fixed level (4160 combined elements).
 const grid = (): string => {
   const sels = Array.from({ length: 65 }, (_v, i) => '.a' + i).join(', ');
   let nested = '';
@@ -29,6 +31,27 @@ const grid = (): string => {
     nested += '}\n';
   }
   return sels + ' {\n' + nested + '}\n.z { color: blue; }\n';
+};
+
+// The grid rendered at the fixed level with safe mode: the depth-62
+// combine overflows, so the combined set is truncated at the limit -
+// all 65 selectors of the innermost frame stay, each 64 elements
+// ending in .b62, the rule body is kept - and one warning trails the
+// output.
+const truncatedGrid = (): string => {
+  const b = Array.from({ length: 63 }, (_v, i) => '.b' + i).join(' ');
+  const lines: string[] = [];
+  for (let i = 0; i < 64; i++) {
+    lines.push('.a' + i + ' ' + b + ',');
+  }
+  lines.push('.a64 ' + b + ' {');
+  lines.push('  color: red;');
+  lines.push('}');
+  lines.push('.z {');
+  lines.push('  color: blue;');
+  lines.push('}');
+  lines.push(recovery(1, 'render: truncated selector combination exceeding complexity limit').trimEnd());
+  return lines.join('\n') + '\n';
 };
 
 describe('evaluation recovery in safe mode', () => {
@@ -114,20 +137,17 @@ describe('evaluation recovery in safe mode', () => {
 });
 
 describe('render recovery in safe mode', () => {
-  test('a ruleset that fails to render is skipped and the stack stays balanced', () => {
+  test('an overflowing ruleset truncates at the complexity limit and the stack stays balanced', () => {
     // At the fixed level the grid overflows the complexity limit
-    // mid-render. Safe mode skips the failing ruleset with a warning;
-    // the next sibling (.z) still attaches at the top level, which
-    // only happens if the env and model stacks were balanced.
+    // mid-render. Safe mode truncates the combined set at the limit:
+    // the selectors and the rule body stay, one warning trails. The
+    // next sibling (.z) still attaches at the top level, which only
+    // happens if the env and model stacks were balanced.
     const res = new LessCompiler({ safeMode: true, compatLevel: 2 }).compile(grid());
     expect(res.errors.length).toBe(0);
-    expect(res.css).toContain(
-      recovery(1, 'render: skipped ruleset: ExecuteError SELECTOR_TOO_COMPLEX: Selector exceeds the complexity threshold'),
-    );
+    expect(res.css).toEqual(truncatedGrid());
     expect(res.css).toContain('.z {\n  color: blue;\n}\n');
-    // The skipped ruleset body is lost with the ruleset (truncation
-    // instead of skipping is a later refinement of this cell).
-    expect(res.css).not.toContain('color: red');
+    expect(res.css).toContain('color: red');
   });
 
   test('a render failure at the legacy levels never happens', () => {

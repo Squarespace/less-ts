@@ -58,16 +58,18 @@ export class RenderFrame {
   // Merges the current selectors into this frame. When the merge
   // overflows the complexity limit and fallbackOnOverflow is set (the
   // legacy levels), the overflow is swallowed: nested rules keep the
-  // ancestors, a flat top-level list keeps its own selectors. Otherwise
-  // the compile fails.
-  mergeSelectors(current?: Selectors, fallbackOnOverflow: boolean = false): void {
+  // ancestors, a flat top-level list keeps its own selectors. With
+  // truncateOnOverflow (safe mode at the fixed levels) the combined
+  // set is truncated at the limit and the truncated flag is set for
+  // the caller to warn on. Otherwise the compile fails.
+  mergeSelectors(current?: Selectors, fallbackOnOverflow: boolean = false, truncateOnOverflow: boolean = false, truncated: boolean[] = []): void {
     const ancestors = this.parent ? this.parent.selectors() : EMPTY_SELECTORS;
     if (!current || current.selectors.length === 0) {
       this._selectors = ancestors;
       return;
     }
     try {
-      this._selectors = combineSelectors(ancestors, current, !fallbackOnOverflow);
+      this._selectors = combineSelectors(ancestors, current, !fallbackOnOverflow, truncateOnOverflow, truncated);
     } catch (e) {
       // SELECTOR_COMPLEXITY_OVERFLOW: legacy levels swallow the
       // overflow. A nested rule degrades to its parent selector. A
@@ -114,7 +116,15 @@ export class RenderEnv {
     if (type === NodeType.BLOCK_DIRECTIVE) {
       next.pushEmptySelectors();
     } else if (selectors) {
-      next.mergeSelectors(selectors, this.ctx.compat.enabled(Patch.SELECTOR_COMPLEXITY_OVERFLOW));
+      // Best-effort recovery truncates the combined selectors at the
+      // complexity limit instead of failing (strict) or falling back
+      // to the ancestors (legacy levels keep their fallback).
+      const legacy = this.ctx.compat.enabled(Patch.SELECTOR_COMPLEXITY_OVERFLOW);
+      const truncated: boolean[] = [];
+      next.mergeSelectors(selectors, legacy, this.ctx.safeMode() && !legacy, truncated);
+      if (truncated[0] !== undefined && truncated[0]) {
+        this.ctx.addWarning('render: truncated selector combination exceeding complexity limit');
+      }
     } else if (features) {
       next.mergeFeatures(features);
     }
