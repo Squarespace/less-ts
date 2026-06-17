@@ -31,6 +31,9 @@ export class ArgSpec {
         case 'd':
           v.push(ARG_DIMENSION);
           break;
+        case 'h':
+          v.push(ARG_HUE);
+          break;
         case 'k':
           v.push(ARG_KEYWORD);
           break;
@@ -105,6 +108,12 @@ export const ARG_DIMENSION: ArgValidator = {
 export const ARG_KEYWORD: ArgValidator = {
   type: 'keyword',
   validate: (arg: Node): boolean => arg.type === NodeType.KEYWORD,
+};
+
+export const ARG_HUE: ArgValidator = {
+  type: 'dimension',
+  // Any number, with units or not: hue angles take deg/rad/grad/turn.
+  validate: (arg: Node): boolean => arg.type === NodeType.DIMENSION,
 };
 
 export const ARG_NUMBER: ArgValidator = {

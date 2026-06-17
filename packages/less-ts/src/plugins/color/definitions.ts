@@ -43,55 +43,55 @@ class ARGB extends BaseFunction {
 
 class HSL extends BaseFunction {
   constructor() {
-    super('hsl', 'ppp');
+    super('hsl', 'hpp');
   }
 
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
-    const h = percent(args[0]);
+    const h = hue(args[0]);
     const s = percent(args[1]);
     const l = percent(args[2]);
-    return new HSLColor((h % 360) / 360, s, l, 1.0);
+    return new HSLColor(h, s, l, 1.0);
   }
 }
 
 class HSLA extends BaseFunction {
   constructor() {
-    super('hsla', 'pppp');
+    super('hsla', 'hppp');
   }
 
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
-    const h = percent(args[0]);
+    const h = hue(args[0]);
     const s = percent(args[1]);
     const l = percent(args[2]);
     const a = percent(args[3]);
-    return new HSLColor((h % 360) / 360, s, l, a);
+    return new HSLColor(h, s, l, a);
   }
 }
 
 class HSV extends BaseFunction {
   constructor() {
-    super('hsv', 'ppp');
+    super('hsv', 'hpp');
   }
 
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
-    const h = percent(args[0]);
+    const h = hue(args[0]);
     const s = percent(args[1]);
     const v = percent(args[2]);
-    return RGBColor.fromHSVA((h % 360) / 360, s, v, 1.0);
+    return RGBColor.fromHSVA(h, s, v, 1.0);
   }
 }
 
 class HSVA extends BaseFunction {
   constructor() {
-    super('hsva', 'pppp');
+    super('hsva', 'hppp');
   }
 
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
-    const h = percent(args[0]);
+    const h = hue(args[0]);
     const s = percent(args[1]);
     const v = percent(args[2]);
     const a = percent(args[3]);
-    return RGBColor.fromHSVA((h % 360) / 360, s, v, a);
+    return RGBColor.fromHSVA(h, s, v, a);
   }
 }
 
@@ -103,6 +103,21 @@ const scaled = (n: Node, scale: number): number => {
 const percent = (n: Node): number => {
   const { value } = n as Dimension;
   return (n as Dimension).unit === Unit.PERCENTAGE ? value * 0.01 : value;
+};
+
+/**
+ * Hue from a dimension: any unit is valid CSS, so take the raw value
+ * (percentages scale like percent()) and wrap it into [0, 360).
+ */
+const hue = (n: Node): number => {
+  const value = percent(n);
+  // A single modulus is exact for in-range values. Only negatives take
+  // the +360 wrap, so in-range hues are not perturbed by 1 ULP.
+  let wrapped = value % 360;
+  if (wrapped < 0) {
+    wrapped += 360;
+  }
+  return wrapped / 360.0;
 };
 
 export const DEFINITIONS: { [x: string]: Function } = {

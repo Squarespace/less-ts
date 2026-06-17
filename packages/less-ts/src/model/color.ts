@@ -168,9 +168,15 @@ export class RGBColor extends BaseColor {
   }
 
   static fromHSVA(h: number, s: number, v: number, a: number): RGBColor {
-    h *= 360;
-    const i = Math.floor((h / 60) % 6);
-    const f = h / 60 - i;
+    // Single modulus is exact for in-range hues. Wrap only negatives so
+    // in-range values are not perturbed by 1 ULP (see the HSLColor ctor).
+    let wrapped = h % 1.0;
+    if (wrapped < 0) {
+      wrapped += 1.0;
+    }
+    const hd = wrapped * 360;
+    const i = ((Math.floor(hd / 60) % 6) + 6) % 6;
+    const f = hd / 60 - i;
     const vals: number[] = [v, v * (1 - s), v * (1 - f * s), v * (1 - (1 - f) * s)];
     const r = vals[HSV_PERMUTATIONS[i][0]] * 255;
     const g = vals[HSV_PERMUTATIONS[i][1]] * 255;
@@ -188,7 +194,16 @@ export class HSLColor extends BaseColor {
   constructor(h: number, s: number, l: number, a: number) {
     super();
 
-    this.h = clamp(h * 360.0, 0, 360);
+    // Wrap an out-of-range or negative wheel fraction into [0, 1) instead
+    // of clamping: a single modulus is exact for in-range values (IEEE),
+    // so only negatives take the +1 wrap, and in-range hues are not
+    // perturbed by 1 ULP (the two-pass form flips 8-bit channel rounding
+    // for 23 of 360 fully-saturated hues).
+    let wrapped = h % 1.0;
+    if (wrapped < 0) {
+      wrapped += 1.0;
+    }
+    this.h = wrapped * 360.0;
     this.s = clamp(s, 0, 1);
     this.l = clamp(l, 0, 1);
     this.a = clamp(a, 0, 1);
