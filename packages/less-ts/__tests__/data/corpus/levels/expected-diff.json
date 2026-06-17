@@ -1,572 +1,382 @@
 [
   {
     "fixture": "010-prop-fn-color",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "010-prop-fn-color",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "010-prop-fn-color",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "011-prop-fn-num",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "011-prop-fn-num",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "011-prop-fn-num",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "013-prop-fn-nested",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "013-prop-fn-nested",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "013-prop-fn-nested",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "014-prop-fn-with-var",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "014-prop-fn-with-var",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "014-prop-fn-with-var",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "015-prop-fn-paren",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "015-prop-fn-paren",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "015-prop-fn-paren",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
+  },
+  {
+    "fixture": "016-prop-fn-op",
+    "level": "bare",
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "016-prop-fn-op",
     "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "016-prop-fn-op",
     "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "016-prop-fn-op",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "017-prop-fn-wrapping-calc",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "017-prop-fn-wrapping-calc",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "017-prop-fn-wrapping-calc",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
+  },
+  {
+    "fixture": "018-prop-calc-with-fn",
+    "level": "bare",
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "018-prop-calc-with-fn",
     "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "018-prop-calc-with-fn",
     "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "018-prop-calc-with-fn",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "020-def-fn-color",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "020-def-fn-color",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "020-def-fn-color",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "021-def-fn-num",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "021-def-fn-num",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "021-def-fn-num",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "023-def-fn-nested",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "023-def-fn-nested",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "023-def-fn-nested",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
+  },
+  {
+    "fixture": "024-def-fn-op",
+    "level": "bare",
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "024-def-fn-op",
     "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "024-def-fn-op",
     "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "024-def-fn-op",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "025-def-fn-paren",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "025-def-fn-paren",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "025-def-fn-paren",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "030-mixin-arg-fn",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "030-mixin-arg-fn",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "030-mixin-arg-fn",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "031-mixin-arg-fn-nested",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "031-mixin-arg-fn-nested",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "031-mixin-arg-fn-nested",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "032-mixin-arg-fn-num",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "032-mixin-arg-fn-num",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "032-mixin-arg-fn-num",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
+  },
+  {
+    "fixture": "034-mixin-arg-fn-op",
+    "level": "bare",
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "034-mixin-arg-fn-op",
     "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "034-mixin-arg-fn-op",
     "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "034-mixin-arg-fn-op",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "035-mixin-arg-paren",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "035-mixin-arg-paren",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "035-mixin-arg-paren",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "036-mixin-def-default",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "036-mixin-def-default",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "036-mixin-def-default",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
+  },
+  {
+    "fixture": "040-guard-fn-num",
+    "level": "bare",
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "040-guard-fn-num",
     "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "040-guard-fn-num",
     "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "040-guard-fn-num",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
+  },
+  {
+    "fixture": "041-guard-arg-fn",
+    "level": "bare",
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "041-guard-arg-fn",
     "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "041-guard-arg-fn",
     "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "041-guard-arg-fn",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "042-guard-def-var",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "042-guard-def-var",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "042-guard-def-var",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
+  },
+  {
+    "fixture": "043-guard-fn-color",
+    "level": "bare",
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "043-guard-fn-color",
     "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "043-guard-fn-color",
     "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "043-guard-fn-color",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
+  },
+  {
+    "fixture": "044-guard-fn-calc",
+    "level": "bare",
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "044-guard-fn-calc",
     "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "044-guard-fn-calc",
     "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "044-guard-fn-calc",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
+  },
+  {
+    "fixture": "045-guard-var-arg",
+    "level": "bare",
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "045-guard-var-arg",
     "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "045-guard-var-arg",
     "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "045-guard-var-arg",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "050-media-fn-num",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "050-media-fn-num",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "050-media-fn-num",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "051-media-fn-color",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "051-media-fn-color",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "051-media-fn-color",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "053-media-def-var",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "053-media-def-var",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "053-media-def-var",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
-    "fixture": "213-color-alpha",
+    "fixture": "211-hex-compress",
+    "level": "bare",
+    "reason": "the reference passes non-3/6-digit hex runs through as written; the TS parser still truncates them to a 3/6-digit prefix"
+  },
+  {
+    "fixture": "211-hex-compress",
     "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference passes non-3/6-digit hex runs through as written; the TS parser still truncates them to a 3/6-digit prefix"
   },
   {
-    "fixture": "213-color-alpha",
+    "fixture": "211-hex-compress",
     "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference passes non-3/6-digit hex runs through as written; the TS parser still truncates them to a 3/6-digit prefix"
+  },
+  {
+    "fixture": "211-hex-compress",
+    "level": "2",
+    "reason": "the reference passes non-3/6-digit hex runs through as written; the TS parser still truncates them to a 3/6-digit prefix"
   },
   {
     "fixture": "213-color-alpha",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "220-fn-values",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "220-fn-values",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "220-fn-values",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
+  },
+  {
+    "fixture": "233-color-alpha-math",
+    "level": "bare",
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "233-color-alpha-math",
     "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "233-color-alpha-math",
     "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "233-color-alpha-math",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
+  },
+  {
+    "fixture": "234-color-ctor-op",
+    "level": "bare",
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "234-color-ctor-op",
     "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "234-color-ctor-op",
     "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference parses value-position calls as plain values below the fixed level; the TS parser still takes them as math operands"
   },
   {
     "fixture": "234-color-ctor-op",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "500-blend-alpha",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "500-blend-alpha",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "500-blend-alpha",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "501-blend-screen",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "501-blend-screen",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "501-blend-screen",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "520-mod-zero",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "520-mod-zero",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "520-mod-zero",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "521-mod-normal",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "521-mod-normal",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "521-mod-normal",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "530-convert-incompatible",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "530-convert-incompatible",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "530-convert-incompatible",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "531-convert-compatible",
-    "level": "0",
-    "reason": "value-position calls render literally until the Java-side patch lands"
-  },
-  {
-    "fixture": "531-convert-compatible",
-    "level": "1",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
     "fixture": "531-convert-compatible",
     "level": "2",
-    "reason": "value-position calls render literally until the Java-side patch lands"
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
+  },
+  {
+    "fixture": "532-unit-factors",
+    "level": "2",
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   }
 ]

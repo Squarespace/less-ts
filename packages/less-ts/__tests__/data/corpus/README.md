@@ -1,7 +1,7 @@
 # Corpus v2 (alignment corpus)
 
 Pinned byte-exact reference corpus (byte-parity with Java
-`main` at default options). 78 fixtures, Java main: 56 OK / 22 ERR.
+`main` at default options). 85 fixtures, Java main: 61 OK / 24 ERR.
 
 Layout:
 

@@ -1,1 +1,1 @@
-ExecuteError INVALID_OPERATION2: Operation + cannot be applied to FUNCTION_CALL and FUNCTION_CALL
+SyntaxError INCOMPLETE_PARSE Unable to complete parse.

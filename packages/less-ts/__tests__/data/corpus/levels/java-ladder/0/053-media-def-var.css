@@ -1,4 +1,4 @@
-@media (min-width: 5px) {
+@media (min-width: round(4.6px)) {
   .a {
     x: 1;
   }

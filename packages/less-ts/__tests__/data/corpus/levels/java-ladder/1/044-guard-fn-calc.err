@@ -1,1 +1,1 @@
-ExecuteError INVALID_ARG_EXT: Argument 1 must be DIMENSION. Found FUNCTION_CALL: calc(10%)
+SyntaxError EXPECTED Expected right parenthesis ')' to end guard condition

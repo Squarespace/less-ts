@@ -163,39 +163,50 @@ const buildFactors = (): FactorMap => {
     map[u][u] = 1.0;
   }
 
+  // 1 inch = 25.4 millimeters exactly. This anchors every length
+  // conversion: 1in = 2.54cm = 25.4mm = 96px = 72pt = 6pc.
+  const MM_PER_IN = 25.4;
+
   add(Unit.IN, Unit.CM, 2.54);
-  add(Unit.IN, Unit.MM, 2.54 * 1000.0);
+  add(Unit.IN, Unit.MM, MM_PER_IN);
   add(Unit.IN, Unit.PX, 96.0);
   add(Unit.IN, Unit.PT, 72.0);
-  add(Unit.IN, Unit.PC, 12.0 * 72.0);
+  add(Unit.IN, Unit.PC, 6.0);
 
-  add(Unit.CM, Unit.MM, 1000.0);
-  add(Unit.CM, Unit.PX, 2.54 * 96.0);
-  add(Unit.CM, Unit.PT, 2.54 * 72.0);
-  add(Unit.CM, Unit.PC, 2.54 * 72.0 * 12.0);
+  // 1cm = 1/2.54in, so cm->mm = MM_PER_IN/2.54 = 10 and cm->px = 96/2.54
+  // (not 2.54*96), cm->pc = 6/2.54.
+  add(Unit.CM, Unit.MM, MM_PER_IN / 2.54);
+  add(Unit.CM, Unit.PX, 96.0 / 2.54);
+  add(Unit.CM, Unit.PT, 72.0 / 2.54);
+  add(Unit.CM, Unit.PC, 6.0 / 2.54);
 
-  add(Unit.PX, Unit.MM, (2.54 * 1000.0) / 96.0);
+  // 1px = 1/96in
+  add(Unit.PX, Unit.MM, MM_PER_IN / 96.0);
   add(Unit.PX, Unit.PT, 0.75);
   add(Unit.PX, Unit.PC, 0.75 / 12.0);
 
-  add(Unit.PC, Unit.MM, 1000.0 * map[Unit.PC][Unit.CM]);
+  // 1pc = 12pt = 1/6in
+  add(Unit.PC, Unit.MM, MM_PER_IN / 6.0);
   add(Unit.PC, Unit.PT, 12.0);
 
-  add(Unit.PT, Unit.MM, (2.54 * 1000.0) / 72.0);
+  // 1pt = 1/72in
+  add(Unit.PT, Unit.MM, MM_PER_IN / 72.0);
 
   add(Unit.S, Unit.MS, 1000.0);
 
   add(Unit.KHZ, Unit.HZ, 1000.0);
 
+  // 1dppx = 1 dot per px = 96dpi (CSS reference pixel); 1dpcm = 1 dot per
+  // cm = 2.54dpi. So dppx->dpcm = 96/2.54 (not 2.54*96) and dppx->dpi = 96.
   add(Unit.DPCM, Unit.DPI, 2.54);
   add(Unit.DPPX, Unit.DPI, 96.0);
-  add(Unit.DPPX, Unit.DPCM, 2.54 * 96.0);
+  add(Unit.DPPX, Unit.DPCM, 96.0 / 2.54);
 
   add(Unit.TURN, Unit.DEG, 360.0);
   add(Unit.TURN, Unit.GRAD, 400.0);
   add(Unit.TURN, Unit.RAD, 2 * Math.PI);
   add(Unit.DEG, Unit.RAD, 1.0 / (180.0 / Math.PI));
-  add(Unit.DEG, Unit.GRAD, 9 / 10.0);
+  add(Unit.DEG, Unit.GRAD, 10.0 / 9.0);
   add(Unit.RAD, Unit.GRAD, 1 / (Math.PI / 200.0));
 
   return map;

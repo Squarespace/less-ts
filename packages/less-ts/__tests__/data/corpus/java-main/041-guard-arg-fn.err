@@ -1,1 +1,1 @@
-ExecuteError UNCOMPARABLE_TYPE: Unable to compare instances of FUNCTION_CALL
+SyntaxError EXPECTED Expected right parenthesis ')' to end guard condition
