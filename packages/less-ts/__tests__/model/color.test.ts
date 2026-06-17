@@ -1,5 +1,6 @@
 import { HSLColor, KeywordColor, RGBColor } from '../../src/model';
-import { hexvalue, hexToRGB } from '../../src/utils';
+import { hexvalue, hexToRGB, nameToRGB, rgbToName } from '../../src/utils';
+import { LessCompiler } from '../../src';
 
 test('equals', () => {
   const black1 = new RGBColor(0, 0, 0, 1.0);
@@ -26,4 +27,22 @@ test('conversion', () => {
   expect(hexvalue('F')).toEqual(15);
 
   expect(hexToRGB('fff')).toEqual([255, 255, 255]);
+});
+
+test('the name table resolves saddlebrown both ways', () => {
+  expect(nameToRGB('saddlebrown')).toEqual([0x8b, 0x45, 0x13]);
+  expect(rgbToName(0x8b, 0x45, 0x13)).toBe('saddlebrown');
+  // black is registered once and resolves both ways
+  expect(nameToRGB('black')).toEqual([0x00, 0x00, 0x00]);
+  expect(rgbToName(0x00, 0x00, 0x00)).toBe('black');
+});
+
+test('saddlebrown and #8b4513 are the same rendered color', () => {
+  // The reference emits the shorter form: the 11-character name loses
+  // to the 7-character hex, so both inputs render #8b4513.
+  const named = new LessCompiler({}).compile('.a { c: saddlebrown; }\n');
+  const hex = new LessCompiler({}).compile('.a { c: #8b4513; }\n');
+  expect(named.errors.length).toBe(0);
+  expect(hex.css).toBe(named.css);
+  expect(hex.css).toContain('c: #8b4513');
 });

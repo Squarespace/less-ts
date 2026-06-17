@@ -8,7 +8,6 @@ class ColorNames {
 
   constructor() {
     this.grey(0x00, 'black');
-    this.grey(0x00, 'black');
     this.grey(0xa9, 'darkgray');
     this.grey(0xa9, 'darkgrey');
     this.grey(0x69, 'dimgray');
@@ -134,7 +133,7 @@ class ColorNames {
     this.rgb(0xff, 0x00, 0x00, 'red');
     this.rgb(0xbc, 0x8f, 0x8f, 'rosybrown');
     this.rgb(0x41, 0x69, 0xe1, 'royalblue');
-    this.rgb(0x8b, 0x45, 0x13, 'sthis.rgblebrown');
+    this.rgb(0x8b, 0x45, 0x13, 'saddlebrown');
     this.rgb(0xfa, 0x80, 0x72, 'salmon');
     this.rgb(0xf4, 0xa4, 0x60, 'sandybrown');
     this.rgb(0x2e, 0x8b, 0x57, 'seagreen');
