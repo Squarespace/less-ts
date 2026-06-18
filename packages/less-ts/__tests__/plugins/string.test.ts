@@ -1,4 +1,4 @@
-import { LessCompiler, Patch } from '../../src';
+import { Dimension, LessCompiler, Patch, Unit } from '../../src';
 import { STRING } from '../../src/plugins/string';
 import { Anonymous, Block, Quoted, Rule, Ruleset, Selector, Selectors, TextElement } from '../../src/model';
 import { Renderer } from '../../src/runtime/render';
@@ -77,4 +77,23 @@ test('replace: validation requires three args', () => {
 
 test('replace: the function is registered in the table', () => {
   expect(STRING.replace).toBeDefined();
+});
+
+const callFormat = (fmt: string, ...args: (Quoted | Dimension)[]): string => {
+  const env = context().newEnv();
+  const result = STRING['%'].invoke(env, [quoted(fmt), ...args]) as Quoted;
+  return env.ctx.render(result);
+};
+
+test('format: known specifiers consume arguments as before', () => {
+  expect(callFormat('%s, %s', new Dimension(12, Unit.PX), quoted('foo'))).toBe('"12px, foo"');
+  expect(callFormat('%s %% %d', quoted('a'), new Dimension(2))).toBe('"a % 2"');
+});
+
+test('format: unknown %X specifiers pass through and consume no argument', () => {
+  // The percent before the space used to eat an argument (1005off).
+  expect(callFormat('100% off', new Dimension(5))).toBe('"100% off"');
+  expect(callFormat('%x', new Dimension(1))).toBe('"%x"');
+  expect(callFormat('%s %x %d', new Dimension(1), new Dimension(2))).toBe('"1 %x 2"');
+  expect(callFormat('%Z', new Dimension(1))).toBe('"%Z"');
 });

@@ -358,5 +358,10 @@
     "fixture": "532-unit-factors",
     "level": "2",
     "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
+  },
+  {
+    "fixture": "533-format-specifiers",
+    "level": "2",
+    "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   }
 ]

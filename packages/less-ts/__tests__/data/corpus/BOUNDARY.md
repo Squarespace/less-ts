@@ -59,7 +59,7 @@ Errors abort the whole compile (LessException). Messages are verbatim in
 the `.err` files; shapes: `ExecuteError <TYPE>: <message>` and
 `SyntaxError INCOMPLETE_PARSE Unable to complete parse.`
 
-## 2. Fixture matrix (85 fixtures, 61 OK / 24 ERR)
+## 2. Fixture matrix (86 fixtures, 62 OK / 24 ERR)
 
 Note: the TS-today column records the TS surface at pinning time
 (pre-alignment). The Java column is the pinned truth; the default
@@ -283,13 +283,15 @@ literal below the fixed level, `96px` at L2. TS today: literal at
 every level (matches the below-fixed-level reference); the L2 cells
 are registered.
 
-### 53x unit conversion factors (532)
+### 53x unit conversion factors (532) + format specifiers (533)
 
 Mixed-unit operations evaluate at every level: `1cm + 1mm` = `1.1cm`,
 `1in + 1mm` = `1.03937008in`, `180deg + 1grad` = `180.9deg`. The
 `convert` lines are literal below the fixed level and evaluate at L2
 (`convert(10mm, cm)` = `1cm`, `convert(180deg, grad)` = `200grad`).
-Green everywhere except L2 (registered).
+533: unknown `%X` format specifiers pass through literally and consume
+no argument (`%('100% off', 5)` = `'100% off'` at L2, not `'1005off'`);
+literal below the fixed level. Green everywhere except L2 (registered).
 
 ### 54x mixin arguments (540) + variadic named arg (541)
 
@@ -306,8 +308,8 @@ legacy side, L2 registered.
 Below the fixed level the wired reference renders calls literally with
 the arguments evaluated, so TS matches every function cell at L0/L1
 today (the pins flipped evaluated-to-literal at this tip). At L2 the
-reference evaluates: 38 fixtures diverge (the 37 of the function-table
-family, plus 532's convert lines); the rest are green.
+reference evaluates: 40 fixtures diverge (the function-table family,
+plus 532's convert lines); the rest are green.
 Notable L2 cells: 016/024/034/233/234 (reference computes, TS
 operation-errors), 017/044 (INVALID_ARG_EXT vs TS literal),
 040/041/042/045 (guard evaluates, TS UNCOMPARABLE). Per-cell

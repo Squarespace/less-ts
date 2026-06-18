@@ -65,6 +65,14 @@ class Format extends BaseFunction {
         continue;
       }
 
+      // Only s/S/d/D/a/A are real format specifiers. Any other "%X"
+      // passes through literally, without consuming an argument.
+      if ('sSdDaA'.indexOf(ch) === -1) {
+        buf += '%' + ch;
+        i++;
+        continue;
+      }
+
       formatters++;
       if (j >= args.length) {
         i++;
