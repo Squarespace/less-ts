@@ -81,7 +81,10 @@ const enum Patterns {
   ELEMENT1 = '(?:[.#]?|:*)(?:[\\w-]|[^\\u0000-\\u009f]|\\\\(?:[A-Fa-f0-9]{1,6} ?|[^A-Fa-f0-9]))+',
   ELEMENT2 = '\\([^)(@]+\\)',
   ELEMENT3 = '[\\.#](?=@)',
-  HEXCOLOR = '#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})',
+  // The run must be exactly 3 or 6 hex digits: a 7th hex digit after 6
+  // (or any digit after 3-5) fails the whole match so the value parses
+  // as an anonymous value and passes through verbatim.
+  HEXCOLOR = '#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})(?![A-Fa-f0-9])',
   IDENTIFIER = '[\\w][\\w-]*',
   IMPORTANT = '! *important',
   KEYWORD = '[_A-Za-z-][\\w-]*',

@@ -30,6 +30,20 @@ test('color', () => {
   const stm = stream('#000');
   expect(stm.matchHexColor()).toBe(true);
   expect(stm.token()).toEqual('#000');
+
+  // The run must be exactly 3 or 6 hex digits: any other length fails
+  // the match so the value parses as an anonymous value and renders
+  // verbatim.
+  expect(stream('#000000').matchHexColor()).toBe(true);
+  expect(stream('#0000').matchHexColor()).toBe(false);
+  expect(stream('#00000').matchHexColor()).toBe(false);
+  expect(stream('#0000000').matchHexColor()).toBe(false);
+  expect(stream('#11223344').matchHexColor()).toBe(false);
+
+  // 3/6-digit colors still parse and the bad runs pass through.
+  const res = new LessCompiler({}).compile('.a { x: #0000 #fff #123456 #1234567; }\n');
+  expect(res.errors.length).toBe(0);
+  expect(res.css).toBe('.a {\n  x: #0000 #fff #123456 #1234567;\n}\n');
 });
 
 test('element', () => {

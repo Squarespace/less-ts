@@ -179,8 +179,8 @@ renders as-is.
   the parse level (INCOMPLETE_PARSE / EXPECTED `)`) or evaluates.
 - calc and rgba/hsla eval on both runtimes for the leaf cases; TS lacks
   the embedded INCOMPATIBLE_UNITS warning comments.
-- keywords/hex compression/8-digit-alpha split; hex run pass-through;
-  truncation + fractional scalar; message prefix/format alignment.
+- keywords/hex compression/8-digit-alpha split; truncation +
+  fractional scalar; message prefix/format alignment.
 
 ## 4. Corrections to prior capture notes (probed evidence wins)
 
@@ -306,9 +306,8 @@ legacy side, L2 registered.
 Below the fixed level the wired reference renders calls literally with
 the arguments evaluated, so TS matches every function cell at L0/L1
 today (the pins flipped evaluated-to-literal at this tip). At L2 the
-reference evaluates: 39 fixtures diverge (the 37 of the function-table
-family, plus 211 hex pass-through and 532's convert lines); the rest
-are green.
+reference evaluates: 38 fixtures diverge (the 37 of the function-table
+family, plus 532's convert lines); the rest are green.
 Notable L2 cells: 016/024/034/233/234 (reference computes, TS
 operation-errors), 017/044 (INVALID_ARG_EXT vs TS literal),
 040/041/042/045 (guard evaluates, TS UNCOMPARABLE). Per-cell

@@ -275,26 +275,6 @@
     "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
-    "fixture": "211-hex-compress",
-    "level": "bare",
-    "reason": "the reference passes non-3/6-digit hex runs through as written; the TS parser still truncates them to a 3/6-digit prefix"
-  },
-  {
-    "fixture": "211-hex-compress",
-    "level": "0",
-    "reason": "the reference passes non-3/6-digit hex runs through as written; the TS parser still truncates them to a 3/6-digit prefix"
-  },
-  {
-    "fixture": "211-hex-compress",
-    "level": "1",
-    "reason": "the reference passes non-3/6-digit hex runs through as written; the TS parser still truncates them to a 3/6-digit prefix"
-  },
-  {
-    "fixture": "211-hex-compress",
-    "level": "2",
-    "reason": "the reference passes non-3/6-digit hex runs through as written; the TS parser still truncates them to a 3/6-digit prefix"
-  },
-  {
     "fixture": "213-color-alpha",
     "level": "2",
     "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
