@@ -1,7 +1,8 @@
 import { ExecEnv, Function, Node, NodeType } from '../common';
 import { Patch } from '../compat';
-import { incompatibleUnits, unknownUnit } from '../errors';
+import { incompatibleUnits, invalidColor, unknownUnit } from '../errors';
 import { stringToUnit, unitConversionFactor, unitDisplay, Anonymous, Dimension, Keyword, Quoted, RGBColor, Unit } from '../model';
+import { isHexColor } from '../utils';
 import { BaseFunction } from './base';
 
 const ANON_EMPTY = new Anonymous('');
@@ -17,6 +18,12 @@ class Color extends BaseFunction {
     str = str.copy();
     str.escaped = true;
     const hex = env.ctx.render(str);
+    if (!isHexColor(hex)) {
+      // Report a clean error instead of a raw failure on bad lengths or
+      // silently mapping bad digits to #000.
+      env.errors.push(invalidColor(hex));
+      return undefined;
+    }
     return RGBColor.fromHex(hex);
   }
 }

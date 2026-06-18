@@ -199,6 +199,35 @@ export const hexToRGB = (raw: string): ColorFields => {
   return [c0, c1, c2];
 };
 
+/**
+ * Returns true if the string is a valid CSS hex color: an optional
+ * single '#' followed by exactly 3 or 6 hex digits. The color() builtin
+ * checks with this before parsing so garbage inputs report a clean error
+ * instead of silently mapping to #000.
+ */
+export const isHexColor = (raw: string): boolean => {
+  const len = raw.length;
+  let start = 0;
+  if (len > 0 && raw[0] === '#') {
+    start++;
+  }
+  const digits = len - start;
+  if (digits !== 3 && digits !== 6) {
+    return false;
+  }
+  for (let i = start; i < len; i++) {
+    const c = raw.charCodeAt(i);
+    const isHex =
+      (c >= 48 && c <= 57) || // 0-9
+      (c >= 97 && c <= 102) || // a-f
+      (c >= 65 && c <= 70); // A-F
+    if (!isHex) {
+      return false;
+    }
+  }
+  return true;
+};
+
 const comp1 = (ch: string): number => comp2(ch, ch);
 
 const comp2 = (c0: string, c1: string): number => (hexvalue(c0) << 4) + hexvalue(c1);

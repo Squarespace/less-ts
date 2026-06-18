@@ -42,6 +42,10 @@ export const invalidOperation1 = (op: string, type: string): LessError =>
 export const invalidArg = (name: string, index: number, type1: string, type2: string): LessError =>
   runtimeError(`Function ${name} arg ${index} must be ${type1}, found ${type2}`);
 
+// The color() builtin rejects a string that is not a 3/6-digit hex color.
+export const invalidColor = (repr: string): LessError =>
+  runtimeError(`ExecuteError INVALID_COLOR: Invalid color string ${repr}, expected 3 or 6 hex characters`);
+
 export const internalError = (message: string): LessError => runtimeError(message);
 
 export const mixinRecurse = (path: string, limit: number): LessError =>

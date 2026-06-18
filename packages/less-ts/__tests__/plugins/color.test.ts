@@ -1,5 +1,7 @@
 import { Dimension, Keyword, LessCompiler, Node, Unit } from '../../src';
+import { Anonymous, Quoted } from '../../src/model';
 import { DEFINITIONS } from '../../src/plugins/color';
+import { MISC } from '../../src/plugins/misc';
 
 const context = () => new LessCompiler({}).context();
 const dim = (n: number, u?: Unit) => new Dimension(n, u);
@@ -61,4 +63,27 @@ test('the hue arg slot takes any dimension but rejects a keyword', () => {
   const err = DEFINITIONS.hsl.validate(env, [new Keyword('red'), pct(50), pct(50)]);
   expect(err[0]).toBe(false);
   expect(err[1].length).toBe(1);
+});
+
+const quoted = (s: string) => new Quoted("'", false, [new Anonymous(s)]);
+
+test('color() parses a 3/6-digit hex string', () => {
+  const ctx = context();
+  expect(ctx.render(MISC.color.invoke(ctx.newEnv(), [quoted('#fff')]) as Node)).toBe('#fff');
+  // the leading # is optional
+  expect(ctx.render(MISC.color.invoke(ctx.newEnv(), [quoted('fff')]) as Node)).toBe('#fff');
+  // 'bad' is three hex digits, so it is a valid (dark) color
+  expect(ctx.render(MISC.color.invoke(ctx.newEnv(), [quoted('bad')]) as Node)).toBe('#bad');
+});
+
+test('color() reports a clean error for a non-hex or wrong-length string', () => {
+  const ctx = context();
+  for (const bad of ['zz', '12345', '1234567', 'gggg']) {
+    const env = ctx.newEnv();
+    expect(MISC.color.invoke(env, [quoted(bad)])).toBeUndefined();
+    expect(env.errors.length).toBe(1);
+    expect(env.errors[0].message).toBe(
+      `ExecuteError INVALID_COLOR: Invalid color string ${bad}, expected 3 or 6 hex characters`,
+    );
+  }
 });
