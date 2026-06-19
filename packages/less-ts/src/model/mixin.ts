@@ -196,7 +196,7 @@ export class Mixin extends BlockNode {
     this.block.repr(buf);
     buf.decr();
     if (buf.compress) {
-      buf.str('{');
+      buf.str('}');
     } else {
       buf.indent().str('}\n');
     }
