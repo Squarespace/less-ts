@@ -399,9 +399,6 @@ export interface Options {
   // back to its keyword
   readonly fastcolor?: boolean;
 
-  // Enable strict math mode
-  readonly strictMath?: boolean;
-
   // Disable internal caches
   readonly nocache?: boolean;
 

@@ -304,9 +304,6 @@ export class RuntimeContext implements Context {
   // Disable caching of variable references on blocks.
   readonly nocache: boolean;
 
-  // Enable strict math mode
-  readonly strictMath: boolean;
-
   // Cap on the maximum recursion depth (in LESS terms, not JS stack)
   readonly mixinRecursionLimit: number;
 
@@ -347,7 +344,6 @@ export class RuntimeContext implements Context {
     this.compress = opts.compress || false;
     this.fastcolor = opts.fastcolor === undefined ? false : opts.fastcolor;
     this.spacer = repeat(' ', this.indentSize);
-    this.strictMath = opts.strictMath || false;
     this.maxWarnings = opts.maxWarnings ?? 0;
     this.maxWarningsPerType = opts.maxWarningsPerType ?? 25;
     this.nocache = opts.nocache || false;
