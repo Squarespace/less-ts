@@ -111,6 +111,13 @@ export class LessStream {
   // comments is a broken sheet (the C6 check in the stylesheet
   // parselet).
   recovered: number = 0;
+  openBlocks: number = 0;
+  // Depth of blocks whose '{' was consumed but whose '}' was not:
+  // the block parselet opens at '{' and closes at '}'. Nonzero at
+  // end of input means a block ran off the end; the stylesheet
+  // completion check reports it (strict: error, safe: truncation
+  // warning). The counter is balanced on every restore, so marks
+  // never carry it.
   // Scan start of the last recovery, for the repeated-start guard.
   private lastRecoverStart: number = -1;
 
@@ -303,6 +310,16 @@ export class LessStream {
     this.skipWs();
     if (this.peek() !== undefined) {
       this.parseError(parseError());
+    }
+    if (this.openBlocks > 0) {
+      if (this.ctx.safeMode()) {
+        // Unclosed block at end of input: keep the partial contents
+        // (the renderer closes the brace) and record the truncation.
+        this.recovered++;
+        this.ctx.addWarning('unclosed block(s) at end of input; output truncated at line ' + this.lineAt(this.length));
+      } else {
+        this.parseError(parseError());
+      }
     }
   }
 

@@ -250,6 +250,34 @@ today: same threshold and legacy fallback; safe mode truncates the
 combination with a trailing warning instead of throwing. Green on all
 four surfaces (the L2 pin is the strict overflow error).
 
+### 44x unclosed blocks, block-less @media, stray braces (440-455)
+
+Unclosed block at end of input (`@media screen {`, `.a { b: 1`,
+nested `.a { .b { c: 2`, `@font-face { ...`): strict ERR
+INCOMPLETE_PARSE at every level; safe keeps the partial block, the
+renderer closes the brace, and a truncation warning leads the output
+(`unclosed block(s) at end of input; output truncated at line N`).
+Block-less `@media` at EOF (`@media screen`, with or without a
+following statement): legacy (bare/L0) drops the directive (empty
+output, or the following statement renders); fixed (L1/L2) ERR
+INCOMPLETE_PARSE. `.a[href` at EOF (444): ERR INCOMPLETE_PARSE at
+every level (legacy drops the attribute only when a block follows,
+as in 410). `.a (b` at EOF (445): the paren re-parses as mixin call
+arguments at every level, ERR EXPECTED `)` to end mixin call
+arguments; safe recovers to nothing and fails the empty-sheet check.
+The paren-list cells (446, 447): a comma list in value-position
+parens does not parse in the reference at any level (`operand_sub`
+requires a single inner expression), so `extract((1px, 2px, 3px), 1)`
+is ERR INCOMPLETE_PARSE everywhere; a single inner expression drops
+the parens (`(1px)` renders `1px`). An empty pair of value-position
+parens (455) parses nothing: strict ERR INCOMPLETE_PARSE, safe skips
+the statement. A `}` at stylesheet scope (451
+after a block-less @media, 452-454): strict ERR GENERAL `unexpected
+'}' closing brace` at every level (451 at bare/L0; at L1/L2 the
+block-less @media fails first, INCOMPLETE_PARSE); safe drops the
+brace at the sync point (452/453 keep the preceding output), 454
+recovers to nothing and fails the empty-sheet check.
+
 ### 50x color blend alpha (500 multiply, 501 screen)
 
 `multiply(rgba(255, 0, 0, 0.5), rgba(0, 0, 255, 0.25))`. Bare: literal

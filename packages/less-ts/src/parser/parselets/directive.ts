@@ -6,8 +6,10 @@ import { Block, BlockDirective, Directive, Features, Import, Media } from '../..
 
 // Placeholder for a tolerated block-less @media (BUG2): it renders
 // nothing, so the directive is dropped and the statements that follow
-// attach to the enclosing block.
-const DUMMY_MEDIA = new Media(new Features([]), new Block());
+// attach to the enclosing block. It must not count as block output:
+// a sheet of only junk plus a block-less @media still fails the
+// empty-sheet check.
+export const DUMMY_MEDIA = new Media(new Features([]), new Block());
 
 export class DirectiveParselet implements Parselet {
   parse(stm: LessStream): Node | undefined {

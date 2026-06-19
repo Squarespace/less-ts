@@ -325,6 +325,26 @@
     "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"
   },
   {
+    "fixture": "445-paren-elem-eof",
+    "level": "bare",
+    "reason": "the reference prefixes the mixin-call paren error with the code word and single-quotes the char; the TS message wording is not aligned yet"
+  },
+  {
+    "fixture": "445-paren-elem-eof",
+    "level": "0",
+    "reason": "the reference prefixes the mixin-call paren error with the code word and single-quotes the char; the TS message wording is not aligned yet"
+  },
+  {
+    "fixture": "445-paren-elem-eof",
+    "level": "1",
+    "reason": "the reference prefixes the mixin-call paren error with the code word and single-quotes the char; the TS message wording is not aligned yet"
+  },
+  {
+    "fixture": "445-paren-elem-eof",
+    "level": "2",
+    "reason": "the reference prefixes the mixin-call paren error with the code word and single-quotes the char; the TS message wording is not aligned yet"
+  },
+  {
     "fixture": "500-blend-alpha",
     "level": "2",
     "reason": "the reference evaluates calls against the function table at the fixed level; the TS table is not wired into rendering yet"

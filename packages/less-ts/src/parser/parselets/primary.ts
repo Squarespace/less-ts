@@ -3,6 +3,7 @@ import { Chars } from '../types';
 import { LessStream, Parselet, Parselets } from '../stream';
 import { Patch } from '../../compat';
 import { Block, Comment, Ruleset, Selectors, Stylesheet } from '../../model';
+import { DUMMY_MEDIA } from './directive';
 
 export class PrimaryParselet implements Parselet {
   parse(stm: LessStream): Node | undefined {
@@ -32,14 +33,30 @@ export class PrimaryParselet implements Parselet {
         // A block terminator or the end of input is not a failure.
         // Otherwise, in recovery mode, drop the invalid region at the
         // next synchronization point and keep parsing.
-        if (stm.ctx.safeMode()) {
-          const ch = stm.peek();
-          if (ch !== Chars.RIGHT_CURLY_BRACKET && ch !== undefined) {
+        const ch = stm.peek();
+        if (ch === Chars.RIGHT_CURLY_BRACKET) {
+          if (stm.openBlocks > 0) {
+            break;
+          }
+          // A '}' at stylesheet scope closes nothing.
+          if (stm.ctx.safeMode()) {
             stm.recover('invalid statement');
             continue;
           }
+          stm.parseError("SyntaxError GENERAL unexpected '}' closing brace");
+        }
+        if (ch !== undefined && stm.ctx.safeMode()) {
+          stm.recover('invalid statement');
+          continue;
         }
         break;
+      }
+      if (node === DUMMY_MEDIA) {
+        // A tolerated block-less @media: the directive is dropped and
+        // the statements that follow attach to the enclosing block.
+        // It must not count as output for the empty-sheet check.
+        stm.skipEmpty();
+        continue;
       }
       if (node.type === NodeType.BLOCK) {
         block.appendBlock(node as Block);
@@ -78,14 +95,23 @@ export class BlockParselet implements Parselet {
     }
     const mark = stm.mark();
     stm.seekOpenSpace();
+    stm.openBlocks++;
     const block = stm.parse(Parselets.PRIMARY);
     stm.skipEmpty();
-    if (stm.peek() !== Chars.RIGHT_CURLY_BRACKET) {
-      stm.restore(mark);
-      return undefined;
+    if (stm.peek() === Chars.RIGHT_CURLY_BRACKET) {
+      stm.seekOpenSpace();
+      stm.openBlocks--;
+      return block;
     }
-    stm.seekOpenSpace();
-    return block;
+    if (stm.peek() === undefined) {
+      // A block that runs off the end of input keeps its partial
+      // contents; the stylesheet completion check reports the open
+      // block (strict: error, safe: truncation warning).
+      return block;
+    }
+    stm.openBlocks--;
+    stm.restore(mark);
+    return undefined;
   }
 }
 

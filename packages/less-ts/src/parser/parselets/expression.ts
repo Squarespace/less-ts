@@ -53,7 +53,9 @@ export class SubParselet implements Parselet {
       return undefined;
     }
     const node = stm.parse(Parselets.EXPRESSION);
-    if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
+    // An empty pair of parens parses nothing: restore both the '('
+    // and the ')' so the caller sees an unshifted stream.
+    if (node === undefined || !stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
       stm.restore(mark);
       return undefined;
     }
