@@ -60,7 +60,8 @@ export const namedArgNotFound = (name: string): LessError =>
 export const uncomparableType = (type: string): LessError =>
   runtimeError(`ExecuteError UNCOMPARABLE_TYPE: Unable to compare instances of ${type}`);
 
-export const unknownUnit = (repr: string): LessError => runtimeError(`Unknown unit "${repr}"`);
+export const unknownUnit = (repr: string): LessError =>
+  runtimeError(`ExecuteError UNKNOWN_UNIT: Unknown unit ${repr}`);
 
 export const varCircularRef = (name: string): LessError => runtimeError(`Variable ${name} references itself`);
 

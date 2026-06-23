@@ -36,11 +36,15 @@ class Convert extends BaseFunction {
   invoke(env: ExecEnv, args: Node[]): Node | undefined {
     const dim = args[0] as Dimension;
     const destUnit = toUnit(env, args[1]);
+    if (destUnit === undefined) {
+      return undefined;
+    }
     const factor = unitConversionFactor(dim.unit, destUnit);
     // CONVERT_INCOMPATIBLE_UNITS: legacy emits 0 with the target
     // unit; fixed levels fail the compile.
     if (factor === 0 && !env.ctx.compat.enabled(Patch.CONVERT_INCOMPATIBLE_UNITS)) {
       env.errors.push(incompatibleUnits(unitDisplay(dim.unit), unitDisplay(destUnit)));
+      return undefined;
     }
     return new Dimension(dim.value * factor, destUnit);
   }
@@ -72,6 +76,9 @@ class UnitFunc extends BaseFunction {
     let unit: Unit | undefined;
     if (args.length >= 2) {
       unit = toUnit(env, args[1]);
+      if (unit === undefined) {
+        return undefined;
+      }
     }
     return new Dimension(dim.value, unit);
   }
@@ -84,11 +91,14 @@ const toUnit = (env: ExecEnv, n: Node): Unit | undefined => {
   } else if (n.type === NodeType.QUOTED) {
     const str = (n as Quoted).copy();
     str.escaped = true;
-    const res = env.ctx.render(str);
-    unit = stringToUnit(res);
-    if (unit === undefined) {
-      env.errors.push(unknownUnit(res));
-    }
+    unit = stringToUnit(env.ctx.render(str));
+  }
+  if (unit === undefined) {
+    // The reference throws here. Record the error with the unit's
+    // repr: a keyword bare, a quoted string with its delimiters.
+    const buf = env.ctx.newBuffer();
+    n.repr(buf);
+    env.errors.push(unknownUnit(buf.toString()));
   }
   return unit;
 };

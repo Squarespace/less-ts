@@ -1,7 +1,7 @@
 # Corpus v2 (alignment corpus)
 
 Pinned byte-exact reference corpus (byte-parity with Java
-`main` at default options). 104 fixtures, Java main: 66 OK / 38 ERR.
+`main` at default options). 108 fixtures, Java main: 70 OK / 38 ERR.
 
 Layout:
 
@@ -9,7 +9,8 @@ Layout:
                       args, 04x guards, 05x media, 21x colors, 22x
                       fn set, 23x color math, 31x-32x errors, 40x-45x
                       compat-level + unclosed-block and stray-brace
-                      cells, 50x-54x compat-level cells)
+                      cells, 50x-54x compat-level cells, 56x unit
+                      conversion cells)
     java-main/        PINNED reference (unwired 2-arg context): <name>.css
                       = raw compile() bytes, <name>.err = verbatim
                       LessException.getMessage()

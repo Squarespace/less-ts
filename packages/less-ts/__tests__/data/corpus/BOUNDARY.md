@@ -335,12 +335,22 @@ legacy side today, L2 registered. 541 (`.m(@b...) { p: @b; }` / `.x {
 not found` on every legacy surface, fixed `p: 1`; TS matches the
 legacy side, L2 registered.
 
+### 56x unit conversion errors (560-563)
+
+`unit(5, foo)` (560), `unit(5, "foo")` (561), `convert(1px, foo)`
+(562): the unknown-unit argument reports `ExecuteError UNKNOWN_UNIT:
+Unknown unit foo` (the quoted form carries its delimiters) at the
+fixed level; below it the call renders literally. `convert(5, px)`
+(563): a unitless source converts with factor 1, fixed `b: 5px`; the
+incompatible-pair error of 530 does not apply (the factor is not 0).
+All four L2 cells registered (function-table family).
+
 ### The base fixtures at the wired levels
 
 Below the fixed level the wired reference renders calls literally with
 the arguments evaluated, so TS matches every function cell at L0/L1
 today (the pins flipped evaluated-to-literal at this tip). At L2 the
-reference evaluates: 42 fixtures diverge (function-table cells - the
+reference evaluates: 47 fixtures diverge (function-table cells - the
 reference evaluates the call, TS still renders it literally); the rest
 are green.
 Notable L2 cells: 016/024/034/233/234 (reference computes, TS
