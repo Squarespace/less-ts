@@ -112,7 +112,13 @@ export class Media extends BlockNode {
   }
 
   copy(env: ExecEnv): Media {
-    const features = this.features ? this.features.eval(env) : undefined;
-    return new Media(features as Features, this.block.copy());
+    let features: Features | undefined;
+    if (this.features) {
+      features = this.features.eval(env) as Features;
+      // Capture feature eval errors on the original node, as the
+      // ruleset copy does for its selectors.
+      env.ctx.captureErrors(this.features, env);
+    }
+    return new Media(features, this.block.copy());
   }
 }
