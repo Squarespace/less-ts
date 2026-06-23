@@ -1,5 +1,5 @@
 import { ExecEnv, LessError, Node, NodeType } from '../common';
-import { argCount, argCountIgnore, invalidArg } from '../errors';
+import { argCount, invalidArg } from '../errors';
 import { Dimension, Unit } from '../model';
 
 export class ArgSpec {
@@ -65,10 +65,16 @@ export class ArgSpec {
       // not enough arguments to call the function
       errors.push(argCount(this.name, this.minArgs, len));
       return [false, errors];
-    } else if (this.variadic || len > this.validators.length) {
-      // Extra args were provided but we will ignore them
-      errors.push(argCountIgnore(this.name, this.minArgs, len));
-      len = this.validators.length;
+    } else if (len > this.validators.length) {
+      if (this.variadic) {
+        // Variadic functions absorb the extras; only the declared
+        // positions are validated.
+        len = this.validators.length;
+      } else {
+        // Extra args to a fixed-arity function fail the call.
+        errors.push(argCount(this.name, this.minArgs, len));
+        return [false, errors];
+      }
     }
 
     for (let i = 0; i < len; i++) {

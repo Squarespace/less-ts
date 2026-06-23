@@ -178,7 +178,9 @@ export class Evaluator {
         }
 
         case NodeType.MIXIN_CALL: {
-          // TODO: should have all been evaluated.
+          // Calls are expanded by expandMixins before this pass; a call
+          // that survives here has no render representation and is
+          // skipped.
           break;
         }
 

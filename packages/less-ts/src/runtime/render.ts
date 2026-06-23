@@ -500,12 +500,6 @@ const renderList = (buf: Buffer, nodes: Node[], sep: string): void => {
   }
 };
 
-const renderAlpha = (buf: Buffer, n: Alpha): void => {
-  buf.str('alpha(opacity=');
-  renderNode(buf, n.value);
-  buf.str(')');
-};
-
 const renderQuoted = (buf: Buffer, n: Quoted): void => {
   const { escaped, parts } = n;
   const delim = escaped ? '' : n.delim;

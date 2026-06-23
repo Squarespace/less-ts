@@ -5,9 +5,6 @@ const runtimeError = (message: string): LessError => ({ type: 'runtime', message
 export const argCount = (name: string, min: number, count: number): LessError =>
   runtimeError(`Function ${name} requires at least ${min} args, found ${count}`);
 
-export const argCountIgnore = (name: string, min: number, count: number): LessError =>
-  runtimeError(`Function ${name} requires at least ${min} args, found ${count}` + '.. ignoring additional args');
-
 export const argTooMany = (call: string): LessError => runtimeError(`Too many arguments provided to mixin call ${call}`);
 
 export const divideByZero = (arg: string): LessError =>
