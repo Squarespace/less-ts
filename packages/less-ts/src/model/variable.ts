@@ -34,9 +34,13 @@ export class Definition extends Node implements IDefinition {
     }
 
     this.evaluating = true;
-    const result = this.value.eval(env);
-    this.evaluating = false;
-    return result;
+    try {
+      return this.value.eval(env);
+    } finally {
+      // Clear the flag on every path, so a failed dereference cannot
+      // make a later reference report a false circular reference.
+      this.evaluating = false;
+    }
   }
 }
 
