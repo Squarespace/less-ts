@@ -43,22 +43,5 @@
   "files": [
     "lib"
   ],
-  "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.ts"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "ts",
-      "tsx"
-    ],
-    "moduleNameMapper": {},
-    "testMatch": [
-      "**/__tests__/**/*.test.ts"
-    ],
-    "transform": {
-      "^.+\\.(ts|tsx)$": "ts-jest"
-    }
-  },
   "version": "1.1.5"
 }

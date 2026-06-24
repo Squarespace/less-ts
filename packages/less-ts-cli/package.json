@@ -2,8 +2,8 @@
   "name": "@squarespace/less-ts-cli",
   "author": "Patrick Hensley <pathensley@gmail.com>",
   "license": "Apache-2.0",
-  "main": "lib/index.js",
-  "types": "lib/index.d.ts",
+  "main": "lib/lessc.js",
+  "types": "lib/lessc.d.ts",
   "repository": {
     "type": "git",
     "url": "https://github.com/squarespace/less-ts"
@@ -51,22 +51,5 @@
     "bin",
     "lib"
   ],
-  "jest": {
-    "collectCoverageFrom": [
-      "src/**/*.ts"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "ts",
-      "tsx"
-    ],
-    "moduleNameMapper": {},
-    "testMatch": [
-      "**/__tests__/**/*.test.ts"
-    ],
-    "transform": {
-      "^.+\\.(ts|tsx)$": "ts-jest"
-    }
-  },
   "version": "1.1.5"
 }

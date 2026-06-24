@@ -19,31 +19,6 @@
   "workspaces": [
     "packages/*"
   ],
-  "jest": {
-    "collectCoverageFrom": [
-      "packages/*/src/**/*.ts",
-      "!packages/*/src/**/index.ts",
-      "!packages/*/src/cli/**/*.ts",
-      "!packages/*/src/**/*.d.ts"
-    ],
-    "coverageReporters": [
-      "json",
-      "lcov",
-      "text",
-      "html"
-    ],
-    "moduleFileExtensions": [
-      "js",
-      "ts",
-      "tsx"
-    ],
-    "testMatch": [
-      "**/__tests__/**/*.test.ts"
-    ],
-    "transform": {
-      "^.+\\.(ts|tsx)$": "ts-jest"
-    }
-  },
   "dependencies": {
     "@types/node": "20.6.0",
     "@types/jest": "^29.5.4",
