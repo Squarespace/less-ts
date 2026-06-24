@@ -1,4 +1,5 @@
 import { Buffer, ExecEnv, Node, NodeType } from '../common';
+import { Patch } from '../compat';
 import { arrayEquals } from '../utils';
 
 export class Alpha extends Node {
@@ -156,16 +157,36 @@ export class FunctionCall extends Node {
   }
 
   needsEval(): boolean {
-    // A call with literal args needs no evaluation: the eval pass only
-    // resolves variables in the args.
-    return this.evaluate;
+    // A fresh call always evaluates (the fixed level dispatches it to
+    // the function table); a call already known to have no
+    // implementation only evaluates while its arguments still need it.
+    return !this.noImpl || this.evaluate;
   }
 
   eval(env: ExecEnv): Node {
-    // Function implementations are not dispatched: a call renders
-    // literally with its args evaluated (vars substituted, inner
-    // operations computed).
-    return this.evaluate ? new FunctionCall(this.name, this.evalArgs(env), true) : this;
+    const args = this.evaluate ? this.evalArgs(env) : this.args;
+    // While the legacy behavior is active the call renders literally
+    // with its evaluated arguments, and it is not dispatched to the
+    // function table.
+    if (env.ctx.compat.enabled(Patch.FUNCTION_CALL_IN_VALUE)) {
+      return new FunctionCall(this.name, args, true);
+    }
+    const func = env.ctx.findFunction(this.name);
+    if (func !== undefined) {
+      const [valid, errors] = func.validate(env, args);
+      if (valid) {
+        const result = func.invoke(env, args);
+        if (result !== undefined) {
+          return result;
+        }
+        // The function signalled that its representation should be
+        // emitted, not executed.
+        return new FunctionCall(this.name, args, true);
+      }
+      env.errors.push(errors[0]);
+    }
+    // No implementation: render the function and its args.
+    return new FunctionCall(this.name, args, true);
   }
 
   private evalArgs(env: ExecEnv): Node[] {

@@ -1,7 +1,7 @@
 import { maxThreshold, LessCompiler, THRESHOLDS } from '../src';
 
-// The recovery matrix contract: every registry patch (16 rows) x
-// level 0..2 x strict/safe = 96 cells. Each row declares its source,
+// The recovery matrix contract: every registry patch (17 rows) x
+// level 0..2 x strict/safe = 102 cells. Each row declares its source,
 // threshold, strict error type, polarity, and (per polarity) whether
 // the rendered body is unchanged at the fixed level and whether its
 // recovery drops the entire stylesheet. The harness pins the outcome
@@ -29,12 +29,10 @@ import { maxThreshold, LessCompiler, THRESHOLDS } from '../src';
 // at the fixed level.
 //
 // LITERAL_IN_VALUE - the patch's construct is a function call in a
-// property value, and value-position calls render literally here (no
-// function dispatch in value position), so the gate has no
-// observable outcome: ok at every cell, zero recovery warnings, body
-// unchanged at every level including the fixed one. The corpus pins
-// register the divergence against the wired reference for those
-// cells.
+// property value, and the call is not in the default function table,
+// so it renders literally and the gate has no observable outcome: ok
+// at every cell, zero recovery warnings, body unchanged at every
+// level including the fixed one.
 //
 // emptyRecovery (REJECT_FIX rows): when the recovery at the fixed
 // level drops the entire stylesheet, the safe cell is a hard GENERAL
@@ -106,9 +104,9 @@ const ROWS: Row[] = [
   // Threshold 2: the remaining patches.
   row('ATTR_SELECTOR_UNTERMINATED', 'a[href {\n  color: red;\n}\n', 2, 'INCOMPLETE_PARSE', Polarity.REJECT_FIX, false, true),
   row('SELECTOR_COMPLEXITY_OVERFLOW', complexitySource(), 2, 'SELECTOR_TOO_COMPLEX', Polarity.REJECT_FIX),
-  row('NONFINITE_AS_ZERO', '.nf { w: sqrt(-1); }\n', 2, '', Polarity.LITERAL_IN_VALUE),
-  row('MOD_ZERO_STRICT', '.mz { w: mod(10, 0); }\n', 2, '', Polarity.LITERAL_IN_VALUE),
-  row('CONVERT_INCOMPATIBLE_UNITS', '.cv { w: convert(16px, em); }\n', 2, '', Polarity.LITERAL_IN_VALUE),
+  row('NONFINITE_AS_ZERO', '.nf { w: sqrt(-1); }\n', 2, '', Polarity.OUTPUT_FIX),
+  row('MOD_ZERO_STRICT', '.mz { w: mod(10, 0); }\n', 2, 'DIVIDE_BY_ZERO', Polarity.REJECT_FIX),
+  row('CONVERT_INCOMPATIBLE_UNITS', '.cv { w: convert(16px, em); }\n', 2, 'INCOMPATIBLE_UNITS', Polarity.REJECT_FIX),
   row('REPLACE_REGEX_GROUPS', '.r { s: replace("abc", "b", "X"); }\n', 2, '', Polarity.LITERAL_IN_VALUE),
   row('VARIADIC_NAMED_ARG', '.m(@b...) { p: @b; }\n.x { .m(@b: 1); }\n', 2, 'ARG_NAMED_NOTFOUND', Polarity.ACCEPT_FIX),
   row('ARGUMENTS_ORDER', '.m(@a, @b) { p: @arguments; }\n.x { .m(@b: 2, @a: 1); }\n', 2, '', Polarity.OUTPUT_FIX),
@@ -118,10 +116,11 @@ const ROWS: Row[] = [
     '.blend { color: multiply(rgba(255, 0, 0, 0.5), rgba(0, 0, 255, 0.25)); }\n',
     2,
     '',
-    Polarity.LITERAL_IN_VALUE,
+    Polarity.OUTPUT_FIX,
   ),
   row('COLOR_CHANNEL_PRECISION', '.cp { c: #fff * 0.5; }\n', 2, '', Polarity.OUTPUT_FIX),
   row('NUMBER_EXPO', '.ne { w: 1e2; }\n', 2, '', Polarity.OUTPUT_FIX),
+  row('FUNCTION_CALL_IN_VALUE', '.fc { w: round(4.6px); }\n', 2, '', Polarity.OUTPUT_FIX),
 ];
 
 // One cell's outcome, normalized: compile() can throw (parse errors,
@@ -246,7 +245,7 @@ const matrixViolations = (rows: Row[]): string[] => {
 };
 
 describe('recovery matrix contract (patch x level x mode)', () => {
-  test('the 96-cell matrix holds', () => {
+  test('the 102-cell matrix holds', () => {
     expect(matrixViolations(ROWS)).toEqual([]);
   });
 

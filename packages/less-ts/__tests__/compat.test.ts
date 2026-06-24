@@ -1138,3 +1138,52 @@ describe('FUNCTION_CALL_IN_VALUE: calls are plain values below the fixed level',
     }
   });
 });
+
+describe('FUNCTION_CALL_IN_VALUE: calls evaluate at the fixed level', () => {
+  // At the fixed level the calls parse as math operands and dispatch
+  // to the function table; unknown names render literally with their
+  // arguments evaluated, and a bad argument fails with the reference
+  // error.
+  const INCOMPLETE = 'SyntaxError INCOMPLETE_PARSE Unable to complete parse.';
+  const firstError = (res: { css: string; errors: Array<{ errors: Array<{ message?: string }> }> }): string =>
+    res.errors.length === 0 ? res.css : res.errors[0].errors[0].message || '';
+
+  test('fixed levels dispatch calls to the function table', () => {
+    const c = new LessCompiler({ compatLevel: 2 });
+    expect(c.compile('.a {\n  color: lighten(#000, 10%);\n}\n').css).toEqual('.a {\n  color: #1a1a1a;\n}\n');
+    expect(c.compile('.a {\n  width: round(4.6px);\n}\n').css).toEqual('.a {\n  width: 5px;\n}\n');
+    expect(c.compile('@x: round(4.6);\n.a {\n  color: @x;\n}\n').css).toEqual('.a {\n  color: 5;\n}\n');
+  });
+
+  test('fixed levels take calls as math operands', () => {
+    const c = new LessCompiler({ compatLevel: 2 });
+    expect(
+      c.compile('.a {\n  x: lighten(#000, 10%) + 1;\n  y: 1 + unit(5px);\n}\n').css
+    ).toEqual('.a {\n  x: #1b1b1b;\n  y: 6;\n}\n');
+  });
+
+  test('fixed levels parse and evaluate calls in guard conditions', () => {
+    const c = new LessCompiler({ compatLevel: 2 });
+    expect(
+      c.compile('.m() when (unit(10px) = 10) {\n  a: ok;\n}\n.a {\n  .m();\n}\n').css
+    ).toEqual('.a {\n  a: ok;\n}\n');
+  });
+
+  test('an unknown function renders literally with evaluated args', () => {
+    const c = new LessCompiler({ compatLevel: 2 });
+    expect(c.compile('@x: 5;\n.a {\n  color: foo(@x);\n}\n').css).toEqual('.a {\n  color: foo(5);\n}\n');
+  });
+
+  test('a bad argument fails the call with the reference error', () => {
+    const c = new LessCompiler({ compatLevel: 2 });
+    expect(firstError(c.compile('.a {\n  x: unit(calc(100% - 90%));\n}\n'))).toEqual(
+      'ExecuteError INVALID_ARG_EXT: Argument 1 must be DIMENSION. Found FUNCTION_CALL: calc(10%)'
+    );
+  });
+
+  test('an override keeps the plain-value side on at a fixed level', () => {
+    const c = new LessCompiler({ compatLevel: 2, compatPatches: { FUNCTION_CALL_IN_VALUE: true } });
+    expect(c.compile('.a {\n  color: lighten(#000, 10%);\n}\n').css).toEqual('.a {\n  color: lighten(#000, 10%);\n}\n');
+    expect(firstError(c.compile('.a {\n  x: lighten(#000, 10%) + 1;\n}\n'))).toEqual(INCOMPLETE);
+  });
+});
