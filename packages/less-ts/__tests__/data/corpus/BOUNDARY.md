@@ -278,6 +278,17 @@ block-less @media fails first, INCOMPLETE_PARSE); safe drops the
 brace at the sync point (452/453 keep the preceding output), 454
 recovers to nothing and fails the empty-sheet check.
 
+### 46x import terminator (460-464)
+
+An @import requires its semicolon at every level: `@import
+"foo.css"` at end of input (460), before a following statement (461),
+and the url() form at end of input (462) are all ERR INCOMPLETE_PARSE
+- the reference has no end-of-input terminator for the directive. The
+semicolon-terminated forms (463, 464) render the directive literally
+with the statement (no resolution or inlining; the import patches are
+dormant on this compiler). These pins hold the end-of-input behavior
+against a less.js-style lenient terminator.
+
 ### 50x color blend alpha (500 multiply, 501 screen)
 
 `multiply(rgba(255, 0, 0, 0.5), rgba(0, 0, 255, 0.25))`. Bare: literal
