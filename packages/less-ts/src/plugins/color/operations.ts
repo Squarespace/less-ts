@@ -8,7 +8,7 @@ const WHITE = new RGBColor(255, 255, 255, 1.0);
 
 class Contrast extends BaseFunction {
   constructor() {
-    super('constrast', '*:ccp');
+    super('contrast', '*:ccp');
   }
 
   invoke(env: ExecEnv, args: Node[]): Node | undefined {

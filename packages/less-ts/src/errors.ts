@@ -1,9 +1,52 @@
 import { LessError } from './common';
 
-const runtimeError = (message: string): LessError => ({ type: 'runtime', message });
+// The reference renders error messages Java-escaped: double quote and
+// backslash get backslashed, control characters become short escapes,
+// and non-ASCII bytes become \uXXXX. Apply it to the finished message.
+export const escapeJava = (raw: string): string => {
+  let buf = '';
+  const len = raw.length;
+  for (let i = 0; i < len; i++) {
+    const c = raw[i];
+    switch (c) {
+      case '"':
+        buf += '\\"';
+        break;
+      case '\\':
+        buf += '\\\\';
+        break;
+      case '\b':
+        buf += '\\b';
+        break;
+      case '\n':
+        buf += '\\n';
+        break;
+      case '\t':
+        buf += '\\t';
+        break;
+      case '\f':
+        buf += '\\f';
+        break;
+      case '\r':
+        buf += '\\r';
+        break;
+      default: {
+        const code = raw.charCodeAt(i);
+        if (code < 0x20 || code > 0x7f) {
+          buf += '\\u' + code.toString(16).padStart(4, '0');
+        } else {
+          buf += c;
+        }
+      }
+    }
+  }
+  return buf;
+};
+
+const runtimeError = (message: string): LessError => ({ type: 'runtime', message: escapeJava(message) });
 
 export const argCount = (name: string, min: number, count: number): LessError =>
-  runtimeError(`Function ${name} requires at least ${min} args, found ${count}`);
+  runtimeError(`ExecuteError ARG_COUNT: Function ${name} requires at least ${min} args, found ${count} `);
 
 export const argTooMany = (call: string): LessError => runtimeError(`Too many arguments provided to mixin call ${call}`);
 
@@ -36,8 +79,11 @@ export const invalidOperation = (op: string, left: string, right: string): LessE
 export const invalidOperation1 = (op: string, type: string): LessError =>
   runtimeError(`ExecuteError INVALID_OPERATION1: Operation ${op} cannot be applied to ${type}`);
 
-export const invalidArg = (name: string, index: number, type1: string, type2: string): LessError =>
-  runtimeError(`Function ${name} arg ${index} must be ${type1}, found ${type2}`);
+export const invalidArg = (index: number, type1: string, type2: string): LessError =>
+  runtimeError(`ExecuteError INVALID_ARG: Argument ${index} must be ${type1}. Found ${type2}`);
+
+export const invalidArgExt = (index: number, type1: string, type2: string, repr: string): LessError =>
+  runtimeError(`ExecuteError INVALID_ARG_EXT: Argument ${index} must be ${type1}. Found ${type2}: ${repr}`);
 
 // The color() builtin rejects a string that is not a 3/6-digit hex color.
 export const invalidColor = (repr: string): LessError =>

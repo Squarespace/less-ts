@@ -17,7 +17,8 @@ test('unit with an unknown keyword reports unknownUnit', () => {
 test('unit with an unknown quoted string reports unknownUnit with the delimiters', () => {
   const env = context().newEnv();
   expect(MISC.unit.invoke(env, [dim(5), quoted('foo')])).toBeUndefined();
-  expect(env.errors).toEqual([{ type: 'runtime', message: UNKNOWN + '"foo"' }]);
+  // The delimiters survive into the message and are Java-escaped.
+  expect(env.errors).toEqual([{ type: 'runtime', message: UNKNOWN + '\\"foo\\"' }]);
 });
 
 test('unit with a non-unit argument reports unknownUnit', () => {

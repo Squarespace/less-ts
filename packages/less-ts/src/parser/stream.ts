@@ -1,4 +1,5 @@
 import { Context, LessParseError, Node } from '../common';
+import { escapeJava } from '../errors';
 import { repeat, whitespace } from '../utils';
 import { Chars, isSkippable } from './types';
 import { UNITS } from '../model';
@@ -329,7 +330,7 @@ export class LessStream {
    * LessErrorEvent and returns it with empty css.
    */
   parseError(message: string): never {
-    throw new LessParseError(message);
+    throw new LessParseError(escapeJava(message));
   }
 
   /**

@@ -138,5 +138,10 @@ export const STRING: { [x: string]: Function } = {
   e: new EFunc(),
   escape: new Escape(),
   '%': new Format(),
-  replace: new Replace(),
 };
+
+// replace() is not in the reference's default function table (it is an
+// extension, registered only by consumers that opt in), so it is not in
+// the dispatch table. The class stays exported for the ext-surface tests
+// and for a consumer that registers it.
+export const REPLACE: Function = new Replace();

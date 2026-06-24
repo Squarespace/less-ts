@@ -1,5 +1,5 @@
-import { ExecEnv, LessError, Node, NodeType } from '../common';
-import { argCount, invalidArg } from '../errors';
+import { ExecEnv, LessError, Node, NodeName, NodeType } from '../common';
+import { argCount, invalidArg, invalidArgExt } from '../errors';
 import { Dimension, Unit } from '../model';
 
 export class ArgSpec {
@@ -55,11 +55,12 @@ export class ArgSpec {
   }
 
   /**
-   * Validate the arguments are of the expected type.
+   * Validate the arguments are of the expected type. The error text is
+   * the reference's: type positions report INVALID_ARG_EXT with the
+   * argument's rendered repr, the number positions report INVALID_ARG.
    */
   validate(env: ExecEnv, args: Node[]): [boolean, LessError[]] {
     const errors: LessError[] = [];
-    const { ctx } = env;
     let len = args.length;
     if (len < this.minArgs) {
       // not enough arguments to call the function
@@ -78,10 +79,10 @@ export class ArgSpec {
     }
 
     for (let i = 0; i < len; i++) {
-      const v = this.validators[i];
       // If an argument fails to validate, we can't call the function, so bail out
-      if (!v.validate(args[i])) {
-        errors.push(invalidArg(this.name, i + 1, v.type, ctx.render(args[i])));
+      const error = this.validators[i].validate(i, args[i], env);
+      if (error !== undefined) {
+        errors.push(error);
         return [false, errors];
       }
     }
@@ -89,65 +90,54 @@ export class ArgSpec {
   }
 }
 
-// export type ArgValidator = (arg: Node) => boolean;
-
+// A position validator reports the first invalid argument as a Less
+// error (the reference's wording) or undefined when the argument is
+// accepted.
 export interface ArgValidator {
-  type: string;
-  validate(arg: Node): boolean;
+  validate(index: number, arg: Node, env: ExecEnv): LessError | undefined;
 }
 
-export const ARG_ANY: ArgValidator = {
-  type: 'any',
-  validate: (arg: Node): boolean => true,
+const typeValidator = (type: NodeType): ArgValidator => ({
+  validate: (index: number, arg: Node, env: ExecEnv): LessError | undefined =>
+    arg.type === type ? undefined : invalidArgExt(index + 1, NodeName[type], NodeName[arg.type], env.ctx.render(arg)),
+});
+
+const ARG_COLOR: ArgValidator = typeValidator(NodeType.COLOR);
+const ARG_DIMENSION: ArgValidator = typeValidator(NodeType.DIMENSION);
+const ARG_KEYWORD: ArgValidator = typeValidator(NodeType.KEYWORD);
+const ARG_QUOTED: ArgValidator = typeValidator(NodeType.QUOTED);
+const ARG_ANY: ArgValidator = {
+  validate: (): undefined => undefined,
 };
 
-export const ARG_COLOR: ArgValidator = {
-  type: 'color',
-  validate: (arg: Node): boolean => arg.type === NodeType.COLOR,
-};
-
-export const ARG_DIMENSION: ArgValidator = {
-  type: 'dimension',
-  validate: (arg: Node): boolean => arg.type === NodeType.DIMENSION,
-};
-
-export const ARG_KEYWORD: ArgValidator = {
-  type: 'keyword',
-  validate: (arg: Node): boolean => arg.type === NodeType.KEYWORD,
-};
-
-export const ARG_HUE: ArgValidator = {
-  type: 'dimension',
-  // Any number, with units or not: hue angles take deg/rad/grad/turn.
-  validate: (arg: Node): boolean => arg.type === NodeType.DIMENSION,
-};
-
-export const ARG_NUMBER: ArgValidator = {
-  type: 'number',
-  validate: (arg: Node): boolean => {
-    if (arg.type === NodeType.DIMENSION) {
-      if ((arg as Dimension).unit === undefined) {
-        return true;
-      }
+const ARG_NUMBER: ArgValidator = {
+  validate: (index: number, arg: Node): LessError | undefined => {
+    if (arg.type !== NodeType.DIMENSION) {
+      return invalidArg(index + 1, 'DIMENSION', NodeName[arg.type]);
     }
-    return false;
+    if ((arg as Dimension).unit === undefined) {
+      return undefined;
+    }
+    // The reference reports this position 0-based.
+    return invalidArg(index, 'a unit-less number', NodeName[arg.type]);
   },
 };
 
-export const ARG_PERCENTAGE: ArgValidator = {
-  type: 'percentage',
-  validate: (arg: Node): boolean => {
-    if (arg.type === NodeType.DIMENSION) {
-      const unit = (arg as Dimension).unit;
-      if (unit === undefined || unit === Unit.PERCENTAGE) {
-        return true;
-      }
-    }
-    return false;
-  },
+// Any number, with units or not: hue angles take deg/rad/grad/turn.
+const ARG_HUE: ArgValidator = {
+  validate: (index: number, arg: Node): LessError | undefined =>
+    arg.type === NodeType.DIMENSION ? undefined : invalidArg(index + 1, 'DIMENSION', NodeName[arg.type]),
 };
 
-export const ARG_QUOTED: ArgValidator = {
-  type: 'quoted',
-  validate: (arg: Node): boolean => arg.type === NodeType.QUOTED,
+const ARG_PERCENTAGE: ArgValidator = {
+  validate: (index: number, arg: Node): LessError | undefined => {
+    if (arg.type !== NodeType.DIMENSION) {
+      return invalidArg(index + 1, 'DIMENSION', NodeName[arg.type]);
+    }
+    const unit = (arg as Dimension).unit;
+    if (unit === undefined || unit === Unit.PERCENTAGE) {
+      return undefined;
+    }
+    return invalidArg(index + 1, 'a unit-less number or a percentage', NodeName[arg.type]);
+  },
 };
