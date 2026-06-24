@@ -90,6 +90,11 @@ export const Patch = {
   // '1.5e-3' parse as single CSS numbers; em/ex units are unaffected
   // (e is an exponent only when a digit follows).
   NUMBER_EXPO: 'NUMBER_EXPO',
+
+  // Value-position function calls render literally (arguments
+  // evaluated) and do not act as math operands. At the fixed level the
+  // calls parse as operands and evaluate against the function table.
+  FUNCTION_CALL_IN_VALUE: 'FUNCTION_CALL_IN_VALUE',
 } as const;
 
 export type Patch = (typeof Patch)[keyof typeof Patch];
@@ -117,6 +122,7 @@ export const THRESHOLDS: { [id: string]: number } = {
   [Patch.COLOR_CHANNEL_PRECISION]: 2,
   [Patch.ATTR_SELECTOR_UNTERMINATED]: 2,
   [Patch.NUMBER_EXPO]: 2,
+  [Patch.FUNCTION_CALL_IN_VALUE]: 2,
 };
 
 // Highest threshold. The fully-fixed compiler sits here (every fix

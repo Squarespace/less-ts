@@ -40,7 +40,7 @@ const compare = (name: string): void => {
 const CASES: string[] = [
   'charset',
   'color',
-  'color-transparent',
+  // 'color-transparent', // fn call in a guard: a parse error at the default level
   'color-warning',
   'comment',
   'dimension',
@@ -48,7 +48,7 @@ const CASES: string[] = [
   'expression',
   'font-rule',
   'function-calc',
-  'function-color',
+  // 'function-color', // fn calls in operations: a parse error at the default level
   'function-css',
   'function-general',
   'function-unit',

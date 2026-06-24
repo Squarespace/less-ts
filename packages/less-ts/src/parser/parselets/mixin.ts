@@ -84,7 +84,7 @@ export class MixinCallArgsParselet implements Parselet {
 
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
-      stm.parseError('expected right parenthesis ")" to end mixin call arguments');
+      stm.parseError("SyntaxError EXPECTED Expected right parenthesis ')' to end mixin call arguments");
     }
     if (delimSemicolon) {
       return new MixinCallArgs(';', argsSemicolon);

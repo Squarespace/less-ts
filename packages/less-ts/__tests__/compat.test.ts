@@ -43,6 +43,7 @@ const JAVA_REGISTRY: { [id: string]: number } = {
   COLOR_CHANNEL_PRECISION: 2,
   ATTR_SELECTOR_UNTERMINATED: 2,
   NUMBER_EXPO: 2,
+  FUNCTION_CALL_IN_VALUE: 2,
 };
 
 describe('Patch registry', () => {
@@ -1093,6 +1094,47 @@ describe('NUMBER_EXPO: exponents in numbers', () => {
     const c = new LessCompiler({ compatLevel: 2, compatPatches: { NUMBER_EXPO: true } });
     for (const [, src, legacy] of cases) {
       expect(c.compile(src).css).toEqual(legacy);
+    }
+  });
+});
+
+describe('FUNCTION_CALL_IN_VALUE: calls are plain values below the fixed level', () => {
+  // A value-position call is not a math operand: a trailing operator
+  // dangles and the statement fails the parse, a guard condition fails
+  // on the expected parenthesis, and a mixin call argument fails the
+  // same way. The call itself still parses as a plain value.
+  const INCOMPLETE = 'SyntaxError INCOMPLETE_PARSE Unable to complete parse.';
+  const GUARD_PAREN = "SyntaxError EXPECTED Expected right parenthesis ')' to end guard condition";
+  const ARGS_PAREN = "SyntaxError EXPECTED Expected right parenthesis ')' to end mixin call arguments";
+
+  const firstError = (res: { css: string; errors: Array<{ errors: Array<{ message?: string }> }> }): string =>
+    res.errors.length === 0 ? res.css : res.errors[0].errors[0].message || '';
+
+  const sources: Array<[string, string]> = [
+    ['.a {\n  x: lighten(#000, 10%) + 1;\n}\n', INCOMPLETE],
+    ['@x: lighten(#000, 10%) + 10;\n.a {\n  color: @x;\n}\n', INCOMPLETE],
+    ['.m() when (unit(10px) = 10) {\n  a: ok;\n}\n.a {\n  .m();\n}\n', GUARD_PAREN],
+    ['.m(@c) {\n  color: @c;\n}\n.a {\n  .m(lighten(#000, 10%) + 1);\n}\n', ARGS_PAREN],
+  ];
+
+  test('legacy levels keep calls out of the operand chain', () => {
+    for (const level of [0, 1]) {
+      for (const [src, expected] of sources) {
+        expect(firstError(new LessCompiler({ compatLevel: level }).compile(src))).toEqual(expected);
+      }
+    }
+  });
+
+  test('the default options keep the released parse', () => {
+    for (const [src, expected] of sources) {
+      expect(firstError(new LessCompiler({}).compile(src))).toEqual(expected);
+    }
+  });
+
+  test('an override forces the plain-value side on at a fixed level', () => {
+    const c = new LessCompiler({ compatLevel: 2, compatPatches: { FUNCTION_CALL_IN_VALUE: true } });
+    for (const [src, expected] of sources) {
+      expect(firstError(c.compile(src))).toEqual(expected);
     }
   });
 });

@@ -4,6 +4,7 @@ import { LessStream, Parselet, Parselets } from '../stream';
 import { parseOperator, Dimension, Operation, Operator, Url } from '../../model';
 import { whitespace } from '../../utils';
 import { Patch } from '../../compat';
+import { FunctionCallParselet } from './function';
 
 export class AdditionParselet implements Parselet {
   parse(stm: LessStream): Node | undefined {
@@ -103,7 +104,13 @@ export class OperandParselet implements Parselet {
       stm.seek1();
     }
     const mark = stm.mark();
-    const node = stm.parse(Parselets.OPERAND_SUB);
+    // Below the fixed level a value-position call is a plain value,
+    // not a math operand: the operand chain stops where the call
+    // would start, and the enclosing parse decides the outcome.
+    const sub = Parselets.OPERAND_SUB;
+    const node = stm.ctx.compat.enabled(Patch.FUNCTION_CALL_IN_VALUE)
+      ? stm.parse(sub.filter((p) => !(p instanceof FunctionCallParselet)))
+      : stm.parse(sub);
     // url() is a value, not a math operand, e.g. the
     // "background: url(x) / 100% 50%" size/position shorthand.
     if (node instanceof Url) {

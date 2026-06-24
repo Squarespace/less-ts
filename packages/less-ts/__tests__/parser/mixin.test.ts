@@ -6,6 +6,7 @@ import {
   Guard,
   Keyword,
   LessCompiler,
+  LessParseError,
   Mixin,
   MixinParams,
   MIXIN,
@@ -23,7 +24,10 @@ const COMPILER = new LessCompiler({});
 const parse = (raw: string): Node | undefined => COMPILER.parse(raw, MIXIN);
 
 test('mixin def', () => {
-  const r = parse('.mixin-1(@color) when (lightness(@color) > 60%) { content1: A }');
+  // A call in a guard is a math operand only at the fixed level; at
+  // the default level the guard condition fails the parse.
+  const raw = '.mixin-1(@color) when (lightness(@color) > 60%) { content1: A }';
+  const r = new LessCompiler({ compatLevel: 2 }).parse(raw, MIXIN);
   expect(r).toEqual(
     new Mixin(
       '.mixin-1',
@@ -39,6 +43,14 @@ test('mixin def', () => {
       new Block([new Rule(new Property('content1'), new Keyword('A'), false)])
     )
   );
+  let thrown: unknown;
+  try {
+    COMPILER.parse(raw, MIXIN);
+  } catch (e) {
+    thrown = e;
+  }
+  expect(thrown).toBeInstanceOf(LessParseError);
+  expect((thrown as Error).message).toEqual("SyntaxError EXPECTED Expected right parenthesis ')' to end guard condition");
 });
 
 test('guard', () => {

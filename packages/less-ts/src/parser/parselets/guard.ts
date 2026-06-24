@@ -21,11 +21,11 @@ export class ConditionParselet implements Parselet {
     let res: Condition | undefined;
     stm.skipWs();
     if (!stm.seekIf(Chars.LEFT_PARENTHESIS)) {
-      stm.parseError('left parenthesis "(" to start guard condition');
+      stm.parseError("SyntaxError EXPECTED Expected left parenthesis '(' to start guard condition");
     }
     const left = stm.parse(Parselets.CONDITION_SUB);
     if (left === undefined) {
-      stm.parseError('expected condition value');
+      stm.parseError('SyntaxError EXPECTED Expected condition value');
     }
 
     stm.skipWs();
@@ -35,7 +35,7 @@ export class ConditionParselet implements Parselet {
       if (right !== undefined) {
         res = new Condition(op, left, right, negate);
       } else {
-        stm.parseError('expected expression');
+        stm.parseError('SyntaxError EXPECTED Expected expression');
       }
     } else {
       res = new Condition(Operator.EQUAL, left, TRUE, negate);
@@ -43,7 +43,7 @@ export class ConditionParselet implements Parselet {
 
     stm.skipWs();
     if (!stm.seekIf(Chars.RIGHT_PARENTHESIS)) {
-      stm.parseError('expected right parenthesis ")" to end guard condition');
+      stm.parseError("SyntaxError EXPECTED Expected right parenthesis ')' to end guard condition");
     }
     return res;
   }
