@@ -33,12 +33,17 @@ export class DirectiveParselet implements Parselet {
     let hasIdentifier = false;
     switch (nvName) {
       case '@import':
-      case '@import-once':
+      case '@import-once': {
         const result = this.parseImport(stm, nvName);
         if (result === undefined) {
-          stm.restore(mark);
+          // The reference commits the import parse on failure (no
+          // rollback): strict fails the statement, and safe mode
+          // recovers from where the parse stopped (past the path and
+          // its trailing whitespace), not from the statement start.
+          stm.parseError(parseError());
         }
         return result;
+      }
 
       case '@media':
         return this.parseMedia(stm);

@@ -98,6 +98,25 @@ const CASES: Array<[string, string, string, string, string, string]> = [
     '',
     INCOMPLETE,
   ],
+  [
+    // The import parse commits on failure: the skip is recorded at the
+    // line where the parse stopped (past the path and its trailing
+    // whitespace), not at the statement start.
+    'import without a semicolon: recovery starts past the path',
+    '@import "foo.css"\n.a { b: 1; }\n',
+    '/* WARNING[1] raised during recovery: skipped invalid statement at line 2 */\n.a {\n  b: 1;\n}\n',
+    '',
+    '',
+    INCOMPLETE,
+  ],
+  [
+    'import without a semicolon at end of input: recovers to nothing',
+    '@import "foo.css"\n',
+    '',
+    NO_OUTPUT,
+    '',
+    INCOMPLETE,
+  ],
 ];
 
 describe('parser recovery in safe mode', () => {
