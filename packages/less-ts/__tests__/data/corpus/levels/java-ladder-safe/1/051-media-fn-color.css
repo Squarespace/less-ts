@@ -1,0 +1,5 @@
+@media (min-width: lighten(#000, 10%)) {
+  .a {
+    x: 1;
+  }
+}

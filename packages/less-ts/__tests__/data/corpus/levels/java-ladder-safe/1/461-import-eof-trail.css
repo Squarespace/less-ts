@@ -1,0 +1,4 @@
+/* WARNING[1] raised during recovery: skipped invalid statement at line 2 */
+.a {
+  b: 1;
+}

@@ -15,15 +15,18 @@ Layout:
                       = raw compile() bytes, <name>.err = verbatim
                       LessException.getMessage()
     levels/java-ladder/<level>/   PINNED reference (wired context, function
-                      table active) at compat levels 0, 1, 2; same css/err
-                      naming
+                      table active) at compat levels 0, 1, 2, strict mode;
+                      same css/err naming
+    levels/java-ladder-safe/<level>/  PINNED reference (wired context,
+                      function table active, safe mode on) at compat
+                      levels 0, 1, 2; same css/err naming
     levels/expected-diff.json     registered divergent cells (fixture,
                       level, reason); the harness asserts inequality on
                       them (flip detector) and equality everywhere else
     ts-current/       TS output for contrast (regenerable, never truth)
     BOUNDARY.md       pinned boundary table (the deliverable)
     tools/            JavaReferenceProbe.java, JavaLadderProbe.java,
-                      ts-probe.js
+                      JavaSafeProbe.java, ts-probe.js
 
 Parity gate: `npm run parity` in packages/less-ts runs
 `__tests__/corpus-parity.test.ts`, byte-comparing TS compile() output
@@ -31,7 +34,8 @@ against the pinned java-main/ files (css for OK fixtures, error text for
 ERR fixtures); green when every bare-surface cell byte-matches or is
 registered in expected-diff.json (level "bare", asserted as
 inequality - the flip detector). `__tests__/corpus-parity-levels.test.ts`
-does the same against the ladder pins at levels 0/1/2 (every pin on
+does the same over the full matrix - every fixture x level 0/1/2 x
+mode strict/safe - against the ladder and safe pins (every pin on
 disk is a cell).
 
 ## Regenerate the Java reference
@@ -42,16 +46,18 @@ Requires a Java `main` build (the only reference) and the gradle jars:
 cd <java-dir> && git checkout main && ./gradlew classes testClasses
 CP="<java-dir>/build/classes/java/main:<java-dir>/build/classes/java/test:$(find ~/.gradle -name '*.jar' | tr '\n' ':')"
 javac -proc:none -cp "$CP" -d /tmp tools/JavaReferenceProbe.java \
-    tools/JavaLadderProbe.java
+    tools/JavaLadderProbe.java tools/JavaSafeProbe.java
 java -cp "/tmp:$CP" JavaReferenceProbe less java-main
 ```
 
 The ladder family (wired context, function table active) comes from
-`JavaLadderProbe`, one run per level:
+`JavaLadderProbe`, one run per level; the safe family from
+`JavaSafeProbe` (wired context, safe mode on), one run per level:
 
 ```sh
 for level in 0 1 2; do
   java -cp "/tmp:$CP" JavaLadderProbe less levels/java-ladder/$level $level
+  java -cp "/tmp:$CP" JavaSafeProbe less levels/java-ladder-safe/$level $level
 done
 ```
 

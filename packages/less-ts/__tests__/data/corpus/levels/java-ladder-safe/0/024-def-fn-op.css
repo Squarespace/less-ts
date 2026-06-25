@@ -1,0 +1,2 @@
+/* WARNING[1] raised during recovery: skipped invalid statement at line 1 */
+/* WARNING[2] raised during recovery: eval: dropped rule: ExecuteError VAR_UNDEFINED: Failed to locate a definition for the variable @x in current scope */

@@ -1,0 +1,3 @@
+.a {
+  b: convert(1px, foo);
+}

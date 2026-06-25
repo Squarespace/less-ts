@@ -1,0 +1,6 @@
+/* WARNING[1] raised during recovery: unclosed block(s) at end of input; output truncated at line 2 */
+@media screen {
+  .a {
+    b: 1;
+  }
+}
