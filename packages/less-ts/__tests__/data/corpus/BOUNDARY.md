@@ -231,6 +231,17 @@ Legacy: silently dropped, the bare element is styled (`a { color: red;
 parse.` (the pin type flips css-to-err at L2). TS matches the legacy
 side at every level today; L2 registered.
 
+### 41x mixin-call-arg error wordings (414 mixed delimiters, 415 param default)
+
+Parse-error cells pinning the mixin-call-argument wording. 414
+(`.m(1, @b: 2; 3)`): `SyntaxError MIXED_DELIMITERS Cannot mix
+semicolon and comma as delimiters` at every strict surface; safe skips
+the broken statement (line 2) and renders the warning only. 415
+(`.m(@a: )`): `SyntaxError EXPECTED Expected an expression` at every
+strict surface; safe recovers to nothing and fails the empty-sheet
+check (GENERAL). The paren cell (445) pins the sibling `EXPECTED )`
+mixin-call-arguments wording.
+
 ### 42x uncomparable guard truth table (420-426)
 
 Shape `.m(@a) when (@a <OP> 10px) { p: 1; }` + `.x { .m(red); }` (color

@@ -28,7 +28,7 @@ test('compile parse errors', () => {
     ['.a { x: ~`code`; }\n', 'inline JavaScript not supported', {}],
     ['.a { x: alpha(opacity=10%); }\n', 'Numeric values for alpha cannot have units', {}],
     ['.a { x: ~"line \n feed"; }\n', 'Quoted string contains a bare line feed', {}],
-    ['.b(@a:); .b(@x) { x: 1; }\n', 'expected an expression', {}],
+    ['.b(@a:); .b(@x) { x: 1; }\n', 'Expected an expression', {}],
     ['garbage', 'stylesheet produced no output', { safeMode: true }],
   ];
   for (const [src, phrase, opts] of cases) {
