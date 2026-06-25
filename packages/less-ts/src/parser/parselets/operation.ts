@@ -71,8 +71,8 @@ export class MultiplicationParselet implements Parselet {
       }
 
       const ch = stm.peekn(1);
-      if (ch === Chars.ASTERISK || ch === Chars.SLASH) {
-        // TODO: should be operation, but need to change Java code too
+      if (op === Operator.DIVIDE && (ch === Chars.ASTERISK || ch === Chars.SLASH)) {
+        // a comment start, not a divide
         return op0;
       }
 

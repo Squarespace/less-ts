@@ -472,6 +472,29 @@ describe('BUG4: invalid additions', () => {
     }
   });
 
+  test('a multiply whose right side is not an operand is dropped at legacy levels and rejected at fixed levels', () => {
+    // '10px*/2' is a star operator whose right side fails to parse:
+    // legacy drops the star and renders the slash as a literal;
+    // fixed levels restore the operator and the rule fails.
+    const src = '.a {\n  x: 10px*/2;\n}\n';
+    const legacyCss = '.a {\n  x: 10px / 2;\n}\n';
+    expect(new LessCompiler({}).compile(src).css).toEqual(legacyCss);
+    expect(new LessCompiler({ compatLevel: 0 }).compile(src).css).toEqual(legacyCss);
+    for (const level of [1, 2]) {
+      parseFail(src, { compatLevel: level });
+    }
+  });
+
+  test('a star after a multiply fails at every level', () => {
+    // '10px**2' never parses: the second star cannot start an
+    // operand, and the rule fails the same way at every level.
+    const src = '.a {\n  x: 10px**2;\n}\n';
+    expect(new LessCompiler({}).compile(src).css).toEqual('');
+    for (const level of [0, 1, 2]) {
+      parseFail(src, { compatLevel: level });
+    }
+  });
+
   test('an override forces the tolerance on at a fixed level', () => {
     expect(new LessCompiler({ compatLevel: 2, compatPatches: { BUG4: true } }).compile(src).css).toEqual(legacyCss);
   });
