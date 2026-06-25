@@ -120,6 +120,9 @@ export class RulesetParselet implements Parselet {
     const mark = stm.mark();
     const selectors = stm.parse(Parselets.SELECTORS);
     if (selectors === undefined) {
+      // A failed selector scan may have consumed a combinator or a
+      // stray token; undo it so the statement fails from its start.
+      stm.restore(mark);
       return undefined;
     }
     const block = stm.parse(Parselets.BLOCK);

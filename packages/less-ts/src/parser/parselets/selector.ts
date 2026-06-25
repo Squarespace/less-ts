@@ -155,7 +155,10 @@ export class SelectorParselet implements Parselet {
       }
       elem = stm.parse(Parselets.ELEMENT);
     }
-    return new Selector(elements);
+    // No elements is no selector: the parse fails, so a recovery
+    // re-parse of a bare block cannot render a rule with an empty
+    // selector.
+    return elements.length > 0 ? new Selector(elements) : undefined;
   }
 }
 
