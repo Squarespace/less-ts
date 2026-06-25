@@ -348,9 +348,17 @@ export class Evaluator {
     if (guard) {
       // Execute the guard condition. If it returns false, we return immediately
       // but return true to indicate we found and evaluated at least one mixin definition.
+      const errorsBefore = env.errors.length;
       const result = guard.eval(env);
+      if (env.errors.length > errorsBefore) {
+        // A guard that fails to evaluate fails the call: strict
+        // surfaces the error, safe mode drops the call with a
+        // warning. This env is a copy, so the error must reach the
+        // caller's env for the drop check to see it.
+        origEnv.errors.push(...env.errors.splice(errorsBefore));
+        return true;
+      }
       if (result.equals(FALSE)) {
-        ctx.captureErrors(mixin, env);
         return true;
       }
     }

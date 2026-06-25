@@ -90,6 +90,27 @@ describe('evaluation recovery in safe mode', () => {
     expect(res.css).toEqual(recovery(1, 'eval: dropped mixin call: ' + mixinUndefined('.m')));
   });
 
+  test('a mixin call whose guard fails to evaluate is dropped', () => {
+    // The guard error fails the whole call: safe mode drops the call
+    // with a warning, the call site renders nothing.
+    const src =
+      '@x: round(4.6);\n.m() when (@x = 5) {\n  a: ok;\n}\n.a {\n  .m();\n}\n';
+    const res = new LessCompiler({ safeMode: true }).compile(src);
+    expect(res.errors.length).toBe(0);
+    expect(res.css).toEqual(
+      recovery(1, 'eval: dropped mixin call: ExecuteError UNCOMPARABLE_TYPE: Unable to compare instances of FUNCTION_CALL'),
+    );
+  });
+
+  test('a guard that fails to evaluate fails the call in strict mode', () => {
+    const src =
+      '@x: round(4.6);\n.m() when (@x = 5) {\n  a: ok;\n}\n.a {\n  .m();\n}\n';
+    const res = new LessCompiler({}).compile(src);
+    expect(res.errors[0].errors[0].message).toBe(
+      'ExecuteError UNCOMPARABLE_TYPE: Unable to compare instances of FUNCTION_CALL',
+    );
+  });
+
   test('mutual recursion drops both calls', () => {
     const res = new LessCompiler({ safeMode: true }).compile('.m1 { .m2(); }\n.m2 { .m1(); }\n.x { .m1(); }\n');
     expect(res.errors.length).toBe(0);
