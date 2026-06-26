@@ -387,17 +387,17 @@ describe('BUG3: a variable followed by empty parens', () => {
 });
 
 describe('BUG4: invalid additions', () => {
-  const src = '@foo: 10px;\n.a {\n  x: @foo + px;\n  y: 1 + px;\n  z: 2 -;\n}\n';
-  const legacyCss = '.a {\n  x: 10px px;\n  y: 1 px;\n  z: 2 -;\n}\n';
+  const bug4Src = '@foo: 10px;\n.a {\n  x: @foo + px;\n  y: 1 + px;\n  z: 2 -;\n}\n';
+  const bug4LegacyCss = '.a {\n  x: 10px px;\n  y: 1 px;\n  z: 2 -;\n}\n';
 
   test('legacy levels keep the dangling operator', () => {
-    expect(new LessCompiler({}).compile(src).css).toEqual(legacyCss);
-    expect(new LessCompiler({ compatLevel: 0 }).compile(src).css).toEqual(legacyCss);
+    expect(new LessCompiler({}).compile(bug4Src).css).toEqual(bug4LegacyCss);
+    expect(new LessCompiler({ compatLevel: 0 }).compile(bug4Src).css).toEqual(bug4LegacyCss);
   });
 
   test('fixed levels reject the input', () => {
     for (const level of [1, 2]) {
-      parseFail(src, { compatLevel: level });
+      parseFail(bug4Src, { compatLevel: level });
     }
   });
 
@@ -496,7 +496,7 @@ describe('BUG4: invalid additions', () => {
   });
 
   test('an override forces the tolerance on at a fixed level', () => {
-    expect(new LessCompiler({ compatLevel: 2, compatPatches: { BUG4: true } }).compile(src).css).toEqual(legacyCss);
+    expect(new LessCompiler({ compatLevel: 2, compatPatches: { BUG4: true } }).compile(bug4Src).css).toEqual(bug4LegacyCss);
   });
 });
 

@@ -20,13 +20,12 @@ const gte = (a: Node, b: Node, negate: boolean = false) => cond(Operator.GREATER
 test('condition errors', () => {
   const compiler = new LessCompiler({});
   const ctx = compiler.context();
-  let c: Condition;
 
   const five = dim(5);
   const ten = dim(10);
 
   const env = ctx.newEnv();
-  c = cond(Operator.ADD, five, ten);
+  const c = cond(Operator.ADD, five, ten);
   c.eval(env);
   ctx.captureErrors(c, env);
   expect(ctx.errors.length).toEqual(1);

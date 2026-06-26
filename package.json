@@ -9,7 +9,7 @@
     "build:watch": "lerna run build:watch --parallel",
     "clean": "lerna run clean",
     "clean:full": "lerna run clean:full && rimraf node_modules pnpm-lock.yaml",
-    "lint": "lerna run build && lerna run lint",
+    "lint": "eslint .",
     "reformat": "lerna run reformat",
     "release_x": "lerna run clean && lerna run build && lerna publish --force-publish=* --npm-client=npm",
     "test": "rimraf ./coverage && jest --coverage --verbose -i --no-cache",
@@ -20,8 +20,8 @@
     "packages/*"
   ],
   "dependencies": {
-    "@types/node": "20.6.0",
     "@types/jest": "^29.5.4",
+    "@types/node": "20.6.0",
     "jest": "^29.6.4",
     "lerna": "^7.2.0",
     "rimraf": "^5.0.1",
@@ -30,5 +30,13 @@
     "tslint": "^5.20.1",
     "tslint-no-circular-imports": "^0.7.0",
     "typescript": "5.2.x"
+  },
+  "devDependencies": {
+    "@eslint/js": "9.39.5",
+    "@typescript-eslint/eslint-plugin": "8.69.0",
+    "@typescript-eslint/parser": "8.69.0",
+    "eslint": "9.39.5",
+    "eslint-config-prettier": "10.1.8",
+    "eslint-plugin-import": "2.32.0"
   }
 }

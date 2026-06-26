@@ -34,12 +34,12 @@ const compileAst = (slots: Semaphore, src: string, dst: string): void => {
     slots.acquire(() => {
       exec(`${LESS_CMD} --debug JSONAST ${src}`, (e, out, err) => {
         if (e) {
-          console.log(String(e));
-          console.log(err);
+          process.stdout.write(String(e) + '\n');
+          process.stdout.write(String(err) + '\n');
           return;
         }
-        console.log(' compiled json ast..');
-        console.log(`    saving ${dst}`);
+        process.stdout.write(' compiled json ast..\n');
+        process.stdout.write(`    saving ${dst}\n`);
         fs.writeFileSync(dst, out, { encoding: 'utf-8' });
         slots.release();
       });
@@ -52,12 +52,12 @@ const compileRepr = (slots: Semaphore, src: string, dst: string): void => {
     slots.acquire(() => {
       exec(`${LESS_CMD} --debug JSONREPR ${src}`, (e, out, err) => {
         if (e) {
-          console.log(String(e));
-          console.log(err);
+          process.stdout.write(String(e) + '\n');
+          process.stdout.write(String(err) + '\n');
           return;
         }
-        console.log('  emitted json text repr..');
-        console.log(`    saving ${dst}`);
+        process.stdout.write('  emitted json text repr..\n');
+        process.stdout.write(`    saving ${dst}\n`);
         fs.writeFileSync(dst, out, { encoding: 'utf-8' });
         slots.release();
       });

@@ -44,7 +44,7 @@ const Polarity = {
   OUTPUT_FIX: 'OUTPUT_FIX',
   LITERAL_IN_VALUE: 'LITERAL_IN_VALUE',
 } as const;
-type Polarity = (typeof Polarity)[keyof typeof Polarity];
+type PolarityType = (typeof Polarity)[keyof typeof Polarity];
 
 interface Row {
   name: string;
@@ -53,7 +53,7 @@ interface Row {
   // Strict-mode error type at the failing cells ('' when the
   // polarity never errors).
   errorType: string;
-  polarity: Polarity;
+  polarity: PolarityType;
   // REJECT_FIX: the rendered body at the fixed safe level equals the
   // released (level 0, safe) body.
   cssUnchangedAtFix: boolean;
@@ -67,7 +67,7 @@ const row = (
   source: string,
   threshold: number,
   errorType: string,
-  polarity: Polarity,
+  polarity: PolarityType,
   cssUnchangedAtFix = false,
   emptyRecovery = false,
 ): Row => ({ name, source, threshold, errorType, polarity, cssUnchangedAtFix, emptyRecovery });

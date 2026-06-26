@@ -97,6 +97,10 @@ export const Patch = {
   FUNCTION_CALL_IN_VALUE: 'FUNCTION_CALL_IN_VALUE',
 } as const;
 
+// Value and type intentionally share this name (const-assertion idiom).
+// tslint's no-duplicate-variable only saw variables, not type aliases,
+// so this pair was never a duplicate.
+// eslint-disable-next-line @typescript-eslint/no-redeclare
 export type Patch = (typeof Patch)[keyof typeof Patch];
 
 // Level at which each fix is applied; the legacy behavior is active
