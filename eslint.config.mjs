@@ -1,6 +1,6 @@
-// ESLint 9 flat config. Replaces the tslint gate; prettier keeps style.
+// ESLint 9 flat config. Replaces the previous lint gate; prettier keeps style.
 //
-// Ported rules (tslint rule -> eslint rule):
+// Ported rules (previous rule set -> eslint rule):
 //   no-shadowed-variable      -> no-shadow (@typescript-eslint/no-shadow)
 //   no-empty                  -> no-empty
 //   no-eval                   -> no-eval
@@ -31,7 +31,7 @@
 //   member-ordering, member-access, interface-name, no-any, no-bitwise,
 //   no-constant-condition, no-inferrable-types, no-string-literal,
 //   no-unused-variable, no-unused-expression, no-default-export,
-//   label-position               -> disabled in the tslint config
+//   label-position               -> disabled in the previous config
 //   indent, max-line-length, quotemark, semicolon, trailing-comma,
 //   no-trailing-whitespace, no-consecutive-blank-lines, one-line, whitespace,
 //   eofline, object-literal-sort-keys -> prettier owns style
@@ -124,12 +124,12 @@ export default [
       'import/no-cycle': 'error',
       '@typescript-eslint/naming-convention': [
         'error',
-        // Mirrors tslint variable-name (check-format, allow-leading-underscore,
+        // Mirrors the previous linter's variable-name (check-format, allow-leading-underscore,
         // allow-pascal-case): lowerCamelCase, PascalCase, or UPPER_CASE.
         { selector: 'variable', format: ['camelCase', 'PascalCase', 'UPPER_CASE'], leadingUnderscore: 'allow' },
         { selector: 'parameter', format: ['camelCase', 'PascalCase', 'UPPER_CASE'], leadingUnderscore: 'allow' },
         { selector: 'classProperty', format: ['camelCase', 'PascalCase', 'UPPER_CASE'], leadingUnderscore: 'allow' },
-        // Mirrors tslint class-name: classes and interfaces are PascalCase.
+        // Mirrors the previous linter's class-name: classes and interfaces are PascalCase.
         { selector: 'class', format: ['PascalCase'] },
         { selector: 'interface', format: ['PascalCase'] },
       ],

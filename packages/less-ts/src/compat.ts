@@ -98,8 +98,8 @@ export const Patch = {
 } as const;
 
 // Value and type intentionally share this name (const-assertion idiom).
-// tslint's no-duplicate-variable only saw variables, not type aliases,
-// so this pair was never a duplicate.
+// The previous linter's no-duplicate-variable rule only saw variables,
+// not type aliases, so this pair was never a duplicate.
 // eslint-disable-next-line @typescript-eslint/no-redeclare
 export type Patch = (typeof Patch)[keyof typeof Patch];
 
