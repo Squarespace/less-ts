@@ -93,7 +93,7 @@ importers:
   packages/less-ts-cli:
     dependencies:
       '@squarespace/less-ts':
-        specifier: ^1.1.5
+        specifier: ^2.0.0
         version: link:../less-ts
       '@types/yargs':
         specifier: ^17.0.24
