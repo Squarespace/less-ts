@@ -48,6 +48,10 @@ export class Evaluator {
 
   private closureArrow: MixinClosureArrow = (m: Mixin): ExecEnv | undefined => this.closures.get(m);
 
+  // The last definition whose value failed to evaluate. An error
+  // left pending at the end of the sheet is reported with this node.
+  private pendingErrorNode?: Node;
+
   constructor(readonly ctx: Context) {}
 
   evaluate(env: ExecEnv, block: Block, n: Node): Node {
@@ -126,6 +130,12 @@ export class Evaluator {
     env.push(n);
     this.expandMixins(env, n.block);
     this.evaluateRules(env, n.block, false);
+    // Errors a member left pending after the top-level pass surface
+    // here, in the scope of the node that raised them; safe mode
+    // dropped the member with a warning instead.
+    if (!env.ctx.safeMode() && this.pendingErrorNode !== undefined && env.errors.length > 0) {
+      env.ctx.captureErrors(this.pendingErrorNode, env);
+    }
     env.pop();
     return n;
   }
@@ -146,10 +156,15 @@ export class Evaluator {
         case NodeType.DEFINITION: {
           const d = n as Definition;
           n = new Definition(d.name, d.dereference(env));
+          if (env.errors.length > errorsBefore) {
+            // Remember this definition for the end-of-sheet drain.
+            this.pendingErrorNode = n;
+          }
           // A member dropped by the recovery check below keeps
           // nothing: its pending warnings stay in the env for the
           // rollback.
           if (!(env.ctx.safeMode() && env.errors.length > errorsBefore)) {
+            env.ctx.captureErrors(n, env);
             this.attachWarnings(n, env);
           }
           break;

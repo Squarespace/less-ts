@@ -1,4 +1,4 @@
-import { maxThreshold, LessCompiler, THRESHOLDS } from '../src';
+import { Definition, LessCompiler, maxThreshold, NodeType, Options, THRESHOLDS } from '../src';
 
 // The recovery matrix contract: every registry patch (17 rows) x
 // level 0..2 x strict/safe = 102 cells. Each row declares its source,
@@ -267,6 +267,61 @@ describe('recovery matrix contract (patch x level x mode)', () => {
   test('each row threshold matches the registry', () => {
     for (const r of ROWS) {
       expect(THRESHOLDS[r.name]).toBe(r.threshold);
+    }
+  });
+});
+
+// A definition whose value fails to evaluate is reported in the
+// definition's own scope, even when it is the last member of the
+// sheet and no later rule captures the env's error list. The strict
+// cells pin the first error message, the css bytes (empty, or the
+// rule after the definition still renders), and the event's node.
+// The safe cells pin the drop-warning bytes and zero error events.
+// Level 0 strict equals the default surface; the reference bytes
+// come from the bare strict and level-0 safe probes.
+describe('a trailing failing definition', () => {
+  const TRAIL_ERR =
+    'ExecuteError VAR_UNDEFINED: Failed to locate a definition for the variable @undef in current scope';
+  const TRAIL_DROP =
+    '/* WARNING[1] raised during recovery: eval: dropped definition: ' + TRAIL_ERR + ' */\n';
+  const strictCells: Options[] = [{}, { compatLevel: 0 }, { compatLevel: 1 }, { compatLevel: 2 }];
+  const safeCells: Options[] = [
+    { compatLevel: 0, safeMode: true },
+    { compatLevel: 1, safeMode: true },
+    { compatLevel: 2, safeMode: true },
+  ];
+
+  test('definition alone: strict errors in scope, safe drops it', () => {
+    const src = '@a: @undef;\n';
+    for (const opts of strictCells) {
+      const res = new LessCompiler(opts).compile(src);
+      expect(res.css).toBe('');
+      expect(res.errors.length).toBe(1);
+      expect(res.errors[0].errors[0].message).toBe(TRAIL_ERR);
+      expect(res.errors[0].node.type).toBe(NodeType.DEFINITION);
+      expect((res.errors[0].node as Definition).name).toBe('@a');
+    }
+    for (const opts of safeCells) {
+      const res = new LessCompiler(opts).compile(src);
+      expect(res.css).toBe(TRAIL_DROP);
+      expect(res.errors.length).toBe(0);
+    }
+  });
+
+  test('definition followed by a rule: strict reports the definition, safe keeps the rule', () => {
+    const src = '@a: @undef;\n.a { x: 1px; }\n';
+    for (const opts of strictCells) {
+      const res = new LessCompiler(opts).compile(src);
+      expect(res.css).toBe('.a {\n  x: 1px;\n}\n');
+      expect(res.errors.length).toBe(1);
+      expect(res.errors[0].errors[0].message).toBe(TRAIL_ERR);
+      expect(res.errors[0].node.type).toBe(NodeType.DEFINITION);
+      expect((res.errors[0].node as Definition).name).toBe('@a');
+    }
+    for (const opts of safeCells) {
+      const res = new LessCompiler(opts).compile(src);
+      expect(res.css).toBe(TRAIL_DROP + '.a {\n  x: 1px;\n}\n');
+      expect(res.errors.length).toBe(0);
     }
   });
 });
