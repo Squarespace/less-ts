@@ -1,5 +1,4 @@
+# @squarespace/less-ts
 
-less-ts
-
-Squarespace Less compiler in Typescript.
-
+The TypeScript LESS compiler. See the repository README for the API,
+options, compat levels, and the error contract.
